@@ -1,0 +1,33 @@
+# Compiled code #
+*.class
+*.pyc
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Build locations #
+overlays/
+target/
+
+# Project metadata #
+*.iml
+*.ipr
+*.iws
+.classpath
+.idea/
+.project
+.settings/
+
+# Temporary files #
+*~
+*.log
+*.swp
+*.temp
+
+# Conent Rep
+cp.*.txt
+debug.sh
+run.sh
+mdb.ini
