@@ -1,3 +1,4 @@
+/*
 package org.plos.crepo.integration;
 
 import org.apache.commons.io.IOUtils;
@@ -549,3 +550,4 @@ public class ContentRepoTest {
 
 
 
+*/
