@@ -60,8 +60,8 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public URL[] getRepoObjRedirectURL(String key, String versionChecksum){
 
-    Map<String, Object> assetValues = this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
-    String paths = (String) assetValues.get("reproxyURL");
+    Map<String, Object> repoObjValues = this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
+    String paths = (String) repoObjValues.get("reproxyURL");
 
     if (StringUtils.isEmpty(paths)){
       return new URL[]{};
@@ -93,12 +93,12 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public InputStream getLatestRepoObjStream(String key){
 
-    HttpResponse response = contentRepoObjectsDao.getLatestAsset(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getLatestRepoObj(bucketName, key);
 
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
-      log.error("Error getting the latest asset content from the response. key:  " +  key, e);
+      log.error("Error getting the latest repoObj content from the response. key:  " +  key, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
           .key(key)
@@ -115,7 +115,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
       file.close();
       return bytes;
     } catch (IOException e) {
-      log.error("Error converting the InputStream in a byte[] getting the latest asset. key " + key, e);
+      log.error("Error converting the InputStream in a byte[] getting the latest repoObj. key " + key, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
           .key(key)
@@ -126,11 +126,11 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
 
-    HttpResponse response = contentRepoObjectsDao.getAssetUsingVersionCks(bucketName, key, versionChecksum);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionCks(bucketName, key, versionChecksum);
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
-      log.error("Error getting the asset content from the response, when using the version checksum." +
+      log.error("Error getting the repoObj content from the response, when using the version checksum." +
           "  key " + key + " versionNumber: " + versionChecksum, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
@@ -159,7 +159,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
 
-    HttpResponse response = contentRepoObjectsDao.getAssetUsingVersionNum(bucketName, key, versionNumber);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionNum(bucketName, key, versionNumber);
 
     try {
       return response.getEntity().getContent();
@@ -191,62 +191,79 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
 
   @Override
   public Map<String,Object> getRepoObjMetaLatestVersion(String key) {
-    HttpResponse response = contentRepoObjectsDao.getAssetMetaLatestVersion(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaLatestVersion(bucketName, key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public Map<String,Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
-    HttpResponse response = contentRepoObjectsDao.getAssetMetaUsingVersionChecksum(bucketName, key, versionChecksum);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionChecksum(bucketName, key, versionChecksum);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
-  public Map<String,Object> getAssetMetaUsingVersionNumber(String key, int versionNumber) {
-    HttpResponse response = contentRepoObjectsDao.getAssetMetaUsingVersionNumber(bucketName, key, versionNumber);
+  public Map<String,Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber) {
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionNumber(bucketName, key, versionNumber);
+    return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
+  }
+
+  @Override
+  public Map<String, Object> getRepoObjMetaUsingTag(String key, String tag) {
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingTag(bucketName, key, tag);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public List<Map<String, Object>> getRepoObjVersions(String key) {
-    HttpResponse response = contentRepoObjectsDao.getAssetVersionsMeta(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjVersionsMeta(bucketName, key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {}.getType());
   }
 
 
   @Override
   public Boolean deleteLatestRepoObj(String key) {
-    Map<String, Object> asset = this.getRepoObjMetaLatestVersion(key);
-    String versionChecksum = (String) asset.get("versionChecksum");
-    contentRepoObjectsDao.deleteAssetUsingVersionCks(bucketName, key, versionChecksum);
+    Map<String, Object> repoObj = this.getRepoObjMetaLatestVersion(key);
+    String versionChecksum = (String) repoObj.get("versionChecksum");
+    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(bucketName, key, versionChecksum);
     return true;
   }
 
   @Override
-  public Boolean deleteAssetUsingVersionChecksum(String key, String versionChecksum) {
-    contentRepoObjectsDao.deleteAssetUsingVersionCks(bucketName, key, versionChecksum);
+  public Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum) {
+    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(bucketName, key, versionChecksum);
     return true;
   }
 
   @Override
-  public Boolean deleteAssetUsingVersionNumber(String key, int versionNumber) {
-    contentRepoObjectsDao.deleteAssetUsingVersionNumber(bucketName, key, versionNumber);
+  public Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber) {
+    contentRepoObjectsDao.deleteRepoObjUsingVersionNumber(bucketName, key, versionNumber);
     return true;
   }
 
   @Override
   public Map<String, Object> createRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
-    HttpResponse response = contentRepoObjectsDao.createAsset(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
+    HttpResponse response = contentRepoObjectsDao.createRepoObj(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public Map<String, Object> versionRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
-    HttpResponse response = contentRepoObjectsDao.versionAsset(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
+    HttpResponse response = contentRepoObjectsDao.versionRepoObj(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
     }.getType());
+  }
+
+  @Override
+  public List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
+    HttpResponse response = null;
+    if (org.apache.commons.lang3.StringUtils.isEmpty(tag)){
+      response = contentRepoObjectsDao.getObjects(bucketName, offset, limit, includeDeleted);
+    } else{
+      response = contentRepoObjectsDao.getObjectsUsingTag(bucketName, offset, limit, includeDeleted, tag);
+    }
+    return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {}.getType());
   }
 
   private String getFileContentType(RepoObject repoObject, File file){

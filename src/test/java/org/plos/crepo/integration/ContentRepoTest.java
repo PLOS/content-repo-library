@@ -1,4 +1,3 @@
-/*
 package org.plos.crepo.integration;
 
 import org.apache.commons.io.IOUtils;
@@ -31,13 +30,15 @@ public class ContentRepoTest {
   private static final String testData1 = "test data one goes\nhere.";
   private static final String testData2 = "test data two goes\nhere.";
 
-  private static final String assetKey1 = "assetKey1";
-  private static final String assetKey2 = "assetKey2";
-  private static final String assetKey3 = "assetKey3";
-  private static final String assetKey4 = "assetKey4";
-  private static final String assetKey5 = "assetKey5";
-  private static final String assetKey6 = "assetKey6";
-  private static final String assetKey7 = "assetKey7";
+  private static final String repoObjKey1 = "repoObjKey1";
+  private static final String repoObjKey2 = "repoObjKey2";
+  private static final String repoObjKey3 = "repoObjKey3";
+  private static final String repoObjKey4 = "repoObjKey4";
+  private static final String repoObjKey5 = "repoObjKey5";
+  private static final String repoObjKey6 = "repoObjKey6";
+  private static final String repoObjKey7 = "repoObjKey7";
+  private static final String repoObjKey8 = "repoObjKey8";
+  private static final String repoObjKey9 = "repoObjKey9";
 
   private static final String collectionKey1 = "collectionKey1";
   private static final String collectionKey2 = "collectionKey2";
@@ -78,73 +79,73 @@ public class ContentRepoTest {
     }
 
     // create object 1
-    RepoObject repoObject = new RepoObject.RepoObjectBuilder(assetKey1)
+    RepoObject repoObject = new RepoObject.RepoObjectBuilder(repoObjKey1)
         .creationDate(creationDateTime)
         .fileContent(file)
         .downloadName("dowloadNameTest1")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
-    assertNotNull(asset1);
-    String fileVersionChecksum = (String) asset1.get("versionChecksum");
-    Double versionNumber = (Double) asset1.get("versionNumber");
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum = (String) repoObj1.get("versionChecksum");
+    Double versionNumber = (Double) repoObj1.get("versionNumber");
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(assetKey1)
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey1)
         .fileContent(file)
         .downloadName("dowloadNameTest2")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.versionRepoObject(repoObject2);
-    assertNotNull(asset2);
-    String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
-    Double versionNumber2 = (Double) asset2.get("versionNumber");
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2);
+    assertNotNull(repoObj2);
+    String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
+    Double versionNumber2 = (Double) repoObj2.get("versionNumber");
 
     //get versions
-    List<Map<String, Object>> versions = contentRepoService.getRepoObjVersions(assetKey1);
+    List<Map<String, Object>> versions = contentRepoService.getRepoObjVersions(repoObjKey1);
     assertNotNull(versions);
     assertEquals(2, versions.size());
     assertEquals(fileVersionChecksum, versions.get(0).get("versionChecksum"));
     assertEquals(fileVersionChecksum2, versions.get(1).get("versionChecksum"));
 
     // get object 1 by version checksum
-    Map<String, Object> asset3 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
+    Map<String, Object> repoObj3 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey1, fileVersionChecksum);
     // get object 1 by version number
-    Map<String, Object> asset4 = contentRepoService.getAssetMetaUsingVersionNumber(assetKey1, versionNumber.intValue());
+    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMetaUsingVersionNum(repoObjKey1, versionNumber.intValue());
 
-    assertNotNull(asset3);
-    assertNotNull(asset4);
-    assertEquals(asset1, asset3);
-    assertEquals(asset3, asset4);
+    assertNotNull(repoObj3);
+    assertNotNull(repoObj4);
+    assertEquals(repoObj1, repoObj3);
+    assertEquals(repoObj3, repoObj4);
 
     // get latest version with key 'testData1Key' ---> object 2
-    Map<String, Object> asset5 = contentRepoService.getRepoObjMetaLatestVersion(assetKey1);
-    assertNotNull(asset5);
-    assertEquals(asset2, asset5);
+    Map<String, Object> repoObj5 = contentRepoService.getRepoObjMetaLatestVersion(repoObjKey1);
+    assertNotNull(repoObj5);
+    assertEquals(repoObj2, repoObj5);
 
     // delete using version checksum ---> object 1
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey1, fileVersionChecksum);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey1, fileVersionChecksum);
 
-    Map<String, Object> asset6 = null;
+    Map<String, Object> repoObj6 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      asset6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
+      repoObj6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey1, fileVersionChecksum);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
-      assertNull(asset6);
+      assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
     // delete using version number ---> object 2
-    contentRepoService.deleteAssetUsingVersionNumber(assetKey1, versionNumber2.intValue());
+    contentRepoService.deleteRepoObjUsingVersionNum(repoObjKey1, versionNumber2.intValue());
 
     try{
       // get object 2 by version checksum ----> must be null
-      asset6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum2);
+      repoObj6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey1, fileVersionChecksum2);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
-      assertNull(asset6);
+      assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
@@ -158,61 +159,61 @@ public class ContentRepoTest {
 
     byte[] content = testData1.getBytes();
     // create object 1
-    RepoObject repoObject = new RepoObject.RepoObjectBuilder(assetKey2)
+    RepoObject repoObject = new RepoObject.RepoObjectBuilder(repoObjKey2)
         .byteContent(content)
         .creationDate(creationDateTime)
         .downloadName("dowloadNameTest2")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
-    assertNotNull(asset1);
-    String fileVersionChecksum = (String) asset1.get("versionChecksum");
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum = (String) repoObj1.get("versionChecksum");
 
-    Boolean deleted = contentRepoService.deleteLatestRepoObj(assetKey2);
+    Boolean deleted = contentRepoService.deleteLatestRepoObj(repoObjKey2);
     assertTrue(deleted);
 
-    Map<String, Object> asset2 = null;
+    Map<String, Object> repoObj2 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      asset2 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey2, fileVersionChecksum);
+      repoObj2 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey2, fileVersionChecksum);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
-      assertNull(asset2);
+      assertNull(repoObj2);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    repoObject = new RepoObject.RepoObjectBuilder(assetKey2)
+    repoObject = new RepoObject.RepoObjectBuilder(repoObjKey2)
         .byteContent(content)
         .creationDate(new Timestamp(new Date().getTime()))
         .downloadName("dowloadNameTest3")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset3 = contentRepoService.createRepoObject(repoObject);
-    assertNotNull(asset3);
-    String fileVersionChecksum3 = (String) asset3.get("versionChecksum");
+    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObject);
+    assertNotNull(repoObj3);
+    String fileVersionChecksum3 = (String) repoObj3.get("versionChecksum");
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(assetKey2)
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey2)
         .byteContent(content)
         .downloadName("dowloadNameTest4")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset4 = contentRepoService.versionRepoObject(repoObject2);
-    assertNotNull(asset4);
-    String fileVersionChecksum4 = (String) asset4.get("versionChecksum");
+    Map<String, Object> repoObj4 = contentRepoService.versionRepoObject(repoObject2);
+    assertNotNull(repoObj4);
+    String fileVersionChecksum4 = (String) repoObj4.get("versionChecksum");
 
-    URL[] url = contentRepoService.getRepoObjRedirectURL(assetKey2);
+    URL[] url = contentRepoService.getRepoObjRedirectURL(repoObjKey2);
     assertEquals(0, url.length);
 
-    url = contentRepoService.getRepoObjRedirectURL(assetKey2, fileVersionChecksum3);
+    url = contentRepoService.getRepoObjRedirectURL(repoObjKey2, fileVersionChecksum3);
     assertEquals(0, url.length);
 
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey2, fileVersionChecksum3);
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey2, fileVersionChecksum4);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey2, fileVersionChecksum3);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey2, fileVersionChecksum4);
 
   }
 
@@ -229,35 +230,35 @@ public class ContentRepoTest {
     }
 
     // create object 1
-    RepoObject repoObject = new RepoObject.RepoObjectBuilder(assetKey3)
+    RepoObject repoObject = new RepoObject.RepoObjectBuilder(repoObjKey3)
         .creationDate(creationDateTime)
         .fileContent(file)
         .downloadName("dowloadNameTest5")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
-    assertNotNull(asset1);
-    String fileVersionChecksum = (String) asset1.get("versionChecksum");
-    Double versionNumber = (Double) asset1.get("versionNumber");
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum = (String) repoObj1.get("versionChecksum");
+    Double versionNumber = (Double) repoObj1.get("versionNumber");
 
-    InputStream content1 = contentRepoService.getLatestRepoObjStream(assetKey3);
+    InputStream content1 = contentRepoService.getLatestRepoObjStream(repoObjKey3);
     assertNotNull(content1);
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(assetKey3)
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey3)
         .fileContent(file)
         .downloadName("dowloadNameTest6")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.versionRepoObject(repoObject2);
-    assertNotNull(asset2);
-    String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
-    Double versionNumber2 = (Double) asset2.get("versionNumber");
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2);
+    assertNotNull(repoObj2);
+    String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
+    Double versionNumber2 = (Double) repoObj2.get("versionNumber");
 
-    InputStream content2 = contentRepoService.getRepoObjStreamUsingVersionCks(assetKey3, fileVersionChecksum);
+    InputStream content2 = contentRepoService.getRepoObjStreamUsingVersionCks(repoObjKey3, fileVersionChecksum);
     assertNotNull(content2);
 
-    InputStream content3 = contentRepoService.getRepoObjStreamUsingVersionNum(assetKey3, versionNumber.intValue());
+    InputStream content3 = contentRepoService.getRepoObjStreamUsingVersionNum(repoObjKey3, versionNumber.intValue());
     assertNotNull(content3);
 
     String fileContent1 = IOUtils.toString(content1, CharEncoding.UTF_8);
@@ -268,9 +269,9 @@ public class ContentRepoTest {
     assertEquals(fileContent1, fileContent2);
     assertEquals(fileContent3, fileContent2);
 
-    byte[] content4 = contentRepoService.getLatestRepoObjByteArray(assetKey3);
-    byte[] content5 = contentRepoService.getRepoObjByteArrayUsingVersionCks(assetKey3, fileVersionChecksum2);
-    byte[] content6 = contentRepoService.getRepoObjByteArrayUsingVersionNum(assetKey3, versionNumber2.intValue());
+    byte[] content4 = contentRepoService.getLatestRepoObjByteArray(repoObjKey3);
+    byte[] content5 = contentRepoService.getRepoObjByteArrayUsingVersionCks(repoObjKey3, fileVersionChecksum2);
+    byte[] content6 = contentRepoService.getRepoObjByteArrayUsingVersionNum(repoObjKey3, versionNumber2.intValue());
 
     assertNotNull(content4);
     assertNotNull(content5);
@@ -284,9 +285,9 @@ public class ContentRepoTest {
     assertEquals(fileContent4,fileContent5);
     assertEquals(fileContent4,fileContent6);
 
-    Boolean deleted = contentRepoService.deleteAssetUsingVersionChecksum(assetKey3, fileVersionChecksum);
+    Boolean deleted = contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum);
     assertTrue(deleted);
-    deleted = contentRepoService.deleteAssetUsingVersionChecksum(assetKey3, fileVersionChecksum2);
+    deleted = contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum2);
     assertTrue(deleted);
 
   }
@@ -296,43 +297,43 @@ public class ContentRepoTest {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
-    RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(assetKey4)
+    RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(repoObjKey4)
         .byteContent(content1)
         .downloadName("dowloadNameTest")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject1);
-    assertNotNull(asset1);
-    String fileVersionChecksum1 = (String) asset1.get("versionChecksum");
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum1 = (String) repoObj1.get("versionChecksum");
 
 
     byte[] content2 = testData2.getBytes();
     // create object 1
-    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(assetKey5)
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey5)
         .byteContent(content2)
         .downloadName("dowloadNameTest7")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.createRepoObject(repoObject2);
-    assertNotNull(asset1);
-    String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
+    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObject2);
+    assertNotNull(repoObj2);
+    String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoCollectionObject> assets = new ArrayList<RepoCollectionObject>();
-    RepoCollectionObject rpa1 = new RepoCollectionObject(assetKey4, fileVersionChecksum1);
-    assets.add(rpa1);
-    RepoCollectionObject rpa2 = new RepoCollectionObject(assetKey5, fileVersionChecksum2);
-    assets.add(rpa2);
+    List<RepoCollectionObject> repoObjs = new ArrayList<RepoCollectionObject>();
+    RepoCollectionObject rpa1 = new RepoCollectionObject(repoObjKey4, fileVersionChecksum1);
+    repoObjs.add(rpa1);
+    RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey5, fileVersionChecksum2);
+    repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey1, assets);
+    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey1, repoObjs);
     repoCollMeta1.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
     Map<String, Object> collection1 = contentRepoService.createCollection(repoCollMeta1);
     assertNotNull(collection1);
     String collVersionChecksum1 = (String) collection1.get("versionChecksum");
     Double collVersionNumber1 = (Double) collection1.get("versionNumber");
 
-    assets.remove(1);
+    repoObjs.remove(1);
     Map<String, Object> collection2 = contentRepoService.versionCollection(repoCollMeta1);
     assertNotNull(collection2);
     String collVersionChecksum2 = (String) collection2.get("versionChecksum");
@@ -380,8 +381,8 @@ public class ContentRepoTest {
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey4, fileVersionChecksum1);
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey5, fileVersionChecksum2);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey4, fileVersionChecksum1);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey5, fileVersionChecksum2);
 
   }
 
@@ -407,43 +408,43 @@ public class ContentRepoTest {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
-    RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(assetKey6)
+    RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(repoObjKey6)
         .byteContent(content1)
         .downloadName("dowloadNameTest")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject1);
-    assertNotNull(asset1);
-    String fileVersionChecksum1 = (String) asset1.get("versionChecksum");
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum1 = (String) repoObj1.get("versionChecksum");
 
 
     byte[] content2 = testData2.getBytes();
     // create object 1
-    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(assetKey7)
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey7)
         .byteContent(content2)
         .downloadName("dowloadNameTest7")
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.createRepoObject(repoObject2);
-    assertNotNull(asset1);
-    String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
+    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObject2);
+    assertNotNull(repoObj2);
+    String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoCollectionObject> assets = new ArrayList<RepoCollectionObject>();
-    RepoCollectionObject rpa1 = new RepoCollectionObject(assetKey6, fileVersionChecksum1);
-    assets.add(rpa1);
-    RepoCollectionObject rpa2 = new RepoCollectionObject(assetKey7, fileVersionChecksum2);
-    assets.add(rpa2);
+    List<RepoCollectionObject> repoObjs = new ArrayList<RepoCollectionObject>();
+    RepoCollectionObject rpa1 = new RepoCollectionObject(repoObjKey6, fileVersionChecksum1);
+    repoObjs.add(rpa1);
+    RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey7, fileVersionChecksum2);
+    repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey2, assets);
+    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey2, repoObjs);
     repoCollMeta1.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
     repoCollMeta1.setTag(TAG);
     Map<String, Object> collection1 = contentRepoService.createCollection(repoCollMeta1);
     assertNotNull(collection1);
     String collVersionChecksum1 = (String) collection1.get("versionChecksum");
 
-    assets.remove(1);
+    repoObjs.remove(1);
     repoCollMeta1.setTag("");
     Map<String, Object> collection2 = contentRepoService.versionCollection(repoCollMeta1);
     assertNotNull(collection2);
@@ -458,7 +459,7 @@ public class ContentRepoTest {
     assertNotNull(collection4);
     String collVersionChecksum4 = (String) collection4.get("versionChecksum");
 
-    RepoCollection repoCollMeta2 = new RepoCollection(collectionKey3, assets);
+    RepoCollection repoCollMeta2 = new RepoCollection(collectionKey3, repoObjs);
     repoCollMeta2.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
     repoCollMeta2.setTag(TAG);
     Map<String, Object> collection5 = contentRepoService.createCollection(repoCollMeta2);
@@ -478,8 +479,68 @@ public class ContentRepoTest {
     contentRepoService.deleteCollectionUsingVersionCks(collectionKey2, collVersionChecksum4);
     contentRepoService.deleteCollectionUsingVersionCks(collectionKey3, collVersionChecksum5);
 
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey6, fileVersionChecksum1);
-    contentRepoService.deleteAssetUsingVersionChecksum(assetKey7, fileVersionChecksum2);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey6, fileVersionChecksum1);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey7, fileVersionChecksum2);
+
+  }
+
+  @Test
+  public void repoObjectsTagTest(){
+
+    byte[] content1 = testData1.getBytes();
+    RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(repoObjKey8)
+        .byteContent(content1)
+        .tag(TAG)
+        .downloadName("dowloadNameTest")
+        .contentType("test/plain")
+        .build();
+
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1);
+    assertNotNull(repoObj1);
+    String fileVersionChecksum1 = (String) repoObj1.get("versionChecksum");
+
+    RepoObject repoObject2 = new RepoObject.RepoObjectBuilder(repoObjKey8)
+        .byteContent(content1)
+        .downloadName("dowloadNameTest1")
+        .contentType("test/plain")
+        .build();
+
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2);
+    assertNotNull(repoObj2);
+    String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
+
+    byte[] content2 = testData2.getBytes();
+    // create object
+    RepoObject repoObject3 = new RepoObject.RepoObjectBuilder(repoObjKey9)
+        .byteContent(content2)
+        .tag(TAG)
+        .downloadName("dowloadNameTest3")
+        .contentType("test/plain")
+        .build();
+
+    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObject3);
+    assertNotNull(repoObj3);
+    String fileVersionChecksum3 = (String) repoObj3.get("versionChecksum");
+
+    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMetaUsingTag(repoObjKey8, TAG);
+    assertNotNull(repoObj4);
+    assertEquals(fileVersionChecksum1, repoObj4.get("versionChecksum"));
+
+
+    List<Map<String, Object>> repoObjectsTag =  contentRepoService.getRepoObjects(0,10,false,TAG);
+    assertNotNull(repoObjectsTag);
+    assertEquals(2, repoObjectsTag.size());
+    for (Map<String, Object> repoObject : repoObjectsTag){
+      assertEquals(TAG, repoObject.get("tag"));
+    }
+
+    List<Map<String, Object>> repoObjects =  contentRepoService.getRepoObjects(0,10,false,null);
+    assertNotNull(repoObjects);
+    assertEquals(3, repoObjects.size());
+
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey8, fileVersionChecksum1);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey8, fileVersionChecksum2);
+    contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey9, fileVersionChecksum3);
 
   }
 
@@ -488,4 +549,3 @@ public class ContentRepoTest {
 
 
 
-*/

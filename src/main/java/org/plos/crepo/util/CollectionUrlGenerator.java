@@ -59,12 +59,12 @@ public class CollectionUrlGenerator extends BaseUrlGenerator{
     return replaceUrl(deleteCollUsingVersionNumUrl, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));
   }
 
-  public String getGetCollections(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag){
-    return replaceUrl(getCollectionsUsingTagUrl, getCollectionsMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
+  public String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag){
+    return replaceUrl(getCollectionsUsingTagUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
   }
 
-  public String getGetCollections(String repoServer, String bucketName, int offset, int limit, boolean includeDelete){
-    return replaceUrl(getCollectionsUrl, getCollectionsMap(repoServer, bucketName, offset, limit, includeDelete));
+  public String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDelete){
+    return replaceUrl(getCollectionsUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDelete));
   }
 
   public String getCreateCollUrl(String repoServer) {
@@ -80,20 +80,6 @@ public class CollectionUrlGenerator extends BaseUrlGenerator{
   private Map<String, String> getCollectionMapWithVersionCks(String repoServer, String bucketName, String collKey, String versionChecksum){
     Map<String, String> values =getCollectionBasicMap(repoServer, bucketName, collKey);
     values.put("versionChecksum", versionChecksum);
-    return values;
-  }
-
-  private Map<String,String> getCollectionsMap(String repoServer, String bucketName, int offset, int limit, boolean includeDelete) {
-    Map<String, String> values = getBucketBasicMap(repoServer, bucketName);
-    values.put("offset", String.valueOf(offset));
-    values.put("limit", String.valueOf(limit));
-    values.put("includeDeleted", String.valueOf(includeDelete));
-    return values;
-  }
-
-  private Map<String,String> getCollectionsMap(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
-    Map<String, String> values = getCollectionsMap(repoServer, bucketName, offset, limit, includeDeleted);
-    values.put("tag", tag);
     return values;
   }
 

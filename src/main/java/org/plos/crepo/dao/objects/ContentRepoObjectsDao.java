@@ -6,30 +6,34 @@ import org.plos.crepo.model.RepoObject;
 
 public interface ContentRepoObjectsDao {
 
-  HttpResponse getLatestAsset(String bucketName, String key);
+  HttpResponse getLatestRepoObj(String bucketName, String key);
 
-  HttpResponse getAssetUsingVersionCks(String bucketName, String key, String versionChecksum);
+  HttpResponse getRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
 
-  HttpResponse getAssetUsingVersionNum(String bucketName, String key, int versionNumber);
+  HttpResponse getRepoObjUsingVersionNum(String bucketName, String key, int versionNumber);
 
-  HttpResponse getAssetMetaLatestVersion(String bucketName, String key);
+  HttpResponse getRepoObjMetaLatestVersion(String bucketName, String key);
 
-  HttpResponse getAssetMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum);
+  HttpResponse getRepoObjMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum);
 
-  HttpResponse getAssetMetaUsingVersionNumber(String bucketName, String key, int versionNumber);
+  HttpResponse getRepoObjMetaUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  HttpResponse getAssetVersionsMeta(String bucketName, String key);
+  HttpResponse getRepoObjVersionsMeta(String bucketName, String key);
 
-  HttpResponse deleteAssetUsingVersionCks(String bucketName, String key, String versionChecksum);
+  HttpResponse getRepoObjMetaUsingTag(String bucketName, String key, String tag);
 
-  HttpResponse deleteAssetUsingVersionNumber(String bucketName, String key, int versionNumber);
+  HttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
 
-  HttpResponse createAsset(String bucketName, RepoObject repoObject, String contentType);
+  HttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  HttpResponse versionAsset(String bucketName, RepoObject repoObject, String contentType);
+  HttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType);
+
+  HttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType);
 
   HttpResponse getRedirectURL(String bucketName, String key);
 
-  HttpResponse getRedirectURL(String bucketName, String key, String versionChecksum);
+  HttpResponse getObjects(String bucketName, int offset, int limit, boolean includeDeleted);
+
+  HttpResponse getObjectsUsingTag(String bucketName, int offset, int limit, boolean includeDeleted, String tag);
 
 }

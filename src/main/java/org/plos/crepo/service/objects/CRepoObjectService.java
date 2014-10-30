@@ -28,7 +28,7 @@ public interface CRepoObjectService {
   /**
    * Returns a URL array which can be used as a links to the specified repo object content.
    * @param key a single string representing the key of the repo object
-   * @param versionChecksum a single string representing the version checksum of the object
+   * @param versionChecksum a single string representing the version checksum of the repo object
    * @return a URL array
    */
   public URL[] getRepoObjRedirectURL(String key, String versionChecksum);
@@ -96,7 +96,7 @@ public interface CRepoObjectService {
    * creation date time.
    *
    * @deprecated use {@link #getRepoObjMetaUsingVersionChecksum(String, String)} or
-   * {@link #getAssetMetaUsingVersionNumber(String, int)} instead.
+   * {@link #getRepoObjMetaUsingVersionNum(String, int)} instead.
    *
    * @param key a single string representing the key of the repo object
    * @return a map with the repo object meta data.
@@ -118,7 +118,16 @@ public interface CRepoObjectService {
    * @param versionNumber an int value representing the version number of the repo object
    * @return a map with the repo object meta data.
    */
-  Map<String,Object> getAssetMetaUsingVersionNumber(String key, int versionNumber);
+  Map<String,Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber);
+
+  /**
+   * Returns a repo object using the given key <code>key</code> and tag <code>tag</code>
+   * @param key a single string representing the key of the repo object.
+   * @param tag a single string representing the tag of the repo object.
+   * @return a map with the data of the repo object
+   */
+  Map<String, Object> getRepoObjMetaUsingTag(String key, String tag);
+
 
   /**
    * Returns the meta data of all the versions for the given repo object, using the repo object
@@ -131,8 +140,8 @@ public interface CRepoObjectService {
   /**
    * Deletes the latest version of the repo object using object key <code>key</code>
    *
-   * @deprecated use {@link #deleteAssetUsingVersionChecksum(String, String)} or
-   * {@link #deleteAssetUsingVersionNumber(String, int)} instead.
+   * @deprecated use {@link #deleteRepoObjUsingVersionCks(String, String)} or
+   * {@link #deleteRepoObjUsingVersionNum(String, int)} instead.
    *
    * @param key a single string representing the key of the repo object
    * @return true if the object was successfully deleted.
@@ -147,7 +156,7 @@ public interface CRepoObjectService {
    * @param versionChecksum a single string representing the version checksum of the repo object
    * @return true if the object was successfully deleted.
    */
-  Boolean deleteAssetUsingVersionChecksum(String key, String versionChecksum);
+  Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum);
 
   /**
    * Deletes the specific version of a repo object using the key <code>key</code>
@@ -156,7 +165,7 @@ public interface CRepoObjectService {
    * @param versionNumber an int value representing the version number of the repo object
    * @return true if the object was successfully deleted.
    */
-  Boolean deleteAssetUsingVersionNumber(String key, int versionNumber);
+  Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber);
 
   /**
    * Creates a repo object using <code>repoObject</code>
@@ -173,5 +182,18 @@ public interface CRepoObjectService {
    * @return a map with the repo object metadata
    */
   Map<String, Object> versionRepoObject(RepoObject repoObject);
+
+  /**
+   * Returns all the object in the configured bucket. It uses the offset and limit to
+   * paginate the response.
+   * @param offset an int value to indicate the page number of the pagination
+   * @param limit an int value representing the number of objects for each page
+   * @param includeDeleted if true the response include deleted objects
+   * @param tag a single string representing the collection tag to filter the response. If it is null,
+   *            it will be ignore.
+   *
+   * @return a map List with the data of every collection
+   */
+  List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag);
 
 }

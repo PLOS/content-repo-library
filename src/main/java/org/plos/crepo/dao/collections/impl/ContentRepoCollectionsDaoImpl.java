@@ -90,14 +90,14 @@ public class ContentRepoCollectionsDaoImpl extends ContentRepoBaseDao implements
 
   @Override
   public HttpResponse getCollectionsUsingTag(String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollections(repoServer, bucketName, offset, limit, includeDeleted, tag));
-    return executeRequest(request, ErrorType.ErrorFetchingCollection);
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUrl(repoServer, bucketName, offset, limit, includeDeleted, tag));
+    return executeRequest(request, ErrorType.ErrorFetchingCollections);
   }
 
   @Override
   public HttpResponse getCollections(String bucketName, int offset, int limit, boolean includeDeleted) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollections(repoServer, bucketName, offset, limit, includeDeleted));
-    return executeRequest(request, ErrorType.ErrorFetchingCollection);
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUrl(repoServer, bucketName, offset, limit, includeDeleted));
+    return executeRequest(request, ErrorType.ErrorFetchingCollections);
   }
 
   private StringEntity getCollectionEntity(String bucketName, RepoCollection repoCollection, CreationMethod creationType) {

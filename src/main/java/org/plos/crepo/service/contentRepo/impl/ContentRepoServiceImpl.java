@@ -33,7 +33,7 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   private static final Logger log = LoggerFactory.getLogger(ContentRepoServiceImpl.class);
 
   @Autowired
-  private ContentRepoBucketsDao contentRepoDao;
+  private ContentRepoBucketsDao contentRepoBucketDao;
 
   @Autowired
   private CRepoBucketServiceImpl cRepoBucketService;
@@ -48,26 +48,24 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   private CRepoObjectsServiceImpl cRepoObjectService;
 
   @Autowired
-  public ContentRepoServiceImpl(ContentRepoBucketsDao contentRepoDao,
+  public ContentRepoServiceImpl(ContentRepoBucketsDao contentRepoBucketDao,
                                 @Value("${crepo.bucketName}") String bucketName) throws Exception {
 
-    this.contentRepoDao = contentRepoDao;
+    this.contentRepoBucketDao = contentRepoBucketDao;
 
     HttpResponse response = null;
     try {
-      response = this.contentRepoDao.getBucket(bucketName);
+      response = this.contentRepoBucketDao.getBucket(bucketName);
     } catch(ContentRepoException ce){
       // if it does not exist, create it
       log.debug("The bucket did not exist. Creating the bucket...", ce);
-      this.contentRepoDao.createBucket(bucketName);
+      this.contentRepoBucketDao.createBucket(bucketName);
     }
 
   }
 
   public Boolean hasXReproxy() {
-
     return cRepoConfigService.hasXReproxy();
-
   }
 
   @Override
@@ -80,24 +78,16 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
     return cRepoConfigService.getRepoStatus();
   }
 
-  public URL[] getRepoObjRedirectURL(String key){
-
-    return cRepoObjectService.getRepoObjRedirectURL(key);
-
-  }
+  public URL[] getRepoObjRedirectURL(String key){ return cRepoObjectService.getRepoObjRedirectURL(key); }
 
   @Override
   public URL[] getRepoObjRedirectURL(String key, String versionChecksum){
-
     return cRepoObjectService.getRepoObjRedirectURL(key, versionChecksum);
-
   }
 
   @Override
   public InputStream getLatestRepoObjStream(String key){
-
     return cRepoObjectService.getLatestRepoObjStream(key);
-
   }
 
   @Override
@@ -107,7 +97,6 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   @Override
   public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
-
     return cRepoObjectService.getRepoObjStreamUsingVersionCks(key, versionChecksum);
   }
 
@@ -119,9 +108,7 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   @Override
   public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
-
     return cRepoObjectService.getRepoObjStreamUsingVersionNum(key, versionNumber);
-
   }
 
   @Override
@@ -140,8 +127,13 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   }
 
   @Override
-  public Map<String,Object> getAssetMetaUsingVersionNumber(String key, int versionNumber) {
-    return cRepoObjectService.getAssetMetaUsingVersionNumber(key, versionNumber);
+  public Map<String,Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber) {
+    return cRepoObjectService.getRepoObjMetaUsingVersionNum(key, versionNumber);
+  }
+
+  @Override
+  public Map<String, Object> getRepoObjMetaUsingTag(String key, String tag) {
+    return cRepoObjectService.getRepoObjMetaUsingTag(key, tag);
   }
 
   @Override
@@ -156,13 +148,13 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   }
 
   @Override
-  public Boolean deleteAssetUsingVersionChecksum(String key, String versionChecksum) {
-    return cRepoObjectService.deleteAssetUsingVersionChecksum(key, versionChecksum);
+  public Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum) {
+    return cRepoObjectService.deleteRepoObjUsingVersionCks(key, versionChecksum);
   }
 
   @Override
-  public Boolean deleteAssetUsingVersionNumber(String key, int versionNumber) {
-    return cRepoObjectService.deleteAssetUsingVersionNumber(key, versionNumber);
+  public Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber) {
+    return cRepoObjectService.deleteRepoObjUsingVersionNum(key, versionNumber);
   }
 
   @Override
@@ -175,6 +167,10 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
     return cRepoObjectService.versionRepoObject(repoObject);
   }
 
+  @Override
+  public List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
+    return cRepoObjectService.getRepoObjects(offset, limit, includeDeleted, tag);
+  }
 
   public List<Map<String, Object>> getBuckets(){
     return cRepoBucketService.getBuckets();

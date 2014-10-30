@@ -25,6 +25,7 @@ public enum ErrorType {
   ErrorVersioningCollection(31, "Error versioning collection"),
   ErrorDeletingCollection(32, "Error deleting collection"),
   ErrorFetchingCollection(33, "Error fetching collection information"),
+  ErrorFetchingCollections(34, "Error fetching collections from bucket"),
 
 
   ErrorFetchingReProxyUrl(12, "Problem fetching reproxy URLs"),

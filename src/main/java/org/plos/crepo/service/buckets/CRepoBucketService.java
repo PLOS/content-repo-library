@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lmasola on 10/28/14.
+ * Content Repo Bucket service interface.
  */
 public interface CRepoBucketService {
 

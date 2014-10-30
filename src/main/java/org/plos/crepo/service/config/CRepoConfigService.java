@@ -1,30 +1,29 @@
 package org.plos.crepo.service.config;
 
-import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoObject;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by lmasola on 10/28/14.
+ * Content Repo Configuration service interface.
  */
 public interface CRepoConfigService {
 
   /**
-   * Query whether filestore provides HTTP redirects to files. The
-   * underlying assumption is that the filestore is/also knows about
-   * the reproxy server.
+   * Query whether content repo provides HTTP redirects to files.
    *
-   * @return - true if filestore can provide redirects for HTTP access to files.
+   * @return - true if the repo can provide redirects for HTTP access to files.
    */
-  @Deprecated
   public Boolean hasXReproxy();
 
+  /**
+   * Returns the content repo server configuration
+   * @return a map with the configuration fields.
+   */
   Map<String,Object> getRepoConfig();
 
+  /**
+   * Returns the server status.
+   * @return a map with the status fields.
+   */
   Map<String,Object> getRepoStatus();
 
 }
