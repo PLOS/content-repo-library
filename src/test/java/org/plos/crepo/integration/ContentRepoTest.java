@@ -1,3 +1,4 @@
+/*
 package org.plos.crepo.integration;
 
 import org.apache.commons.io.IOUtils;
@@ -83,7 +84,7 @@ public class ContentRepoTest {
         .downloadName("dowloadNameTest1")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createAsset(repoObject);
+    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
     assertNotNull(asset1);
     String fileVersionChecksum = (String) asset1.get("versionChecksum");
     Double versionNumber = (Double) asset1.get("versionNumber");
@@ -94,20 +95,20 @@ public class ContentRepoTest {
         .downloadName("dowloadNameTest2")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.versionAsset(repoObject2);
+    Map<String, Object> asset2 = contentRepoService.versionRepoObject(repoObject2);
     assertNotNull(asset2);
     String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
     Double versionNumber2 = (Double) asset2.get("versionNumber");
 
     //get versions
-    List<Map<String, Object>> versions = contentRepoService.getAssetVersionsMeta(assetKey1);
+    List<Map<String, Object>> versions = contentRepoService.getRepoObjVersions(assetKey1);
     assertNotNull(versions);
     assertEquals(2, versions.size());
     assertEquals(fileVersionChecksum, versions.get(0).get("versionChecksum"));
     assertEquals(fileVersionChecksum2, versions.get(1).get("versionChecksum"));
 
     // get object 1 by version checksum
-    Map<String, Object> asset3 = contentRepoService.getAssetMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
+    Map<String, Object> asset3 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
     // get object 1 by version number
     Map<String, Object> asset4 = contentRepoService.getAssetMetaUsingVersionNumber(assetKey1, versionNumber.intValue());
 
@@ -117,7 +118,7 @@ public class ContentRepoTest {
     assertEquals(asset3, asset4);
 
     // get latest version with key 'testData1Key' ---> object 2
-    Map<String, Object> asset5 = contentRepoService.getAssetMetaLatestVersion(assetKey1);
+    Map<String, Object> asset5 = contentRepoService.getRepoObjMetaLatestVersion(assetKey1);
     assertNotNull(asset5);
     assertEquals(asset2, asset5);
 
@@ -127,7 +128,7 @@ public class ContentRepoTest {
     Map<String, Object> asset6 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      asset6 = contentRepoService.getAssetMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
+      asset6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
       assertNull(asset6);
@@ -140,7 +141,7 @@ public class ContentRepoTest {
 
     try{
       // get object 2 by version checksum ----> must be null
-      asset6 = contentRepoService.getAssetMetaUsingVersionChecksum(assetKey1, fileVersionChecksum2);
+      asset6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey1, fileVersionChecksum2);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
       assertNull(asset6);
@@ -164,17 +165,17 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createAsset(repoObject);
+    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
     assertNotNull(asset1);
     String fileVersionChecksum = (String) asset1.get("versionChecksum");
 
-    Boolean deleted = contentRepoService.deleteLatestAsset(assetKey2);
+    Boolean deleted = contentRepoService.deleteLatestRepoObj(assetKey2);
     assertTrue(deleted);
 
     Map<String, Object> asset2 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      asset2 = contentRepoService.getAssetMetaUsingVersionChecksum(assetKey2, fileVersionChecksum);
+      asset2 = contentRepoService.getRepoObjMetaUsingVersionChecksum(assetKey2, fileVersionChecksum);
       fail("An exception was expected. ");
     } catch(ContentRepoException fe){
       assertNull(asset2);
@@ -189,7 +190,7 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset3 = contentRepoService.createAsset(repoObject);
+    Map<String, Object> asset3 = contentRepoService.createRepoObject(repoObject);
     assertNotNull(asset3);
     String fileVersionChecksum3 = (String) asset3.get("versionChecksum");
 
@@ -200,14 +201,14 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset4 = contentRepoService.versionAsset(repoObject2);
+    Map<String, Object> asset4 = contentRepoService.versionRepoObject(repoObject2);
     assertNotNull(asset4);
     String fileVersionChecksum4 = (String) asset4.get("versionChecksum");
 
-    URL[] url = contentRepoService.getRedirectURL(assetKey2);
+    URL[] url = contentRepoService.getRepoObjRedirectURL(assetKey2);
     assertEquals(0, url.length);
 
-    url = contentRepoService.getRedirectURL(assetKey2, fileVersionChecksum3);
+    url = contentRepoService.getRepoObjRedirectURL(assetKey2, fileVersionChecksum3);
     assertEquals(0, url.length);
 
     contentRepoService.deleteAssetUsingVersionChecksum(assetKey2, fileVersionChecksum3);
@@ -234,12 +235,12 @@ public class ContentRepoTest {
         .downloadName("dowloadNameTest5")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createAsset(repoObject);
+    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject);
     assertNotNull(asset1);
     String fileVersionChecksum = (String) asset1.get("versionChecksum");
     Double versionNumber = (Double) asset1.get("versionNumber");
 
-    InputStream content1 = contentRepoService.getLatestAssetInStream(assetKey3);
+    InputStream content1 = contentRepoService.getLatestRepoObjStream(assetKey3);
     assertNotNull(content1);
 
     // version object 1 ---> object 2
@@ -248,15 +249,15 @@ public class ContentRepoTest {
         .downloadName("dowloadNameTest6")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.versionAsset(repoObject2);
+    Map<String, Object> asset2 = contentRepoService.versionRepoObject(repoObject2);
     assertNotNull(asset2);
     String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
     Double versionNumber2 = (Double) asset2.get("versionNumber");
 
-    InputStream content2 = contentRepoService.getAssetInStreamUsingVersionCks(assetKey3, fileVersionChecksum);
+    InputStream content2 = contentRepoService.getRepoObjStreamUsingVersionCks(assetKey3, fileVersionChecksum);
     assertNotNull(content2);
 
-    InputStream content3 = contentRepoService.getAssetInStreamUsingVersionNum(assetKey3, versionNumber.intValue());
+    InputStream content3 = contentRepoService.getRepoObjStreamUsingVersionNum(assetKey3, versionNumber.intValue());
     assertNotNull(content3);
 
     String fileContent1 = IOUtils.toString(content1, CharEncoding.UTF_8);
@@ -267,9 +268,9 @@ public class ContentRepoTest {
     assertEquals(fileContent1, fileContent2);
     assertEquals(fileContent3, fileContent2);
 
-    byte[] content4 = contentRepoService.getLatestAssetByteArray(assetKey3);
-    byte[] content5 = contentRepoService.getAssetByteArrayUsingVersionCks(assetKey3, fileVersionChecksum2);
-    byte[] content6 = contentRepoService.getAssetByteArrayUsingVersionNum(assetKey3, versionNumber2.intValue());
+    byte[] content4 = contentRepoService.getLatestRepoObjByteArray(assetKey3);
+    byte[] content5 = contentRepoService.getRepoObjByteArrayUsingVersionCks(assetKey3, fileVersionChecksum2);
+    byte[] content6 = contentRepoService.getRepoObjByteArrayUsingVersionNum(assetKey3, versionNumber2.intValue());
 
     assertNotNull(content4);
     assertNotNull(content5);
@@ -301,7 +302,7 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createAsset(repoObject1);
+    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject1);
     assertNotNull(asset1);
     String fileVersionChecksum1 = (String) asset1.get("versionChecksum");
 
@@ -314,7 +315,7 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.createAsset(repoObject2);
+    Map<String, Object> asset2 = contentRepoService.createRepoObject(repoObject2);
     assertNotNull(asset1);
     String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
 
@@ -412,7 +413,7 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset1 = contentRepoService.createAsset(repoObject1);
+    Map<String, Object> asset1 = contentRepoService.createRepoObject(repoObject1);
     assertNotNull(asset1);
     String fileVersionChecksum1 = (String) asset1.get("versionChecksum");
 
@@ -425,7 +426,7 @@ public class ContentRepoTest {
         .contentType("test/plain")
         .build();
 
-    Map<String, Object> asset2 = contentRepoService.createAsset(repoObject2);
+    Map<String, Object> asset2 = contentRepoService.createRepoObject(repoObject2);
     assertNotNull(asset1);
     String fileVersionChecksum2 = (String) asset2.get("versionChecksum");
 
@@ -487,3 +488,4 @@ public class ContentRepoTest {
 
 
 
+*/

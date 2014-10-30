@@ -24,6 +24,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Facade used as an entry point to all the content repo services.
+ */
 @Service
 public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigService, CRepoCollectionService, CRepoBucketService {
 
@@ -77,63 +80,63 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
     return cRepoConfigService.getRepoStatus();
   }
 
-  public URL[] getRedirectURL(String key){
+  public URL[] getRepoObjRedirectURL(String key){
 
-    return cRepoObjectService.getRedirectURL(key);
-
-  }
-
-  @Override
-  public URL[] getRedirectURL(String key, String versionChecksum){
-
-    return cRepoObjectService.getRedirectURL(key, versionChecksum);
+    return cRepoObjectService.getRepoObjRedirectURL(key);
 
   }
 
   @Override
-  public InputStream getLatestAssetInStream(String key){
+  public URL[] getRepoObjRedirectURL(String key, String versionChecksum){
 
-    return cRepoObjectService.getLatestAssetInStream(key);
-
-  }
-
-  @Override
-  public byte[] getLatestAssetByteArray(String key){
-   return cRepoObjectService.getLatestAssetByteArray(key);
-  }
-
-  @Override
-  public InputStream getAssetInStreamUsingVersionCks(String key, String versionChecksum) {
-
-    return cRepoObjectService.getAssetInStreamUsingVersionCks(key, versionChecksum);
-  }
-
-  @Override
-  public byte[] getAssetByteArrayUsingVersionCks(String key, String versionChecksum) {
-    return cRepoObjectService.getAssetByteArrayUsingVersionCks(key, versionChecksum);
-  }
-
-
-  @Override
-  public InputStream getAssetInStreamUsingVersionNum(String key, int versionNumber) {
-
-    return cRepoObjectService.getAssetInStreamUsingVersionNum(key, versionNumber);
+    return cRepoObjectService.getRepoObjRedirectURL(key, versionChecksum);
 
   }
 
   @Override
-  public byte[] getAssetByteArrayUsingVersionNum(String key, int versionNumber) {
-    return cRepoObjectService.getAssetByteArrayUsingVersionNum(key, versionNumber);
+  public InputStream getLatestRepoObjStream(String key){
+
+    return cRepoObjectService.getLatestRepoObjStream(key);
+
   }
 
   @Override
-  public Map<String,Object> getAssetMetaLatestVersion(String key) {
-    return cRepoObjectService.getAssetMetaLatestVersion(key);
+  public byte[] getLatestRepoObjByteArray(String key){
+   return cRepoObjectService.getLatestRepoObjByteArray(key);
   }
 
   @Override
-  public Map<String,Object> getAssetMetaUsingVersionChecksum(String key, String versionChecksum) {
-    return cRepoObjectService.getAssetMetaUsingVersionChecksum(key, versionChecksum);
+  public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
+
+    return cRepoObjectService.getRepoObjStreamUsingVersionCks(key, versionChecksum);
+  }
+
+  @Override
+  public byte[] getRepoObjByteArrayUsingVersionCks(String key, String versionChecksum) {
+    return cRepoObjectService.getRepoObjByteArrayUsingVersionCks(key, versionChecksum);
+  }
+
+
+  @Override
+  public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
+
+    return cRepoObjectService.getRepoObjStreamUsingVersionNum(key, versionNumber);
+
+  }
+
+  @Override
+  public byte[] getRepoObjByteArrayUsingVersionNum(String key, int versionNumber) {
+    return cRepoObjectService.getRepoObjByteArrayUsingVersionNum(key, versionNumber);
+  }
+
+  @Override
+  public Map<String,Object> getRepoObjMetaLatestVersion(String key) {
+    return cRepoObjectService.getRepoObjMetaLatestVersion(key);
+  }
+
+  @Override
+  public Map<String,Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
+    return cRepoObjectService.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
   }
 
   @Override
@@ -142,14 +145,14 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   }
 
   @Override
-  public List<Map<String, Object>> getAssetVersionsMeta(String key) {
-    return cRepoObjectService.getAssetVersionsMeta(key);
+  public List<Map<String, Object>> getRepoObjVersions(String key) {
+    return cRepoObjectService.getRepoObjVersions(key);
   }
 
 
   @Override
-  public Boolean deleteLatestAsset(String key) {
-    return cRepoObjectService.deleteLatestAsset(key);
+  public Boolean deleteLatestRepoObj(String key) {
+    return cRepoObjectService.deleteLatestRepoObj(key);
   }
 
   @Override
@@ -163,13 +166,13 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   }
 
   @Override
-  public Map<String, Object> createAsset(RepoObject repoObject) {
-    return cRepoObjectService.createAsset(repoObject);
+  public Map<String, Object> createRepoObject(RepoObject repoObject) {
+    return cRepoObjectService.createRepoObject(repoObject);
   }
 
   @Override
-  public Map<String, Object> versionAsset(RepoObject repoObject) {
-    return cRepoObjectService.versionAsset(repoObject);
+  public Map<String, Object> versionRepoObject(RepoObject repoObject) {
+    return cRepoObjectService.versionRepoObject(repoObject);
   }
 
 

@@ -44,7 +44,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Autowired
   private RepoObjectValidator repoObjectValidator;
 
-  public URL[] getRedirectURL(String key){
+  public URL[] getRepoObjRedirectURL(String key){
 
     HttpResponse response = contentRepoObjectsDao.getRedirectURL(bucketName, key);
     Header header = response.getFirstHeader("X-Reproxy-URL");
@@ -58,9 +58,9 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public URL[] getRedirectURL(String key, String versionChecksum){
+  public URL[] getRepoObjRedirectURL(String key, String versionChecksum){
 
-    Map<String, Object> assetValues = this.getAssetMetaUsingVersionChecksum(key, versionChecksum);
+    Map<String, Object> assetValues = this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
     String paths = (String) assetValues.get("reproxyURL");
 
     if (StringUtils.isEmpty(paths)){
@@ -91,7 +91,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public InputStream getLatestAssetInStream(String key){
+  public InputStream getLatestRepoObjStream(String key){
 
     HttpResponse response = contentRepoObjectsDao.getLatestAsset(bucketName, key);
 
@@ -108,8 +108,8 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public byte[] getLatestAssetByteArray(String key){
-    InputStream file = this.getLatestAssetInStream(key);
+  public byte[] getLatestRepoObjByteArray(String key){
+    InputStream file = this.getLatestRepoObjStream(key);
     try {
       byte[] bytes = IOUtils.toByteArray(file);
       file.close();
@@ -124,7 +124,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public InputStream getAssetInStreamUsingVersionCks(String key, String versionChecksum) {
+  public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
 
     HttpResponse response = contentRepoObjectsDao.getAssetUsingVersionCks(bucketName, key, versionChecksum);
     try {
@@ -140,8 +140,8 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public byte[] getAssetByteArrayUsingVersionCks(String key, String versionChecksum) {
-    InputStream file = this.getAssetInStreamUsingVersionCks(key, versionChecksum);
+  public byte[] getRepoObjByteArrayUsingVersionCks(String key, String versionChecksum) {
+    InputStream file = this.getRepoObjStreamUsingVersionCks(key, versionChecksum);
     try {
       byte[] bytes = IOUtils.toByteArray(file);
       file.close();
@@ -157,7 +157,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
 
 
   @Override
-  public InputStream getAssetInStreamUsingVersionNum(String key, int versionNumber) {
+  public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
 
     HttpResponse response = contentRepoObjectsDao.getAssetUsingVersionNum(bucketName, key, versionNumber);
 
@@ -174,8 +174,8 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public byte[] getAssetByteArrayUsingVersionNum(String key, int versionNumber) {
-    InputStream file = this.getAssetInStreamUsingVersionNum(key, versionNumber);
+  public byte[] getRepoObjByteArrayUsingVersionNum(String key, int versionNumber) {
+    InputStream file = this.getRepoObjStreamUsingVersionNum(key, versionNumber);
     try {
       byte[] bytes = IOUtils.toByteArray(file);
       file.close();
@@ -190,13 +190,13 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public Map<String,Object> getAssetMetaLatestVersion(String key) {
+  public Map<String,Object> getRepoObjMetaLatestVersion(String key) {
     HttpResponse response = contentRepoObjectsDao.getAssetMetaLatestVersion(bucketName, key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
-  public Map<String,Object> getAssetMetaUsingVersionChecksum(String key, String versionChecksum) {
+  public Map<String,Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
     HttpResponse response = contentRepoObjectsDao.getAssetMetaUsingVersionChecksum(bucketName, key, versionChecksum);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
@@ -208,15 +208,15 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public List<Map<String, Object>> getAssetVersionsMeta(String key) {
+  public List<Map<String, Object>> getRepoObjVersions(String key) {
     HttpResponse response = contentRepoObjectsDao.getAssetVersionsMeta(bucketName, key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {}.getType());
   }
 
 
   @Override
-  public Boolean deleteLatestAsset(String key) {
-    Map<String, Object> asset = this.getAssetMetaLatestVersion(key);
+  public Boolean deleteLatestRepoObj(String key) {
+    Map<String, Object> asset = this.getRepoObjMetaLatestVersion(key);
     String versionChecksum = (String) asset.get("versionChecksum");
     contentRepoObjectsDao.deleteAssetUsingVersionCks(bucketName, key, versionChecksum);
     return true;
@@ -235,14 +235,14 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   }
 
   @Override
-  public Map<String, Object> createAsset(RepoObject repoObject) {
+  public Map<String, Object> createRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
     HttpResponse response = contentRepoObjectsDao.createAsset(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
-  public Map<String, Object> versionAsset(RepoObject repoObject) {
+  public Map<String, Object> versionRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
     HttpResponse response = contentRepoObjectsDao.versionAsset(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
