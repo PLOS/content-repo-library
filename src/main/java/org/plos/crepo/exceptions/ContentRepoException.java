@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class ContentRepoException extends RuntimeException {
 
+  private static final long serialVersionUID = -7747202126932506670L;
   private ErrorType errorType;
 
   public ErrorType getErrorType() {
