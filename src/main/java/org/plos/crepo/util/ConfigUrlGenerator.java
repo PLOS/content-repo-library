@@ -3,6 +3,9 @@ package org.plos.crepo.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Generates the content repo urls for config services.
+ */
 @Component
 public class ConfigUrlGenerator extends BaseUrlGenerator{
 

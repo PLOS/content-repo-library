@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * Generates the content repo urls for objects services.
+ */
 @Component
 public class ObjectUrlGenerator extends BaseUrlGenerator{
 

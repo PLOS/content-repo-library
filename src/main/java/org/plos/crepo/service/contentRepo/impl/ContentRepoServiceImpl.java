@@ -1,6 +1,5 @@
 package org.plos.crepo.service.contentRepo.impl;
 
-import org.apache.http.HttpResponse;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.model.RepoCollection;
@@ -53,9 +52,8 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
     this.contentRepoBucketDao = contentRepoBucketDao;
 
-    HttpResponse response = null;
     try {
-      response = this.contentRepoBucketDao.getBucket(bucketName);
+      this.contentRepoBucketDao.getBucket(bucketName);
     } catch(ContentRepoException ce){
       // if it does not exist, create it
       log.debug("The bucket did not exist. Creating the bucket...", ce);

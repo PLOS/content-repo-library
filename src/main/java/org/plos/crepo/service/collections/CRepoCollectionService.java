@@ -72,7 +72,7 @@ public interface CRepoCollectionService {
   /**
    * Returns all the versions of a repo collection using the given key <code>key</code>
    * @param key a single string representing the key of the repo collection.
-   * @return a map List with the data of every collection
+   * @return a List with the data of every collection
    */
   List<Map<String, Object>> getCollectionVersions(String key);
 
