@@ -26,15 +26,31 @@ public class RepoObjectValidatorTest {
 
     RepoObject repoObject = mock(RepoObject.class);
 
+    when(repoObject.getKey()).thenReturn("validaKey");
     when(repoObject.getFileContent()).thenReturn(null);
     when(repoObject.getByteContent()).thenReturn(new byte[1]);
     when(repoObject.getContentType()).thenReturn("text/plain");
 
     repoObjectValidator.validate(repoObject);
 
+    verify(repoObject).getKey();
     verify(repoObject).getFileContent();
     verify(repoObject, times(2)).getByteContent();
     verify(repoObject).getContentType();
+
+  }
+
+  @Test
+  public void emptyKeyTest(){
+
+    RepoObject repoObject = mock(RepoObject.class);
+
+    try{
+      repoObjectValidator.validate(repoObject);
+      fail("A content repo app was expected. ");
+    } catch(ContentRepoException e){
+      assertEquals(ErrorType.EmptyObjectKey, e.getErrorType());
+    }
 
   }
 
@@ -43,6 +59,7 @@ public class RepoObjectValidatorTest {
 
     RepoObject repoObject = mock(RepoObject.class);
 
+    when(repoObject.getKey()).thenReturn("validaKey");
     when(repoObject.getFileContent()).thenReturn(null);
     when(repoObject.getByteContent()).thenReturn(null);
 
@@ -51,6 +68,7 @@ public class RepoObjectValidatorTest {
       fail("A content repo app was expected. ");
     } catch(ContentRepoException e){
       assertEquals(ErrorType.EmptyContent, e.getErrorType());
+      verify(repoObject, times(2)).getKey();
       verify(repoObject).getFileContent();
       verify(repoObject).getByteContent();
     }
@@ -62,6 +80,7 @@ public class RepoObjectValidatorTest {
 
     RepoObject repoObject = mock(RepoObject.class);
 
+    when(repoObject.getKey()).thenReturn("validaKey");
     when(repoObject.getFileContent()).thenReturn(null);
     when(repoObject.getByteContent()).thenReturn(new byte[1]);
     when(repoObject.getContentType()).thenReturn(null);
@@ -73,9 +92,9 @@ public class RepoObjectValidatorTest {
     } catch(ContentRepoException e){
       assertEquals(ErrorType.EmptyContentType, e.getErrorType());
       assertTrue(e.getMessage().contains(KEY));
+      verify(repoObject, times(2)).getKey();
       verify(repoObject).getFileContent();
       verify(repoObject, times(2)).getByteContent();
-      verify(repoObject).getKey();
     }
 
   }

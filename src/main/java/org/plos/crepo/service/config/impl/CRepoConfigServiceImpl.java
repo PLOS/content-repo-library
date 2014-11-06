@@ -16,7 +16,8 @@ import java.util.Map;
 @Service
 public class CRepoConfigServiceImpl implements CRepoConfigService {
 
-  private static Gson gson = new Gson();
+  @Autowired
+  private Gson gson;
 
   private static final Logger log = LoggerFactory.getLogger(CRepoConfigServiceImpl.class);
 

@@ -1,4 +1,3 @@
-/*
 package org.plos.crepo.integration;
 
 import org.apache.commons.io.IOUtils;
@@ -27,6 +26,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 public class ContentRepoTest {
+
+  private static final String EXCEPTION_EXPECTED = "An exception was expected. ";
 
   private static final String testData1 = "test data one goes\nhere.";
   private static final String testData2 = "test data two goes\nhere.";
@@ -64,6 +65,292 @@ public class ContentRepoTest {
   private static int getRandomNumber(int Low, int High){
     Random r = new Random();
     return r.nextInt(High-Low) + Low;
+  }
+
+  @Test
+  public void objectErrorTest(){
+
+    try{
+      contentRepoService.getRepoObjRedirectURL(repoObjKey1, "gdsfds");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getLatestRepoObjStream("invalidKey");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getLatestRepoObjByteArray("invalidKey");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjStreamUsingVersionCks("invalidKey", "bdjksabdaks");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjByteArrayUsingVersionCks(repoObjKey1, "fdsafds");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjStreamUsingVersionNum("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjByteArrayUsingVersionNum("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjMetaLatestVersion("invalidKey");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjMetaUsingVersionChecksum("invalidKey", "dsaa232");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjMetaUsingVersionNum("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjMetaUsingTag("invalidKey", "tag");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getRepoObjVersions(null);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+    }
+
+    try{
+      contentRepoService.deleteLatestRepoObj("invalidKey");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
+    }
+
+    try{
+      contentRepoService.deleteRepoObjUsingVersionCks("invalidKey", "dsadas");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.deleteRepoObjUsingVersionNum("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try {
+      contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("").build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+    }
+
+    try {
+      contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("dsad").build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
+    }
+
+    try {
+      contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("dsad").byteContent(new byte[]{}).build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
+    }
+
+    try {
+      contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("").build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+    }
+
+    try {
+      contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("dsad").build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
+    }
+
+    try {
+      contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("dsad").byteContent(new byte[]{}).build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
+    }
+
+    try {
+      contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder(repoObjKey1).byteContent(new byte[]{}).contentType("text/plain").build());
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningObject);
+      assertTrue(fe.getMessage().contains("does not exist"));
+    }
+
+  }
+
+  @Test
+  public void collectionErrorTest(){
+
+    try{
+      contentRepoService.createCollection(new RepoCollection("", null));
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+    }
+
+    try{
+      contentRepoService.createCollection(new RepoCollection("dsakjds", null));
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingCollection);
+    }
+
+    try{
+      contentRepoService.versionCollection(new RepoCollection("", null));
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+    }
+
+    try{
+      contentRepoService.versionCollection(new RepoCollection("dsakjds", null));
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningCollection);
+    }
+
+    try{
+      contentRepoService.getCollectionUsingVersionCks("invalidKey", "dsaa232");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getCollectionUsingVersionNumber("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getCollectionUsingTag("invalidKey", "tag");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.getCollectionVersions(null);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+    }
+
+    try{
+      contentRepoService.deleteCollectionUsingVersionCks("invalidKey", "dsadas");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+    try{
+      contentRepoService.deleteCollectionUsingVersionNumb("invalidKey", 0);
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
+      assertTrue(fe.getMessage().contains("not found"));
+    }
+
+  }
+
+  @Test
+  public void bucketErrorTest(){
+
+    try{
+      contentRepoService.createBucket("");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingBucket);
+    }
+
+    try{
+      contentRepoService.getBucket("dsadas");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingBucketMeta);
+    }
+
+    try{
+      contentRepoService.getBucket("");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.EmptyBucketKey);
+    }
+
+    try{
+      contentRepoService.getBucket("invalidBucket");
+      fail(EXCEPTION_EXPECTED);
+    } catch(ContentRepoException fe){
+      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingBucketMeta);
+    }
+
   }
 
   @Test
@@ -131,7 +418,7 @@ public class ContentRepoTest {
     try{
       // get object 1 by version checksum ----> must be null
       repoObj6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey1, fileVersionChecksum);
-      fail("An exception was expected. ");
+      fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -144,7 +431,7 @@ public class ContentRepoTest {
     try{
       // get object 2 by version checksum ----> must be null
       repoObj6 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey1, fileVersionChecksum2);
-      fail("An exception was expected. ");
+      fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -178,7 +465,7 @@ public class ContentRepoTest {
     try{
       // get object 1 by version checksum ----> must be null
       repoObj2 = contentRepoService.getRepoObjMetaUsingVersionChecksum(repoObjKey2, fileVersionChecksum);
-      fail("An exception was expected. ");
+      fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj2);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -361,7 +648,7 @@ public class ContentRepoTest {
     try{
       // get object 2 by version checksum ----> must be null
       collection5 = contentRepoService.getCollectionUsingVersionNumber(collectionKey1, collVersionNumber2.intValue());
-      fail("An exception was expected. ");
+      fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(collection5);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
@@ -375,7 +662,7 @@ public class ContentRepoTest {
     try{
       // get object 2 by version checksum ----> must be null
       collection6 = contentRepoService.getCollectionUsingVersionCks(collectionKey1, collVersionChecksum1);
-      fail("An exception was expected. ");
+      fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(collection6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
@@ -550,4 +837,3 @@ public class ContentRepoTest {
 
 
 
-*/

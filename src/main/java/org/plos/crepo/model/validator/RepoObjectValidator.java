@@ -11,6 +11,11 @@ public class RepoObjectValidator {
 
   public void validate(RepoObject repoObject){
 
+    if (StringUtils.isEmpty(repoObject.getKey())){
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectKey)
+          .build();
+    }
+
     if (repoObject.getFileContent() == null && repoObject.getByteContent() == null){
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyContent)
           .key(repoObject.getKey())

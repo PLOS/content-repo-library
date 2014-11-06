@@ -41,7 +41,10 @@ public class RepoCollection {
   }
 
   public List<RepoCollectionObject> getObjects() {
-    return Collections.unmodifiableList(objects);
+    if (objects != null){
+      return Collections.unmodifiableList(objects);
+    }
+    return null;
   }
 
   public String getCreationDateTime() {

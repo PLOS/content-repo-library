@@ -1,6 +1,7 @@
 package org.plos.crepo.config;
 
 
+import com.google.gson.Gson;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class ConnectionConfig {
@@ -32,6 +34,12 @@ public class ConnectionConfig {
 
     return HttpClients.custom().setConnectionManager(ccm).build();
 
+  }
+
+  @Bean
+  @Scope("prototype")
+  public Gson gson(){
+    return new Gson();
   }
 
 }

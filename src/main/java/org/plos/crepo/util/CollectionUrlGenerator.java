@@ -59,7 +59,7 @@ public class CollectionUrlGenerator extends BaseUrlGenerator{
     return replaceUrl(deleteCollUsingVersionNumUrl, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));
   }
 
-  public String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag){
+  public String getGetCollectionsUsingTagUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag){
     return replaceUrl(getCollectionsUsingTagUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
   }
 

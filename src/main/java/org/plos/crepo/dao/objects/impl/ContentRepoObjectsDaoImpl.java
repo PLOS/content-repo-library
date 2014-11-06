@@ -2,11 +2,13 @@ package org.plos.crepo.dao.objects.impl;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.plos.crepo.dao.ContentRepoBaseDao;
 import org.plos.crepo.dao.objects.ContentRepoObjectsDao;
 import org.plos.crepo.exceptions.ErrorType;
@@ -17,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ContentRepoObjectsDaoImpl extends ContentRepoBaseDao implements ContentRepoObjectsDao{
@@ -65,13 +70,13 @@ public class ContentRepoObjectsDaoImpl extends ContentRepoBaseDao implements Con
   @Override
   public HttpResponse getRepoObjMetaUsingVersionNumber(String bucketName, String key, int versionNumber) {
     HttpGet request = new HttpGet(objectUrlGenerator.getObjectMetaUsingVersionNumUrl(repoServer, bucketName, key, versionNumber));
-    return executeRequest(request, ErrorType.ErrorFetchingObjectVersions);
+    return executeRequest(request, ErrorType.ErrorFetchingObjectMeta);
   }
 
   @Override
   public HttpResponse getRepoObjVersionsMeta(String bucketName, String key) {
     HttpGet request = new HttpGet(objectUrlGenerator.getObjectVersionsUrl(repoServer, bucketName, key));
-    return executeRequest(request, ErrorType.ErrorFetchingObjectMeta);
+    return executeRequest(request, ErrorType.ErrorFetchingObjectVersions);
   }
 
   @Override
@@ -134,6 +139,7 @@ public class ContentRepoObjectsDaoImpl extends ContentRepoBaseDao implements Con
     }
 
     return multipartEntityBuilder.build();
+
   }
 
   @Override

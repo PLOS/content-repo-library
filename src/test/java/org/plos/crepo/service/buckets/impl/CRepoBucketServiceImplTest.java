@@ -1,4 +1,5 @@
-package org.plos.crepo.service.config.impl;
+package org.plos.crepo.service.buckets.impl;
+
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -8,8 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.plos.crepo.dao.config.ContentRepoConfigDao;
+import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.service.BaseServiceTest;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -23,54 +23,73 @@ import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, Gson.class})
-public class CRepoConfigServiceImplTest extends BaseServiceTest {
+public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
   @InjectMocks
-  private CRepoConfigServiceImpl cRepoConfigServiceImpl;
+  private CRepoBucketServiceImpl cRepoBucketServiceImpl;
 
   @Mock
-  private ContentRepoConfigDao contentRepoConfigDao;
+  private ContentRepoBucketsDao contentRepoBucketsDao;
 
   @Before
   public void setUp(){
-    cRepoConfigServiceImpl = new CRepoConfigServiceImpl();
+    cRepoBucketServiceImpl = new CRepoBucketServiceImpl();
     gson = PowerMockito.mock(Gson.class);
     initMocks(this);
   }
 
   @Test
-  public void hasXReproxyTest(){
+  public void getBucketTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoConfigDao.hasReProxy()).thenReturn(httpResponse);
-    PowerMockito.mockStatic(HttpResponseUtil.class);
-    Mockito.when(HttpResponseUtil.getResponseAsString(httpResponse)).thenReturn("true");
+    when(contentRepoBucketsDao.getBucket(KEY)).thenReturn(httpResponse);
+    mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
 
-    Boolean hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
+    Map<String, Object> bucketResponse = cRepoBucketServiceImpl.getBucket(KEY);
 
-    verify(contentRepoConfigDao).hasReProxy();
+    verify(contentRepoBucketsDao).getBucket(KEY);
+    verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
-    assertTrue(hasXReproxy);
+    assertNotNull(bucketResponse);
+    assertEquals(expectedResponse, bucketResponse);
   }
 
   @Test
-  public void getRepoConfigTest(){
+  public void getBucketsTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoConfigDao.getRepoConfig()).thenReturn(httpResponse);
+    when(contentRepoBucketsDao.getBuckets()).thenReturn(httpResponse);
+    mockStatics(httpResponse);
+
+    List<Map<String,Object>> expectedResponse = mock(List.class);
+    Type type = new TypeToken<List<Map<String, Object>>>() {
+    }.getType();
+    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+
+    List<Map<String, Object>> bucketResponse = cRepoBucketServiceImpl.getBuckets();
+
+    verify(contentRepoBucketsDao).getBuckets();
+    verify(gson).fromJson(eq(JSON_MSG), eq(type));
+    PowerMockito.verifyStatic();
+
+    assertNotNull(bucketResponse);
+    assertEquals(expectedResponse, bucketResponse);
+  }
+
+  @Test
+  public void createBucketTest(){
+    HttpResponse httpResponse = mock(HttpResponse.class);
+    when(contentRepoBucketsDao.createBucket(KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(Map.class);
@@ -78,36 +97,14 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
 
-    Map<String, Object> configResponse = cRepoConfigServiceImpl.getRepoConfig();
+    Map<String, Object> bucketResponse = cRepoBucketServiceImpl.createBucket(KEY);
 
-    verify(contentRepoConfigDao).getRepoConfig();
+    verify(contentRepoBucketsDao).createBucket(KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
-    assertNotNull(configResponse);
-    assertEquals(expectedResponse, configResponse);
+    assertNotNull(bucketResponse);
+    assertEquals(expectedResponse, bucketResponse);
   }
-
-  @Test
-  public void getRepoStatusTest(){
-    HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoConfigDao.getRepoStatus()).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String,Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    Map<String, Object> statusResponse = cRepoConfigServiceImpl.getRepoStatus();
-
-    verify(contentRepoConfigDao).getRepoStatus();
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    PowerMockito.verifyStatic();
-
-    assertNotNull(statusResponse);
-    assertEquals(expectedResponse, statusResponse);
-  }
-
 
 }
