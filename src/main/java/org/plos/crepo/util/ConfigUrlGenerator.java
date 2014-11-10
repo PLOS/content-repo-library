@@ -9,14 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigUrlGenerator extends BaseUrlGenerator{
 
-  @Value("${crepo.url.hasReproxyUrl}")
-  private String hasReproxyUrl;
-
-  @Value("${crepo.url.repoConfigUrl}")
-  private String repoConfigUrl;
-
-  @Value("${crepo.url.repoStatusUrl}")
-  private String  repoStatusUrl;
+  private static final String hasReproxyUrl = "${repoServer}/hasXReproxy";
+  private static final String repoConfigUrl = "${repoServer}/config";
+  private static final String repoStatusUrl = "${repoServer}/status";
 
   public String getHasReproxyUrl(String repoServer){
     return replaceUrl(hasReproxyUrl, getUrlBasicMap(repoServer));

@@ -9,14 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BucketUrlGenerator extends BaseUrlGenerator{
 
-  @Value("${crepo.url.createBucket}")
-  private String createBucket;
-
-  @Value("${crepo.url.createBucket}")
-  private String getBucketsUrl;
-
-  @Value("${crepo.url.getBucket}")
-  private String getBucketUrl;
+  private static final String createBucket = "${repoServer}/buckets";
+  private static final String getBucketsUrl = "${repoServer}/buckets";
+  private static final String getBucketUrl = "${repoServer}/buckets/${bucketName}";
 
   public String getCreateBucketUrl(String repoServer){
     return replaceUrl(createBucket, getUrlBasicMap(repoServer));

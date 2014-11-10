@@ -11,32 +11,16 @@ import java.util.Map;
 @Component
 public class CollectionUrlGenerator extends BaseUrlGenerator{
 
-  @Value("${crepo.url.getCollUsingVersionNumUrl}")
-  private String getCollUsingVersionNumUrl;
+  private static final String getCollUsingVersionNumUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&version=${versionNumber}";
+  private static final String getCollUsingTagUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&tag=${tag}";
+  private static final String getCollVersionCksUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&versionChecksum=${versionChecksum}";
+  private static final String getCollVersionsUrl = "${repoServer}/collections/versions/${bucketName}?key=${collectionKey}";
+  private static final String getCollectionsUsingTagUrl = "${crepo.url.getCollectionsUrl}&tag=${tag}";
+  private static final String getCollectionsUrl = "${repoServer}/collections?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
+  private static final String deleteCollUsingVersionCksUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&versionChecksum=${versionChecksum}";
+  private static final String deleteCollUsingVersionNumUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&version=${versionNumber}";
+  private static final String createCollUrl = "${repoServer}/collections";
 
-  @Value("${crepo.url.getCollUsingTagUrl}")
-  private String getCollUsingTagUrl;
-
-  @Value("${crepo.url.getCollVersionCksUrl}")
-  private String getCollVersionCksUrl;
-
-  @Value("${crepo.url.getCollVersionsUrl}")
-  private String getCollVersionsUrl;
-
-  @Value("${crepo.url.getCollectionsUsingTagUrl}")
-  private String getCollectionsUsingTagUrl;
-
-  @Value("${crepo.url.getCollectionsUrl}")
-  private String getCollectionsUrl;
-
-  @Value("${crepo.url.deleteCollUsingVersionCksUrl}")
-  private String deleteCollUsingVersionCksUrl;
-
-  @Value("${crepo.url.deleteCollUsingVersionNumUrl}")
-  private String deleteCollUsingVersionNumUrl;
-
-  @Value("${crepo.url.createCollUrl}")
-  private String createCollUrl;
 
   public String getGetCollUsingVersionNumUrl(String repoServer, String bucketName, String collKey, int versionNumber) {
     return replaceUrl(getCollUsingVersionNumUrl, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));

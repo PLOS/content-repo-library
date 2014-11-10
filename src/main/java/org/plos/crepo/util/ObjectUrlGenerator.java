@@ -11,44 +11,19 @@ import java.util.Map;
 @Component
 public class ObjectUrlGenerator extends BaseUrlGenerator{
 
-  @Value("${crepo.url.getLatestObject}")
-  private String getLatestObjUrl;
-
-  @Value("${crepo.url.getObjUsingVersionNumUrl}")
-  private String getObjUsingVersionNumUrl;
-
-  @Value("${crepo.url.getObjVersionCksUrl}")
-  private String getObjVersionCksUrl;
-
-  @Value("${crepo.url.getLatestObjMetaUrl}")
-  private String getLatestObjMetaUrl;
-
-  @Value("${crepo.url.getObjMetaUsingVersionNumUrl}")
-  private String getObjMetaUsingVersionNumUrl;
-
-  @Value("${crepo.url.getObjMetaUsingVersionCksUrl}")
-  private String getObjMetaUsingVersionCksUrl;
-
-  @Value("${crepo.url.getObjMetaUsingTagUrl}")
-  private String getObjMetaUsingTagUrl;
-
-  @Value("${crepo.url.getObjVersionsUrl}")
-  private String getObjVersionsUrl;
-
-  @Value("${crepo.url.deleteObjUsingVersionCksUrl}")
-  private String deleteObjUsingVersionCksUrl;
-
-  @Value("${crepo.url.deleteObjUsingVersionNumUrl}")
-  private String deleteObjUsingVersionNumUrl;
-
-  @Value("${crepo.url.createObjUrl}")
-  private String createObjUrl;
-
-  @Value("${crepo.url.getObjectsUrl}")
-  private String getObjectsUrl;
-
-  @Value("${crepo.url.getObjectsUsingTagUrl}")
-  private String getObjectsUsingTagUrl;
+  private static final String getLatestObjUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}";
+  private static final String getObjUsingVersionNumUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
+  private static final String getObjVersionCksUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String getLatestObjMetaUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}";
+  private static final String getObjMetaUsingVersionNumUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&version=${versionNumber}";
+  private static final String getObjMetaUsingVersionCksUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String getObjMetaUsingTagUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&tag=${tag}";
+  private static final String getObjVersionsUrl = "${repoServer}/objects/versions/${bucketName}?key=${objectKey}";
+  private static final String deleteObjUsingVersionCksUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String deleteObjUsingVersionNumUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
+  private static final String createObjUrl = "${repoServer}/objects";
+  private static final String getObjectsUrl = "${repoServer}/objects?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
+  private static final String getObjectsUsingTagUrl = "${crepo.url.getObjectsUrl}&tag=${tag}";
 
   public String getLatestObjectUrl(String repoServer, String bucketName, String repoObjKey){
     return replaceUrl(getLatestObjUrl, getObjectBasicMap(repoServer, bucketName, repoObjKey));
