@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.plos.crepo.config.ContentRepoClientConfig;
 import org.plos.crepo.dao.objects.ContentRepoObjectsDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
@@ -37,8 +38,8 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Autowired
   private Gson gson;
 
-  @Value("${crepo.bucketName}")
-  private String bucketName;
+  @Autowired
+  private ContentRepoClientConfig clientConfig;
 
   @Autowired
   private ContentRepoObjectsDao contentRepoObjectsDao;
@@ -48,7 +49,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
 
   public URL[] getRepoObjRedirectURL(String key){
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRedirectURL(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getRedirectURL(clientConfig.getBucketName(), key);
     Header header = response.getFirstHeader("X-Reproxy-URL");
 
     if (header == null) {
@@ -96,7 +97,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public InputStream getLatestRepoObjStream(String key){
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getLatestRepoObj(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getLatestRepoObj(clientConfig.getBucketName(), key);
 
     try {
       return response.getEntity().getContent();
@@ -130,7 +131,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionCks(bucketName, key, versionChecksum);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionCks(clientConfig.getBucketName(), key, versionChecksum);
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
@@ -163,13 +164,13 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionNum(bucketName, key, versionNumber);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjUsingVersionNum(clientConfig.getBucketName(), key, versionNumber);
 
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
       log.error(" Error trying to get the content from the response, using version number." +
-          " bucketName " + bucketName + " Key: " + key + " versionNumber: " + versionNumber, e);
+          " clientConfig.getBucketName() " + clientConfig.getBucketName() + " Key: " + key + " versionNumber: " + versionNumber, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
           .key(key)
@@ -196,7 +197,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   @Override
   public Map<String,Object> getRepoObjMetaLatestVersion(String key) {
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaLatestVersion(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaLatestVersion(clientConfig.getBucketName(), key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
@@ -204,14 +205,14 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   public Map<String,Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionChecksum(bucketName, key, versionChecksum);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionChecksum(clientConfig.getBucketName(), key, versionChecksum);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public Map<String,Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber) {
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionNumber(bucketName, key, versionNumber);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingVersionNumber(clientConfig.getBucketName(), key, versionNumber);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
@@ -219,14 +220,14 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   public Map<String, Object> getRepoObjMetaUsingTag(String key, String tag) {
     validateObjectKey(key);
     validateObjectTag(tag);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingTag(bucketName, key, tag);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjMetaUsingTag(clientConfig.getBucketName(), key, tag);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public List<Map<String, Object>> getRepoObjVersions(String key) {
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRepoObjVersionsMeta(bucketName, key);
+    HttpResponse response = contentRepoObjectsDao.getRepoObjVersionsMeta(clientConfig.getBucketName(), key);
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {}.getType());
   }
 
@@ -236,7 +237,7 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
     validateObjectKey(key);
     Map<String, Object> repoObj = this.getRepoObjMetaLatestVersion(key);
     String versionChecksum = (String) repoObj.get("versionChecksum");
-    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(bucketName, key, versionChecksum);
+    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(clientConfig.getBucketName(), key, versionChecksum);
     return true;
   }
 
@@ -244,28 +245,28 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   public Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
-    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(bucketName, key, versionChecksum);
+    contentRepoObjectsDao.deleteRepoObjUsingVersionCks(clientConfig.getBucketName(), key, versionChecksum);
     return true;
   }
 
   @Override
   public Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber) {
     validateObjectKey(key);
-    contentRepoObjectsDao.deleteRepoObjUsingVersionNumber(bucketName, key, versionNumber);
+    contentRepoObjectsDao.deleteRepoObjUsingVersionNumber(clientConfig.getBucketName(), key, versionNumber);
     return true;
   }
 
   @Override
   public Map<String, Object> createRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
-    HttpResponse response = contentRepoObjectsDao.createRepoObj(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
+    HttpResponse response = contentRepoObjectsDao.createRepoObj(clientConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
   }
 
   @Override
   public Map<String, Object> versionRepoObject(RepoObject repoObject) {
     repoObjectValidator.validate(repoObject);
-    HttpResponse response = contentRepoObjectsDao.versionRepoObj(bucketName, repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
+    HttpResponse response = contentRepoObjectsDao.versionRepoObj(clientConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()));
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
     }.getType());
   }
@@ -274,9 +275,9 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
   public List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
     HttpResponse response = null;
     if (StringUtils.isEmpty(tag)){
-      response = contentRepoObjectsDao.getObjects(bucketName, offset, limit, includeDeleted);
+      response = contentRepoObjectsDao.getObjects(clientConfig.getBucketName(), offset, limit, includeDeleted);
     } else{
-      response = contentRepoObjectsDao.getObjectsUsingTag(bucketName, offset, limit, includeDeleted, tag);
+      response = contentRepoObjectsDao.getObjectsUsingTag(clientConfig.getBucketName(), offset, limit, includeDeleted, tag);
     }
     return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {}.getType());
   }

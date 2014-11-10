@@ -6,7 +6,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,22 +14,19 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class ConnectionConfig {
 
-  @Value("${connections.max.total}")
-  private int conMaxTotal;
-
-  @Value("${connections.max.default}")
-  private int conMaxDefault;
+  @Autowired
+  private ContentRepoClientConfig clientConfig;
 
   @Autowired
   ApplicationContext context;
 
   @Bean
-  public CloseableHttpClient httpClient(){
+  public CloseableHttpClient httpClient() {
 
     PoolingHttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager();
 
-    ccm.setMaxTotal(conMaxTotal);
-    ccm.setDefaultMaxPerRoute(conMaxDefault);
+    ccm.setMaxTotal(clientConfig.getConnectionsMaxTotal());
+    ccm.setDefaultMaxPerRoute(clientConfig.getConnectionsMaxDefault());
 
     return HttpClients.custom().setConnectionManager(ccm).build();
 
@@ -38,7 +34,7 @@ public class ConnectionConfig {
 
   @Bean
   @Scope("prototype")
-  public Gson gson(){
+  public Gson gson() {
     return new Gson();
   }
 
