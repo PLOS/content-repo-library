@@ -21,19 +21,19 @@ public class ContentRepoConfigDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public HttpResponse hasReProxy() {
-    HttpGet request = new HttpGet(configUrlGenerator.getHasReproxyUrl(repoServer));
+    HttpGet request = new HttpGet(configUrlGenerator.getHasReproxyUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingReproxyData);
   }
 
   @Override
   public HttpResponse getRepoConfig() {
-    HttpGet request = new HttpGet(configUrlGenerator.getRepoConfigUrl(repoServer));
+    HttpGet request = new HttpGet(configUrlGenerator.getRepoConfigUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingConfig);
   }
 
   @Override
   public HttpResponse getRepoStatus() {
-    HttpGet request = new HttpGet(configUrlGenerator.getRepoStatusUrl(repoServer));
+    HttpGet request = new HttpGet(configUrlGenerator.getRepoStatusUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingStatus);
   }
 

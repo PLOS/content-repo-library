@@ -38,7 +38,7 @@ public class ContentRepoCollectionsDaoImpl extends ContentRepoBaseDao implements
 
   @Override
   public HttpResponse createCollection(String bucketName, RepoCollection repoCollection) {
-    HttpPost request = new HttpPost(collectionUrlGenerator.getCreateCollUrl(repoServer));
+    HttpPost request = new HttpPost(collectionUrlGenerator.getCreateCollUrl(getRepoServer()));
     request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.NEW));
     request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
     return executeRequest(request, ErrorType.ErrorCreatingCollection);
@@ -46,7 +46,7 @@ public class ContentRepoCollectionsDaoImpl extends ContentRepoBaseDao implements
 
   @Override
   public HttpResponse versionCollection(String bucketName, RepoCollection repoCollection) {
-    HttpPost request = new HttpPost(collectionUrlGenerator.getCreateCollUrl(repoServer));
+    HttpPost request = new HttpPost(collectionUrlGenerator.getCreateCollUrl(getRepoServer()));
     request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
     request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.VERSION));
     return executeRequest(request, ErrorType.ErrorVersioningCollection);
@@ -54,49 +54,49 @@ public class ContentRepoCollectionsDaoImpl extends ContentRepoBaseDao implements
 
   @Override
   public HttpResponse deleteCollectionUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpDelete request = new HttpDelete(collectionUrlGenerator.getDeleteCollUsingVersionCksUrl(repoServer, bucketName, key, versionChecksum));
+    HttpDelete request = new HttpDelete(collectionUrlGenerator.getDeleteCollUsingVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
   @Override
   public HttpResponse deleteCollectionUsingVersionNumb(String bucketName, String key, int versionNumber) {
-    HttpDelete request = new HttpDelete(collectionUrlGenerator.getDeleteCollUsingVersionNumUrl(repoServer, bucketName, key, versionNumber));
+    HttpDelete request = new HttpDelete(collectionUrlGenerator.getDeleteCollUsingVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
   @Override
   public HttpResponse getCollectionUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollVersionCksUrl(repoServer, bucketName, key, versionChecksum));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
     return executeRequest(request, ErrorType.ErrorFetchingCollection);
   }
 
   @Override
   public HttpResponse getCollectionUsingVersionNumber(String bucketName, String key, int versionNumber) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollUsingVersionNumUrl(repoServer, bucketName, key, versionNumber));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollUsingVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
     return executeRequest(request, ErrorType.ErrorFetchingCollection);
   }
 
   @Override
   public HttpResponse getCollectionUsingTag(String bucketName, String key, String tag) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollUsingTagUrl(repoServer, bucketName, key, tag));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollUsingTagUrl(getRepoServer(), bucketName, key, tag));
     return executeRequest(request, ErrorType.ErrorFetchingCollection);
   }
 
   @Override
   public HttpResponse getCollectionVersions(String bucketName, String key){
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollVersionsUrl(repoServer, bucketName, key));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollVersionsUrl(getRepoServer(), bucketName, key));
     return executeRequest(request, ErrorType.ErrorFetchingCollectionVersions);
   }
 
   @Override
   public HttpResponse getCollectionsUsingTag(String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUsingTagUrl(repoServer, bucketName, offset, limit, includeDeleted, tag));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUsingTagUrl(getRepoServer(), bucketName, offset, limit, includeDeleted, tag));
     return executeRequest(request, ErrorType.ErrorFetchingCollections);
   }
 
   @Override
   public HttpResponse getCollections(String bucketName, int offset, int limit, boolean includeDeleted) {
-    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUrl(repoServer, bucketName, offset, limit, includeDeleted));
+    HttpGet request = new HttpGet(collectionUrlGenerator.getGetCollectionsUrl(getRepoServer(), bucketName, offset, limit, includeDeleted));
     return executeRequest(request, ErrorType.ErrorFetchingCollections);
   }
 

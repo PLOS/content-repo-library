@@ -5,13 +5,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.plos.crepo.config.ContentRepoClientConfig;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 
@@ -21,11 +21,15 @@ public abstract class ContentRepoBaseDao {
   @Qualifier("httpClient")
   protected CloseableHttpClient httpClient;
 
-  @Value("${crepo.repoServer}")
-  protected String repoServer;
+  @Autowired
+  private ContentRepoClientConfig clientConfig;
 
-  protected HttpResponse executeRequest(HttpRequestBase request, ErrorType errorType){
-    try (CloseableHttpResponse response = httpClient.execute(request)){
+  protected String getRepoServer() {
+    return clientConfig.getRepoServer();
+  }
+
+  protected HttpResponse executeRequest(HttpRequestBase request, ErrorType errorType) {
+    try (CloseableHttpResponse response = httpClient.execute(request)) {
 
       if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK && response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
         String cause = HttpResponseUtil.getErrorMessage(response);

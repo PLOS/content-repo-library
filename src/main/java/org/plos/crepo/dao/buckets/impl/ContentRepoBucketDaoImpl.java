@@ -29,7 +29,7 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public HttpResponse createBucket(String bucketName) {
-    HttpPost request = new HttpPost(bucketUrlGenerator.getCreateBucketUrl(repoServer));
+    HttpPost request = new HttpPost(bucketUrlGenerator.getCreateBucketUrl(getRepoServer()));
 
     List<NameValuePair> params = new ArrayList<>();
     params.add(new BasicNameValuePair("name", bucketName));
@@ -40,13 +40,13 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public HttpResponse getBuckets() {
-    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketsUrl(repoServer));
+    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketsUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }
 
   @Override
   public HttpResponse getBucket(String bucketName){
-    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketUrl(repoServer, bucketName));
+    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketUrl(getRepoServer(), bucketName));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }
 

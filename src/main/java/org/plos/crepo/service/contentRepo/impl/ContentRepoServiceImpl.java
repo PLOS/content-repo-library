@@ -1,5 +1,6 @@
 package org.plos.crepo.service.contentRepo.impl;
 
+import org.plos.crepo.config.ContentRepoClientConfig;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.model.RepoCollection;
@@ -48,10 +49,11 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   @Autowired
   public ContentRepoServiceImpl(ContentRepoBucketsDao contentRepoBucketDao,
-                                @Value("${crepo.bucketName}") String bucketName) throws Exception {
+                                ContentRepoClientConfig clientConfig) throws Exception {
 
     this.contentRepoBucketDao = contentRepoBucketDao;
 
+    String bucketName = clientConfig.getBucketName();
     try {
       this.contentRepoBucketDao.getBucket(bucketName);
     } catch(ContentRepoException ce){
