@@ -1,7 +1,8 @@
 package org.plos.crepo.service.contentRepo.impl;
 
-import org.plos.crepo.config.ContentRepoClientConfig;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
+import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoObject;
@@ -15,8 +16,6 @@ import org.plos.crepo.service.objects.CRepoObjectService;
 import org.plos.crepo.service.objects.impl.CRepoObjectsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -32,36 +31,18 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoServiceImpl.class);
 
-  @Autowired
-  private ContentRepoBucketsDao contentRepoBucketDao;
+  private final ContentRepoBucketsDao contentRepoBucketDao;
+  private final CRepoBucketServiceImpl cRepoBucketService;
+  private final CRepoCollectionServiceImpl cRepoCollectionService;
+  private final CRepoConfigServiceImpl cRepoConfigService;
+  private final CRepoObjectsServiceImpl cRepoObjectService;
 
-  @Autowired
-  private CRepoBucketServiceImpl cRepoBucketService;
-
-  @Autowired
-  private CRepoCollectionServiceImpl cRepoCollectionService;
-
-  @Autowired
-  private CRepoConfigServiceImpl cRepoConfigService;
-
-  @Autowired
-  private CRepoObjectsServiceImpl cRepoObjectService;
-
-  @Autowired
-  public ContentRepoServiceImpl(ContentRepoBucketsDao contentRepoBucketDao,
-                                ContentRepoClientConfig clientConfig) throws Exception {
-
-    this.contentRepoBucketDao = contentRepoBucketDao;
-
-    String bucketName = clientConfig.getBucketName();
-    try {
-      this.contentRepoBucketDao.getBucket(bucketName);
-    } catch(ContentRepoException ce){
-      // if it does not exist, create it
-      log.debug("The bucket did not exist. Creating the bucket...", ce);
-      this.contentRepoBucketDao.createBucket(bucketName);
-    }
-
+  public ContentRepoServiceImpl(ContentRepoAccessConfig accessConfig) {
+    contentRepoBucketDao = new ContentRepoBucketDaoImpl(accessConfig);
+    cRepoBucketService = new CRepoBucketServiceImpl(accessConfig);
+    cRepoCollectionService = new CRepoCollectionServiceImpl(accessConfig);
+    cRepoConfigService = new CRepoConfigServiceImpl(accessConfig);
+    cRepoObjectService = new CRepoObjectsServiceImpl(accessConfig);
   }
 
   public Boolean hasXReproxy() {
@@ -78,21 +59,23 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
     return cRepoConfigService.getRepoStatus();
   }
 
-  public URL[] getRepoObjRedirectURL(String key){ return cRepoObjectService.getRepoObjRedirectURL(key); }
+  public URL[] getRepoObjRedirectURL(String key) {
+    return cRepoObjectService.getRepoObjRedirectURL(key);
+  }
 
   @Override
-  public URL[] getRepoObjRedirectURL(String key, String versionChecksum){
+  public URL[] getRepoObjRedirectURL(String key, String versionChecksum) {
     return cRepoObjectService.getRepoObjRedirectURL(key, versionChecksum);
   }
 
   @Override
-  public InputStream getLatestRepoObjStream(String key){
+  public InputStream getLatestRepoObjStream(String key) {
     return cRepoObjectService.getLatestRepoObjStream(key);
   }
 
   @Override
-  public byte[] getLatestRepoObjByteArray(String key){
-   return cRepoObjectService.getLatestRepoObjByteArray(key);
+  public byte[] getLatestRepoObjByteArray(String key) {
+    return cRepoObjectService.getLatestRepoObjByteArray(key);
   }
 
   @Override
@@ -117,17 +100,17 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
   }
 
   @Override
-  public Map<String,Object> getRepoObjMetaLatestVersion(String key) {
+  public Map<String, Object> getRepoObjMetaLatestVersion(String key) {
     return cRepoObjectService.getRepoObjMetaLatestVersion(key);
   }
 
   @Override
-  public Map<String,Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
+  public Map<String, Object> getRepoObjMetaUsingVersionChecksum(String key, String versionChecksum) {
     return cRepoObjectService.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
   }
 
   @Override
-  public Map<String,Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber) {
+  public Map<String, Object> getRepoObjMetaUsingVersionNum(String key, int versionNumber) {
     return cRepoObjectService.getRepoObjMetaUsingVersionNum(key, versionNumber);
   }
 
@@ -172,15 +155,15 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
     return cRepoObjectService.getRepoObjects(offset, limit, includeDeleted, tag);
   }
 
-  public List<Map<String, Object>> getBuckets(){
+  public List<Map<String, Object>> getBuckets() {
     return cRepoBucketService.getBuckets();
   }
 
-  public Map<String, Object> getBucket(String key){
+  public Map<String, Object> getBucket(String key) {
     return cRepoBucketService.getBucket(key);
   }
 
-  public Map<String, Object> createBucket(String key){
+  public Map<String, Object> createBucket(String key) {
     return cRepoBucketService.createBucket(key);
   }
 
@@ -226,7 +209,7 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   @Override
   public List<Map<String, Object>> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
-    return cRepoCollectionService.getCollections( offset, limit, includeDeleted, tag);
+    return cRepoCollectionService.getCollections(offset, limit, includeDeleted, tag);
   }
 
 }

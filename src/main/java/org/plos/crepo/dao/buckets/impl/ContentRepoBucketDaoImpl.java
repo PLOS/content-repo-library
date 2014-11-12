@@ -7,13 +7,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.ContentRepoBaseDao;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.BucketUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,12 +24,13 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoBucketDaoImpl.class);
 
-  @Autowired
-  private BucketUrlGenerator bucketUrlGenerator;
+  public ContentRepoBucketDaoImpl(ContentRepoAccessConfig accessConfig) {
+    super(accessConfig);
+  }
 
   @Override
   public HttpResponse createBucket(String bucketName) {
-    HttpPost request = new HttpPost(bucketUrlGenerator.getCreateBucketUrl(getRepoServer()));
+    HttpPost request = new HttpPost(BucketUrlGenerator.getCreateBucketUrl(getRepoServer()));
 
     List<NameValuePair> params = new ArrayList<>();
     params.add(new BasicNameValuePair("name", bucketName));
@@ -40,13 +41,13 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public HttpResponse getBuckets() {
-    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketsUrl(getRepoServer()));
+    HttpGet request = new HttpGet(BucketUrlGenerator.getBucketsUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }
 
   @Override
-  public HttpResponse getBucket(String bucketName){
-    HttpGet request = new HttpGet(bucketUrlGenerator.getBucketUrl(getRepoServer(), bucketName));
+  public HttpResponse getBucket(String bucketName) {
+    HttpGet request = new HttpGet(BucketUrlGenerator.getBucketUrl(getRepoServer(), bucketName));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }
 

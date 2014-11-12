@@ -1,32 +1,32 @@
 package org.plos.crepo.dao;
 
+import com.google.common.base.Preconditions;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.plos.crepo.config.ContentRepoClientConfig;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 public abstract class ContentRepoBaseDao {
 
-  @Autowired
-  private HttpResponseOpener httpResponseOpener;
+  private final ContentRepoAccessConfig accessConfig;
 
-  @Autowired
-  private ContentRepoClientConfig clientConfig;
+  protected ContentRepoBaseDao(ContentRepoAccessConfig accessConfig) {
+    this.accessConfig = Preconditions.checkNotNull(accessConfig);
+  }
 
   protected String getRepoServer() {
-    return clientConfig.getRepoServer();
+    return accessConfig.getRepoServer();
   }
 
   protected HttpResponse executeRequest(HttpRequestBase request, ErrorType errorType) {
-    try (CloseableHttpResponse response = httpResponseOpener.openResponse(request)) {
+    try (CloseableHttpResponse response = accessConfig.open(request)) {
 
       if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK && response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
         String cause = HttpResponseUtil.getErrorMessage(response);

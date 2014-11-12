@@ -2,24 +2,37 @@ package org.plos.crepo.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-public class BasicContentRepoClientConfig implements ContentRepoClientConfig {
+import java.io.IOException;
+
+public class BasicContentRepoAccessConfig implements ContentRepoAccessConfig {
 
   private final String bucketName;
   private final String repoServer;
-  private final int connectionsMaxTotal;
-  private final int connectionsMaxDefault;
+  private final HttpClientConnectionManager connectionManager;
 
-  private BasicContentRepoClientConfig(Builder builder) {
+  private BasicContentRepoAccessConfig(Builder builder) {
     this.bucketName = builder.bucketName;
     this.repoServer = builder.repoServer;
-    this.connectionsMaxTotal = builder.connectionsMaxTotal;
-    this.connectionsMaxDefault = builder.connectionsMaxDefault;
 
     Preconditions.checkState(!Strings.isNullOrEmpty(bucketName), "bucketName required");
     Preconditions.checkState(!Strings.isNullOrEmpty(repoServer), "repoServer required");
-    Preconditions.checkState(connectionsMaxTotal > 0, "connectionsMaxTotal must be positive");
-    Preconditions.checkState(connectionsMaxDefault > 0, "connectionsMaxDefault must be positive");
+    Preconditions.checkState(builder.connectionsMaxTotal > 0, "connectionsMaxTotal must be positive");
+    Preconditions.checkState(builder.connectionsMaxDefault > 0, "connectionsMaxDefault must be positive");
+
+    this.connectionManager = createConnectionManager(builder.connectionsMaxTotal, builder.connectionsMaxDefault);
+  }
+
+  private static HttpClientConnectionManager createConnectionManager(int connectionsMaxTotal, int connectionsMaxDefault) {
+    PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
+    manager.setMaxTotal(connectionsMaxTotal);
+    manager.setDefaultMaxPerRoute(connectionsMaxDefault);
+    return manager;
   }
 
   @Override
@@ -33,13 +46,8 @@ public class BasicContentRepoClientConfig implements ContentRepoClientConfig {
   }
 
   @Override
-  public int getConnectionsMaxTotal() {
-    return connectionsMaxTotal;
-  }
-
-  @Override
-  public int getConnectionsMaxDefault() {
-    return connectionsMaxDefault;
+  public CloseableHttpResponse open(HttpUriRequest request) throws IOException {
+    return HttpClientBuilder.create().setConnectionManager(connectionManager).build().execute(request);
   }
 
 
@@ -56,8 +64,8 @@ public class BasicContentRepoClientConfig implements ContentRepoClientConfig {
     private Builder() {
     }
 
-    public BasicContentRepoClientConfig build() {
-      return new BasicContentRepoClientConfig(this);
+    public BasicContentRepoAccessConfig build() {
+      return new BasicContentRepoAccessConfig(this);
     }
 
     public Builder setBucketName(String bucketName) {
@@ -110,11 +118,10 @@ public class BasicContentRepoClientConfig implements ContentRepoClientConfig {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    BasicContentRepoClientConfig that = (BasicContentRepoClientConfig) o;
+    BasicContentRepoAccessConfig that = (BasicContentRepoAccessConfig) o;
 
-    if (connectionsMaxDefault != that.connectionsMaxDefault) return false;
-    if (connectionsMaxTotal != that.connectionsMaxTotal) return false;
     if (!bucketName.equals(that.bucketName)) return false;
+    if (!connectionManager.equals(that.connectionManager)) return false;
     if (!repoServer.equals(that.repoServer)) return false;
 
     return true;
@@ -124,18 +131,16 @@ public class BasicContentRepoClientConfig implements ContentRepoClientConfig {
   public int hashCode() {
     int result = bucketName.hashCode();
     result = 31 * result + repoServer.hashCode();
-    result = 31 * result + connectionsMaxTotal;
-    result = 31 * result + connectionsMaxDefault;
+    result = 31 * result + connectionManager.hashCode();
     return result;
   }
 
   @Override
   public String toString() {
-    return "BasicContentRepoClientConfig{" +
+    return "BasicContentRepoAccessConfig{" +
         "bucketName='" + bucketName + '\'' +
         ", repoServer='" + repoServer + '\'' +
-        ", connectionsMaxTotal=" + connectionsMaxTotal +
-        ", connectionsMaxDefault=" + connectionsMaxDefault +
+        ", connectionManager=" + connectionManager +
         '}';
   }
 }

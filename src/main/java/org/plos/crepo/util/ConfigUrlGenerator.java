@@ -1,27 +1,26 @@
 package org.plos.crepo.util;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import static org.plos.crepo.util.BaseUrlGenerator.getUrlBasicMap;
+import static org.plos.crepo.util.BaseUrlGenerator.replaceUrl;
 
 /**
  * Generates the content repo urls for config services.
  */
-@Component
-public class ConfigUrlGenerator extends BaseUrlGenerator{
+public class ConfigUrlGenerator {
 
   private static final String hasReproxyUrl = "${repoServer}/hasXReproxy";
   private static final String repoConfigUrl = "${repoServer}/config";
   private static final String repoStatusUrl = "${repoServer}/status";
 
-  public String getHasReproxyUrl(String repoServer){
+  public static String getHasReproxyUrl(String repoServer) {
     return replaceUrl(hasReproxyUrl, getUrlBasicMap(repoServer));
   }
 
-  public String getRepoConfigUrl(String repoServer){
+  public static String getRepoConfigUrl(String repoServer) {
     return replaceUrl(repoConfigUrl, getUrlBasicMap(repoServer));
   }
 
-  public String getRepoStatusUrl(String repoServer){
+  public static String getRepoStatusUrl(String repoServer) {
     return replaceUrl(repoStatusUrl, getUrlBasicMap(repoServer));
   }
 
