@@ -68,16 +68,21 @@ public class CRepoObjectsServiceImplTest  extends BaseServiceTest {
   @Test
   public void getRepoObjRedirectURLTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    Header urlHeader = mock(Header.class);
-    when(httpResponse.getFirstHeader("X-Reproxy-URL")).thenReturn(urlHeader);
-    when(contentRepoObjectsDao.getRedirectURL(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    when(urlHeader.getValue()).thenReturn(URLS);
+    when(contentRepoObjectsDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
+    mockStatics(httpResponse);
+
+    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Type type = new TypeToken<Map<String, Object>>() {
+    }.getType();
+    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
 
     URL[] urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
 
-    verify(httpResponse).getFirstHeader("X-Reproxy-URL");
-    verify(contentRepoObjectsDao).getRedirectURL(BUCKET_NAME, KEY);
-    verify(urlHeader).getValue();
+    verify(contentRepoObjectsDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
+    verify(gson).fromJson(eq(JSON_MSG), eq(type));
+    verify(expectedResponse).get("reproxyURL");
+    PowerMockito.verifyStatic();
 
     assertNotNull(urls);
     assertEquals(2, urls.length);

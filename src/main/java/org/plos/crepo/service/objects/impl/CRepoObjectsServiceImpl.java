@@ -46,22 +46,17 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
 
   public URL[] getRepoObjRedirectURL(String key) {
     validateObjectKey(key);
-    HttpResponse response = contentRepoObjectsDao.getRedirectURL(accessConfig.getBucketName(), key);
-    Header header = response.getFirstHeader("X-Reproxy-URL");
-
-    if (header == null) {
-      return new URL[]{};
-    }
-
-    return getUrls(header.getValue());
-
+    return getUrlsFromMeta(this.getRepoObjMetaLatestVersion(key));
   }
 
   @Override
   public URL[] getRepoObjRedirectURL(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
-    Map<String, Object> repoObjValues = this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum);
+    return getUrlsFromMeta(this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum));
+  }
+
+  private URL[] getUrlsFromMeta(Map<String, Object> repoObjValues) {
     String paths = (String) repoObjValues.get("reproxyURL");
 
     if (StringUtils.isEmpty(paths)) {
@@ -69,7 +64,6 @@ public class CRepoObjectsServiceImpl implements CRepoObjectService {
     }
 
     return getUrls(paths);
-
   }
 
   private URL[] getUrls(String paths) {
