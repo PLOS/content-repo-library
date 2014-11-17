@@ -1,6 +1,7 @@
 package org.plos.crepo.dao;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -26,8 +27,18 @@ public abstract class ContentRepoBaseDao {
   }
 
   protected HttpResponse executeRequest(HttpRequestBase request, ErrorType errorType) {
-    try (CloseableHttpResponse response = accessConfig.open(request)) {
+    CloseableHttpResponse response;
+    try {
+      response = accessConfig.open(request);
+    } catch (IOException e) {
+      getLog().error("Error handling the response, uri: " + request.getURI().toString() + " repoMessage: ", e);
+      throw new ContentRepoException.ContentRepoExceptionBuilder(errorType)
+          .baseException(e)
+          .url(request.getURI().toString())
+          .build();
+    }
 
+    try {
       if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK && response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
         String cause = HttpResponseUtil.getErrorMessage(response);
         getLog().error("uri: " + request.getURI().toString() + " repoMessage: " + cause);
@@ -38,15 +49,10 @@ public abstract class ContentRepoBaseDao {
       }
 
       return response;
-
-    } catch (IOException e) {
-      getLog().error("Error handling the response, uri: " + request.getURI().toString() + " repoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(errorType)
-          .baseException(e)
-          .url(request.getURI().toString())
-          .build();
-    } finally {
+    } catch (RuntimeException e) {
+      IOUtils.closeQuietly(response);
       request.releaseConnection();
+      throw e;
     }
   }
 
