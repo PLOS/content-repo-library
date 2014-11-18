@@ -1,19 +1,11 @@
 package org.plos.crepo.service.contentRepo.impl;
 
-import org.plos.crepo.config.ContentRepoAccessConfig;
-import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
-import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
-import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.service.buckets.CRepoBucketService;
-import org.plos.crepo.service.buckets.impl.CRepoBucketServiceImpl;
 import org.plos.crepo.service.collections.CRepoCollectionService;
-import org.plos.crepo.service.collections.impl.CRepoCollectionServiceImpl;
 import org.plos.crepo.service.config.CRepoConfigService;
-import org.plos.crepo.service.config.impl.CRepoConfigServiceImpl;
 import org.plos.crepo.service.objects.CRepoObjectService;
-import org.plos.crepo.service.objects.impl.CRepoObjectsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,18 +23,19 @@ public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigSe
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoServiceImpl.class);
 
-  private final ContentRepoBucketsDao contentRepoBucketDao;
-  private final CRepoBucketServiceImpl cRepoBucketService;
-  private final CRepoCollectionServiceImpl cRepoCollectionService;
-  private final CRepoConfigServiceImpl cRepoConfigService;
-  private final CRepoObjectsServiceImpl cRepoObjectService;
+  private final CRepoBucketService cRepoBucketService;
+  private final CRepoCollectionService cRepoCollectionService;
+  private final CRepoConfigService cRepoConfigService;
+  private final CRepoObjectService cRepoObjectService;
 
-  public ContentRepoServiceImpl(ContentRepoAccessConfig accessConfig) {
-    contentRepoBucketDao = new ContentRepoBucketDaoImpl(accessConfig);
-    cRepoBucketService = new CRepoBucketServiceImpl(accessConfig);
-    cRepoCollectionService = new CRepoCollectionServiceImpl(accessConfig);
-    cRepoConfigService = new CRepoConfigServiceImpl(accessConfig);
-    cRepoObjectService = new CRepoObjectsServiceImpl(accessConfig);
+  public ContentRepoServiceImpl(CRepoBucketService cRepoBucketService,
+                                  CRepoCollectionService cRepoCollectionService,
+                                  CRepoConfigService cRepoConfigService,
+                                  CRepoObjectService cRepoObjectService) {
+    this.cRepoBucketService = cRepoBucketService;
+    this.cRepoCollectionService = cRepoCollectionService;
+    this.cRepoConfigService = cRepoConfigService;
+    this.cRepoObjectService =  cRepoObjectService;
   }
 
   public Boolean hasXReproxy() {

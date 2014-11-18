@@ -22,8 +22,8 @@ public class CRepoBucketServiceImpl implements CRepoBucketService {
   private final Gson gson;
   private final ContentRepoBucketsDao contentRepoBucketsDao;
 
-  public CRepoBucketServiceImpl(ContentRepoAccessConfig accessConfig) {
-    contentRepoBucketsDao = new ContentRepoBucketDaoImpl(accessConfig);
+  public CRepoBucketServiceImpl(ContentRepoBucketsDao contentRepoBucketsDao) {
+    this.contentRepoBucketsDao = contentRepoBucketsDao;
     gson = new Gson();
   }
 

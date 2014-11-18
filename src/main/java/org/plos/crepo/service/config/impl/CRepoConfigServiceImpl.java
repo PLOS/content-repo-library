@@ -23,8 +23,8 @@ public class CRepoConfigServiceImpl implements CRepoConfigService {
 
   private final ContentRepoConfigDao contentRepoConfigDao;
 
-  public CRepoConfigServiceImpl(ContentRepoAccessConfig accessConfig) {
-    contentRepoConfigDao = new ContentRepoConfigDaoImpl(accessConfig);
+  public CRepoConfigServiceImpl(ContentRepoConfigDao contentRepoCollectionDao) {
+    this.contentRepoConfigDao = contentRepoCollectionDao;
     gson = new Gson();
   }
 

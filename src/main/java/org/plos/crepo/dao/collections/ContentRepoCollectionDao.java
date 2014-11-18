@@ -4,7 +4,7 @@ package org.plos.crepo.dao.collections;
 import org.apache.http.HttpResponse;
 import org.plos.crepo.model.RepoCollection;
 
-public interface ContentRepoCollectionsDao{
+public interface ContentRepoCollectionDao {
 
   HttpResponse createCollection(String bucketName, RepoCollection repoCollection);
 

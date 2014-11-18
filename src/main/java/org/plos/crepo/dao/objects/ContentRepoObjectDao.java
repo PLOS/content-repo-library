@@ -4,7 +4,7 @@ package org.plos.crepo.dao.objects;
 import org.apache.http.HttpResponse;
 import org.plos.crepo.model.RepoObject;
 
-public interface ContentRepoObjectsDao {
+public interface ContentRepoObjectDao {
 
   HttpResponse getLatestRepoObj(String bucketName, String key);
 

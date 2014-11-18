@@ -9,7 +9,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.ContentRepoBaseDao;
-import org.plos.crepo.dao.collections.ContentRepoCollectionsDao;
+import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.CreationMethod;
@@ -24,11 +24,11 @@ import javax.ws.rs.core.MediaType;
 import java.io.UnsupportedEncodingException;
 
 @Repository
-public class ContentRepoCollectionsDaoImpl extends ContentRepoBaseDao implements ContentRepoCollectionsDao {
+public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements ContentRepoCollectionDao {
 
-  private static final Logger log = LoggerFactory.getLogger(ContentRepoCollectionsDaoImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ContentRepoCollectionDaoImpl.class);
 
-  public ContentRepoCollectionsDaoImpl(ContentRepoAccessConfig accessConfig) {
+  public ContentRepoCollectionDaoImpl(ContentRepoAccessConfig accessConfig) {
     super(accessConfig);
   }
 

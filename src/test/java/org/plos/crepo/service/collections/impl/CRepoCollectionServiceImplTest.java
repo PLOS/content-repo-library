@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
-import org.plos.crepo.dao.collections.ContentRepoCollectionsDao;
+import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.service.BaseServiceTest;
 import org.plos.crepo.util.HttpResponseUtil;
@@ -46,7 +46,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   private CRepoCollectionServiceImpl cRepoCollectionServiceImpl;
 
   @Mock
-  private ContentRepoCollectionsDao contentRepoCollectionsDao;
+  private ContentRepoCollectionDao contentRepoCollectionDao;
 
   @Before
   public void setUp(){
@@ -61,7 +61,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     HttpResponse httpResponse = mock(HttpResponse.class);
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionsDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
@@ -72,7 +72,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection);
 
     verify(repoCollection).getKey();
-    verify(contentRepoCollectionsDao).createCollection(BUCKET_NAME, repoCollection);
+    verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -85,7 +85,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     HttpResponse httpResponse = mock(HttpResponse.class);
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionsDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
@@ -96,7 +96,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection);
 
     verify(repoCollection).getKey();
-    verify(contentRepoCollectionsDao).versionCollection(BUCKET_NAME, repoCollection);
+    verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -107,29 +107,29 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void deleteCollectionUsingVersionNumbTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
 
     Boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionNumb(KEY, VERSION_NUMBER);
 
-    verify(contentRepoCollectionsDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
+    verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
     assertTrue(deleted);
   }
 
   @Test
   public void deleteCollectionUsingVersionCksTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
 
     Boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionCks(KEY, VERSION_CHECKSUM);
 
-    verify(contentRepoCollectionsDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     assertTrue(deleted);
   }
 
   @Test
   public void getCollectionUsingVersionCksTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
@@ -139,7 +139,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollectionUsingVersionCks(KEY, VERSION_CHECKSUM);
 
-    verify(contentRepoCollectionsDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -150,7 +150,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void getCollectionUsingVersionNumberTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
@@ -160,7 +160,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollectionUsingVersionNumber(KEY, VERSION_NUMBER);
 
-    verify(contentRepoCollectionsDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
+    verify(contentRepoCollectionDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -172,7 +172,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void getCollectionUsingTagTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollectionUsingTag(BUCKET_NAME,KEY, TAG)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME,KEY, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String,Object> expectedResponse = mock(HashMap.class);
@@ -182,7 +182,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollectionUsingTag(KEY, TAG);
 
-    verify(contentRepoCollectionsDao).getCollectionUsingTag(BUCKET_NAME,KEY, TAG);
+    verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME,KEY, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -193,7 +193,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void getCollectionVersionsTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     List<Map<String,Object>> expectedResponse = mock(List.class);
@@ -203,7 +203,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     List<Map<String, Object>> collectionResponse = cRepoCollectionServiceImpl.getCollectionVersions(KEY);
 
-    verify(contentRepoCollectionsDao).getCollectionVersions(BUCKET_NAME, KEY);
+    verify(contentRepoCollectionDao).getCollectionVersions(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -214,7 +214,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void getCollectionsUsingTagTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     List<Map<String,Object>> expectedResponse = mock(List.class);
@@ -224,7 +224,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     List<Map<String, Object>> collectionResponse = cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, TAG);
 
-    verify(contentRepoCollectionsDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
+    verify(contentRepoCollectionDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 
@@ -235,7 +235,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
   @Test
   public void getCollectionsTest(){
     HttpResponse httpResponse = mock(HttpResponse.class);
-    when(contentRepoCollectionsDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     List<Map<String,Object>> expectedResponse = mock(List.class);
@@ -245,7 +245,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
 
     List<Map<String, Object>> collectionResponse = cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, null);
 
-    verify(contentRepoCollectionsDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
+    verify(contentRepoCollectionDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     PowerMockito.verifyStatic();
 

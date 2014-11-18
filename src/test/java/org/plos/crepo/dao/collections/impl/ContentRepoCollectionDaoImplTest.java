@@ -35,7 +35,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(HttpResponseUtil.class)
-public class ContentRepoCollectionsDaoImplTest extends BaseDaoTest {
+public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
   private static final String BUCKET_NAME = "bucket1";
   private static final String COLLECTION_KEY = "collectionKey";
@@ -48,11 +48,11 @@ public class ContentRepoCollectionsDaoImplTest extends BaseDaoTest {
   private CollectionUrlGenerator collectionUrlGenerator;
 
   @InjectMocks
-  private ContentRepoCollectionsDaoImpl contentRepoCollectionDaoImpl;
+  private ContentRepoCollectionDaoImpl contentRepoCollectionDaoImpl;
 
   @Before
   public void setUp(){
-    contentRepoCollectionDaoImpl = new ContentRepoCollectionsDaoImpl();
+    contentRepoCollectionDaoImpl = new ContentRepoCollectionDaoImpl();
     initMocks(this);
     Whitebox.setInternalState(contentRepoCollectionDaoImpl, "repoServer", REPO_SERVER);
   }

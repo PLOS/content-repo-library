@@ -9,7 +9,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.ContentRepoBaseDao;
-import org.plos.crepo.dao.objects.ContentRepoObjectsDao;
+import org.plos.crepo.dao.objects.ContentRepoObjectDao;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.CreationMethod;
 import org.plos.crepo.model.RepoObject;
@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ContentRepoObjectsDaoImpl extends ContentRepoBaseDao implements ContentRepoObjectsDao {
+public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements ContentRepoObjectDao {
 
-  private static final Logger log = LoggerFactory.getLogger(ContentRepoObjectsDaoImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ContentRepoObjectDaoImpl.class);
 
-  public ContentRepoObjectsDaoImpl(ContentRepoAccessConfig accessConfig) {
+  public ContentRepoObjectDaoImpl(ContentRepoAccessConfig accessConfig) {
     super(accessConfig);
   }
 
