@@ -26,7 +26,7 @@ public abstract class ContentRepoBaseDao {
     return accessConfig.getRepoServer();
   }
 
-  protected HttpResponse executeRequest(HttpRequestBase request, ErrorType errorType) {
+  protected CloseableHttpResponse executeRequest(HttpRequestBase request, ErrorType errorType) {
     CloseableHttpResponse response;
     try {
       response = accessConfig.open(request);

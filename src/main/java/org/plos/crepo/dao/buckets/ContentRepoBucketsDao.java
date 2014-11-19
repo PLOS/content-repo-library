@@ -1,16 +1,14 @@
 package org.plos.crepo.dao.buckets;
 
 
-import org.apache.http.HttpResponse;
-import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoObject;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 public interface ContentRepoBucketsDao {
 
-  HttpResponse createBucket(String bucketName);
+  CloseableHttpResponse createBucket(String bucketName);
 
-  HttpResponse getBuckets();
+  CloseableHttpResponse getBuckets();
 
-  HttpResponse getBucket(String bucketName);
+  CloseableHttpResponse getBucket(String bucketName);
 
 }

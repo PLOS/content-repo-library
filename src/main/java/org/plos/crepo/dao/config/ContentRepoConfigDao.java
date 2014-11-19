@@ -1,16 +1,14 @@
 package org.plos.crepo.dao.config;
 
 
-import org.apache.http.HttpResponse;
-import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoObject;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 public interface ContentRepoConfigDao {
 
-  HttpResponse hasReProxy();
+  CloseableHttpResponse hasReProxy();
 
-  HttpResponse getRepoConfig();
+  CloseableHttpResponse getRepoConfig();
 
-  HttpResponse getRepoStatus();
+  CloseableHttpResponse getRepoStatus();
 
 }

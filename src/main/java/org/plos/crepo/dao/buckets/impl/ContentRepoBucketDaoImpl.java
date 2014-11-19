@@ -1,9 +1,9 @@
 package org.plos.crepo.dao.buckets.impl;
 
 import org.apache.http.Consts;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,7 +29,7 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public HttpResponse createBucket(String bucketName) {
+  public CloseableHttpResponse createBucket(String bucketName) {
     HttpPost request = new HttpPost(BucketUrlGenerator.getCreateBucketUrl(getRepoServer()));
 
     List<NameValuePair> params = new ArrayList<>();
@@ -40,13 +40,13 @@ public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public HttpResponse getBuckets() {
+  public CloseableHttpResponse getBuckets() {
     HttpGet request = new HttpGet(BucketUrlGenerator.getBucketsUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }
 
   @Override
-  public HttpResponse getBucket(String bucketName) {
+  public CloseableHttpResponse getBucket(String bucketName) {
     HttpGet request = new HttpGet(BucketUrlGenerator.getBucketUrl(getRepoServer(), bucketName));
     return executeRequest(request, ErrorType.ErrorFetchingBucketMeta);
   }

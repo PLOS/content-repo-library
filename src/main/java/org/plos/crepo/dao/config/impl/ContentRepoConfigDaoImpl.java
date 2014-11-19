@@ -1,6 +1,7 @@
 package org.plos.crepo.dao.config.impl;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.ContentRepoBaseDao;
@@ -21,19 +22,19 @@ public class ContentRepoConfigDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public HttpResponse hasReProxy() {
+  public CloseableHttpResponse hasReProxy() {
     HttpGet request = new HttpGet(ConfigUrlGenerator.getHasReproxyUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingReproxyData);
   }
 
   @Override
-  public HttpResponse getRepoConfig() {
+  public CloseableHttpResponse getRepoConfig() {
     HttpGet request = new HttpGet(ConfigUrlGenerator.getRepoConfigUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingConfig);
   }
 
   @Override
-  public HttpResponse getRepoStatus() {
+  public CloseableHttpResponse getRepoStatus() {
     HttpGet request = new HttpGet(ConfigUrlGenerator.getRepoStatusUrl(getRepoServer()));
     return executeRequest(request, ErrorType.ErrorFetchingStatus);
   }

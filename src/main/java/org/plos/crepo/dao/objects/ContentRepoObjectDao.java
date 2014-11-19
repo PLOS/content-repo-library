@@ -1,39 +1,39 @@
 package org.plos.crepo.dao.objects;
 
 
-import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.plos.crepo.model.RepoObject;
 
 public interface ContentRepoObjectDao {
 
-  HttpResponse getLatestRepoObj(String bucketName, String key);
+  CloseableHttpResponse getLatestRepoObj(String bucketName, String key);
 
-  HttpResponse getRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse getRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
 
-  HttpResponse getRepoObjUsingVersionNum(String bucketName, String key, int versionNumber);
+  CloseableHttpResponse getRepoObjUsingVersionNum(String bucketName, String key, int versionNumber);
 
-  HttpResponse getRepoObjMetaLatestVersion(String bucketName, String key);
+  CloseableHttpResponse getRepoObjMetaLatestVersion(String bucketName, String key);
 
-  HttpResponse getRepoObjMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse getRepoObjMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum);
 
-  HttpResponse getRepoObjMetaUsingVersionNumber(String bucketName, String key, int versionNumber);
+  CloseableHttpResponse getRepoObjMetaUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  HttpResponse getRepoObjVersionsMeta(String bucketName, String key);
+  CloseableHttpResponse getRepoObjVersionsMeta(String bucketName, String key);
 
-  HttpResponse getRepoObjMetaUsingTag(String bucketName, String key, String tag);
+  CloseableHttpResponse getRepoObjMetaUsingTag(String bucketName, String key, String tag);
 
-  HttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
 
-  HttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber);
+  CloseableHttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  HttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType);
+  CloseableHttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType);
 
-  HttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType);
+  CloseableHttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType);
 
-  HttpResponse getRedirectURL(String bucketName, String key);
+  CloseableHttpResponse getRedirectURL(String bucketName, String key);
 
-  HttpResponse getObjects(String bucketName, int offset, int limit, boolean includeDeleted);
+  CloseableHttpResponse getObjects(String bucketName, int offset, int limit, boolean includeDeleted);
 
-  HttpResponse getObjectsUsingTag(String bucketName, int offset, int limit, boolean includeDeleted, String tag);
+  CloseableHttpResponse getObjectsUsingTag(String bucketName, int offset, int limit, boolean includeDeleted, String tag);
 
 }
