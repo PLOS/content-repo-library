@@ -13,16 +13,17 @@
     <properties>
         <commons-pool.version>1.5.4</commons-pool.version>
         <powermock.version>1.5.6</powermock.version>
+        <org.slf4j-version>1.7.7</org.slf4j-version>
 
-        <start-class>org.plos.crepo.Application</start-class>
+        <!--<start-class>org.plos.crepo.Application</start-class>-->
     </properties>
 
     <!-- Inherit defaults from Spring Boot -->
-    <parent>
+<!--    <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.1.8.RELEASE</version>
-    </parent>
+    </parent>-->
 
     <licenses>
         <license>
@@ -41,16 +42,21 @@
         </dependency>
 
         <!-- Spring Boot -->
+<!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+-->
         <!-- Spring Boot Test -->
+<!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+-->
+
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
@@ -61,6 +67,25 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j-version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- apache dependencies -->
