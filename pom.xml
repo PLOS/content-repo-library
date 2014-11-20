@@ -14,16 +14,7 @@
         <commons-pool.version>1.5.4</commons-pool.version>
         <powermock.version>1.5.6</powermock.version>
         <org.slf4j-version>1.7.7</org.slf4j-version>
-
-        <!--<start-class>org.plos.crepo.Application</start-class>-->
     </properties>
-
-    <!-- Inherit defaults from Spring Boot -->
-<!--    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.1.8.RELEASE</version>
-    </parent>-->
 
     <licenses>
         <license>
@@ -40,22 +31,6 @@
           <artifactId>guava</artifactId>
           <version>18.0</version>
         </dependency>
-
-        <!-- Spring Boot -->
-<!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
--->
-        <!-- Spring Boot Test -->
-<!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
--->
 
         <dependency>
             <groupId>org.aspectj</groupId>
