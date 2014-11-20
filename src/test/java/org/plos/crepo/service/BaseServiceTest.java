@@ -9,7 +9,8 @@ import org.powermock.api.mockito.PowerMockito;
 public class BaseServiceTest {
 
   protected static final String KEY = "key";
-  protected static final java.lang.String JSON_MSG = "{\"test\":\"mockJsonTest\" }";
+  protected static final String JSON_MSG = "{\"test\":\"mockJsonTest\" }";
+  protected static final String FAIL_MSG = "a ContentRepoException was expected";
 
   protected Gson gson;
 

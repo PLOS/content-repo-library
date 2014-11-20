@@ -10,54 +10,50 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.Mockito;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.BucketUrlGenerator;
 import org.plos.crepo.util.HttpResponseUtil;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpResponseUtil.class)
+@PrepareForTest({HttpResponseUtil.class, BucketUrlGenerator.class})
 public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
 
-  private static final java.lang.String SOME_URL = "http://someUrl";
-  private static final String BUCKET_NAME = "bucket1";
+  private ContentRepoBucketDaoImpl contentRepoBucketDaoImpl;
 
   @Mock
-  private BucketUrlGenerator bucketUrlGenerator;
-
-  @InjectMocks
-  private ContentRepoBucketDaoImpl contentRepoBucketDaoImpl;
+  private ContentRepoAccessConfig repoAccessConfig;
 
   @Before
   public void setUp(){
-    contentRepoBucketDaoImpl = new ContentRepoBucketDaoImpl();
-    initMocks(this);
-    Whitebox.setInternalState(contentRepoBucketDaoImpl, "repoServer", REPO_SERVER);
+    contentRepoBucketDaoImpl = new ContentRepoBucketDaoImpl(repoAccessConfig);
+    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
+    PowerMockito.mockStatic(BucketUrlGenerator.class);
   }
 
   @Test
   public void createBucketTest() throws IOException {
-    when(bucketUrlGenerator.getCreateBucketUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    Mockito.when(BucketUrlGenerator.getCreateBucketUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
-    mockCommonCalls(HttpStatus.SC_CREATED);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_CREATED);
 
     HttpResponse response = contentRepoBucketDaoImpl.createBucket(BUCKET_NAME);
 
-    verify(bucketUrlGenerator).getCreateBucketUrl(REPO_SERVER);
-    verifyCommonCalls(httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -69,9 +65,9 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
 
   @Test
   public void createBucketThrowsExcTest() throws IOException {
-    when(bucketUrlGenerator.getCreateBucketUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    when(BucketUrlGenerator.getCreateBucketUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -82,8 +78,8 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorCreatingBucket);
     }
 
-    verify(bucketUrlGenerator).getCreateBucketUrl(REPO_SERVER);
-    verifyCommonCalls(httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
     HttpPost httpPost = httpPostArgument.getValue();
     String params = EntityUtils.toString(httpPost.getEntity(), CharEncoding.UTF_8);
@@ -94,26 +90,26 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
   @Test
   public void getBucketsTest() throws IOException {
 
-    when(bucketUrlGenerator.getBucketsUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    when(BucketUrlGenerator.getBucketsUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoBucketDaoImpl.getBuckets();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
 
-    verify(bucketUrlGenerator).getBucketsUrl(REPO_SERVER);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getBucketsThrowsExcTest() throws IOException {
 
-    when(bucketUrlGenerator.getBucketsUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    when(BucketUrlGenerator.getBucketsUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -124,8 +120,8 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
-    verify(bucketUrlGenerator).getBucketsUrl(REPO_SERVER);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
@@ -133,26 +129,26 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
   @Test
   public void getBucketTest() throws IOException {
 
-    when(bucketUrlGenerator.getBucketUrl(REPO_SERVER, BUCKET_NAME)).thenReturn(SOME_URL);
+    when(BucketUrlGenerator.getBucketUrl(REPO_SERVER, BUCKET_NAME)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoBucketDaoImpl.getBucket(BUCKET_NAME);
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
 
-    verify(bucketUrlGenerator).getBucketUrl(REPO_SERVER, BUCKET_NAME);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getBucketThrowsExcTest() throws IOException {
 
-    when(bucketUrlGenerator.getBucketUrl(REPO_SERVER, BUCKET_NAME)).thenReturn(SOME_URL);
+    when(BucketUrlGenerator.getBucketUrl(REPO_SERVER, BUCKET_NAME)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -163,10 +159,9 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
-    verify(bucketUrlGenerator).getBucketUrl(REPO_SERVER, BUCKET_NAME);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
-
 
 }

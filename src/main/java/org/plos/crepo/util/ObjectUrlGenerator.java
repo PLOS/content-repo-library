@@ -1,84 +1,76 @@
 package org.plos.crepo.util;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
-import static org.plos.crepo.util.BaseUrlGenerator.getBucketBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.getContentInBucketMap;
-import static org.plos.crepo.util.BaseUrlGenerator.getUrlBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.replaceUrl;
+import static org.plos.crepo.util.BaseUrlGenerator.*;
 
 /**
  * Generates the content repo urls for objects services.
  */
-@Component
 public class ObjectUrlGenerator {
 
-  private static final String getLatestObjUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}";
-  private static final String getObjUsingVersionNumUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
-  private static final String getObjVersionCksUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
-  private static final String getLatestObjMetaUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}";
-  private static final String getObjMetaUsingVersionNumUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&version=${versionNumber}";
-  private static final String getObjMetaUsingVersionCksUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
-  private static final String getObjMetaUsingTagUrl = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&tag=${tag}";
-  private static final String getObjVersionsUrl = "${repoServer}/objects/versions/${bucketName}?key=${objectKey}";
-  private static final String deleteObjUsingVersionCksUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
-  private static final String deleteObjUsingVersionNumUrl = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
-  private static final String createObjUrl = "${repoServer}/objects";
-  private static final String getObjectsUrl = "${repoServer}/objects?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
-  private static final String getObjectsUsingTagUrl = "${crepo.url.getObjectsUrl}&tag=${tag}";
+  private static final String CREATE_OBJECT_URL = "${repoServer}/objects";
+  private static final String LATEST_OBJECT_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}";
+  private static final String OBJECT_USING_VERSION_NUM_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
+  private static final String OBJECT_USING_VERSION_CKS_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String GET_LATEST_OBJECT_META_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}";
+  private static final String GET_OBJECT_META_USING_VERSION_NUM_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&version=${versionNumber}";
+  private static final String GET_OBJECT_META_USING_VERSIONS_CKS = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String GET_OBJECT_META_USING_TAG_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&tag=${tag}";
+  private static final String GET_OBJECT_VERSIONS_URL = "${repoServer}/objects/versions/${bucketName}?key=${objectKey}";
+  private static final String GET_OBJECTS_URL = "${repoServer}/objects?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
+  private static final String GET_OBJECTS_USING_TAG_URL = GET_OBJECTS_URL + "&tag=${tag}";
 
   public static String getLatestObjectUrl(String repoServer, String bucketName, String repoObjKey) {
-    return replaceUrl(getLatestObjUrl, getObjectBasicMap(repoServer, bucketName, repoObjKey));
+    return replaceUrl(LATEST_OBJECT_URL, getObjectBasicMap(repoServer, bucketName, repoObjKey));
   }
 
   public static String getObjectUsingVersionNumUrl(String repoServer, String bucketName, String repoObjKey, int versionNumber) {
-    return replaceUrl(getObjUsingVersionNumUrl, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
+    return replaceUrl(OBJECT_USING_VERSION_NUM_URL, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
   }
+/*
+  public static String getDeleteObjectVersionNumUrl(String repoServer, String bucketName, String repoObjKey, int versionNumber) {
+    return replaceUrl(OBJECT_USING_VERSION_NUM_URL, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
+  }*/
 
   public static String getObjectUsingVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(getObjVersionCksUrl, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+    return replaceUrl(OBJECT_USING_VERSION_CKS_URL, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
   }
 
+/*  public static String getDeleteObjectVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
+    return replaceUrl(OBJECT_USING_VERSION_CKS_URL, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+  }*/
+
   public static String getLatestObjectMetaUrl(String repoServer, String bucketName, String repoObjKey) {
-    return replaceUrl(getLatestObjMetaUrl, getObjectBasicMap(repoServer, bucketName, repoObjKey));
+    return replaceUrl(GET_LATEST_OBJECT_META_URL, getObjectBasicMap(repoServer, bucketName, repoObjKey));
   }
 
   public static String getObjectMetaUsingVersionNumUrl(String repoServer, String bucketName, String repoObjKey, Integer versionNumber) {
-    return replaceUrl(getObjMetaUsingVersionNumUrl, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
+    return replaceUrl(GET_OBJECT_META_USING_VERSION_NUM_URL, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
   }
 
   public static String getObjectMetaUsingVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(getObjMetaUsingVersionCksUrl, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+    return replaceUrl(GET_OBJECT_META_USING_VERSIONS_CKS, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
   }
 
   public static String getObjectVersionsUrl(String repoServer, String bucketName, String repoObjKey) {
-    return replaceUrl(getObjVersionsUrl, getObjectBasicMap(repoServer, bucketName, repoObjKey));
-  }
-
-  public static String getDeleteObjectVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(deleteObjUsingVersionCksUrl, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
-  }
-
-  public static String getDeleteObjectVersionNumUrl(String repoServer, String bucketName, String repoObjKey, int versionNumber) {
-    return replaceUrl(deleteObjUsingVersionNumUrl, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
+    return replaceUrl(GET_OBJECT_VERSIONS_URL, getObjectBasicMap(repoServer, bucketName, repoObjKey));
   }
 
   public static String getCreateObjectUrl(String repoServer) {
-    return replaceUrl(createObjUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(CREATE_OBJECT_URL, getUrlBasicMap(repoServer));
   }
 
   public static String getGetObjMetaUsingTagUrl(String repoServer, String bucketName, String key, String tag) {
-    return replaceUrl(getObjMetaUsingTagUrl, getObjectMapWithTag(repoServer, bucketName, key, tag));
+    return replaceUrl(GET_OBJECT_META_USING_TAG_URL, getObjectMapWithTag(repoServer, bucketName, key, tag));
   }
 
   public static String getGetObjectsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted) {
-    return replaceUrl(getObjectsUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted));
+    return replaceUrl(GET_OBJECTS_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted));
   }
 
   public static String getGetObjectsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
-    return replaceUrl(getObjectsUsingTagUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
+    return replaceUrl(GET_OBJECTS_USING_TAG_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
   }
 
   private static Map<String, String> getObjectBasicMap(String repoServer, String bucketName, String repoObjKey) {

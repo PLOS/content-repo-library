@@ -3,11 +3,12 @@ package org.plos.crepo.dao;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.Mock;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.HttpResponseUtil;
@@ -19,21 +20,22 @@ import java.net.URI;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(HttpResponseUtil.class)
 public class ContentRepoBaseDaoTest extends BaseDaoTest{
 
-  @InjectMocks
   private TestContentRepoBaseDaoImpl contentRepoBaseDao;
   private URI uri = URI.create("http://testUri");
 
+  @Mock
+  private ContentRepoAccessConfig repoAccessConfig;
+
   @Before
   public void setUp(){
-    contentRepoBaseDao = new TestContentRepoBaseDaoImpl();
-    initMocks(this);
-    Whitebox.setInternalState(contentRepoBaseDao, "repoServer", REPO_SERVER);
+    contentRepoBaseDao = new TestContentRepoBaseDaoImpl(repoAccessConfig);
+    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
   }
 
   @Test
@@ -41,7 +43,7 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
     HttpRequestBase httpRequest = mock(HttpRequestBase.class);
     when(httpRequest.getURI()).thenReturn(uri);
 
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoBaseDao.executeRequest(httpRequest, ErrorType.ErrorFetchingBucketMeta);
 
@@ -49,9 +51,10 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
     assertEquals(mockResponse, response);
     assertEquals(uri, httpRequest.getURI());
 
-    verify(httpClient).execute(httpRequest);
+    verify(repoAccessConfig).open(httpRequest);
     verify(mockResponse).getStatusLine();
     verify(statusLine).getStatusCode();
+    verify(repoAccessConfig).open(httpRequest);
 
   }
 
@@ -60,7 +63,7 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
     HttpRequestBase httpRequest = mock(HttpRequestBase.class);
     when(httpRequest.getURI()).thenReturn(uri);
 
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -71,7 +74,7 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
-    verify(httpClient).execute(httpRequest);
+    verify(repoAccessConfig).open(httpRequest);
     verify(mockResponse, times(2)).getStatusLine();
     verify(statusLine, times(2)).getStatusCode();
     verify(httpRequest, times(2)).getURI();
@@ -86,7 +89,7 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
     HttpRequestBase httpRequest = mock(HttpRequestBase.class);
     when(httpRequest.getURI()).thenReturn(uri);
     IOException exception = mock(IOException.class);
-    when(httpClient.execute(isA(HttpRequestBase.class))).thenThrow(exception);
+    when(repoAccessConfig.open(isA(HttpRequestBase.class))).thenThrow(exception);
 
     HttpResponse response = null;
 
@@ -99,7 +102,7 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
       assertEquals(exception, ex.getCause());
     }
 
-    verify(httpClient).execute(httpRequest);
+    verify(repoAccessConfig).open(httpRequest);
     verify(httpRequest, times(2)).getURI();
 
     assertEquals(uri, httpRequest.getURI());

@@ -1,7 +1,6 @@
 package org.plos.crepo.util;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.http.HttpEntity;

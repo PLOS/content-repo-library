@@ -14,39 +14,30 @@ public enum ErrorType {
   EmptyCollectionTag(6, "Empty repo collection tag"),
   EmptyBucketKey(7, "Empty bucket key"),
 
-  ErrorAccessingFile(10, "Error accessing file"),
-  ErrorCreatingObject(11, "Error creating new object"),
-  ErrorVersioningObject(12, "Error versioning new object"),
-  ErrorFetchingObject(13, "Error fetching object from content repo"),
-  ErrorFetchingObjectMeta(14, "Error fetching object meta data from content repo"),
-  ErrorFetchingObjectVersions(15, "Error fetching object versions from content repo"),
-  ErrorCreatingBucket(16, "Error creating bucket on server"),
-  EmptyContentType(17, "Empty Content Type"),
-  EmptyContent(18, "Content is empty. A File object or a byte[] must be specified. "),
+  ErrorAccessingFile(100, "Error accessing file"),
+  ErrorCreatingObject(101, "Error creating new object"),
+  ErrorVersioningObject(102, "Error versioning new object"),
+  ErrorFetchingObject(103, "Error fetching object from content repo"),
+  ErrorFetchingObjectMeta(104, "Error fetching object meta data from content repo"),
+  ErrorFetchingObjectVersions(105, "Error fetching object versions from content repo"),
+  ErrorCreatingBucket(106, "Error creating bucket on server"),
+  EmptyContentType(107, "Empty Content Type"),
+  EmptyContent(108, "Content is empty. A File object or a byte[] must be specified. "),
+  ErrorFetchingReProxyUrl(109, "Problem fetching reproxy URLs"),
+  ErrorDeletingObject(110,"Error deleting object"),
 
 
-  ErrorFetchingBucketMeta(20, "Error fetching buckets meta"),
-  ErrorFetchingReproxyData(21, "Error fetching reproxy information"),
-  ErrorFetchingConfig(22, "Error fetching repo configuration"),
-  ErrorFetchingStatus(23, "Error fetching repo status"),
+  ErrorFetchingBucketMeta(200, "Error fetching buckets meta"),
+  ErrorFetchingReproxyData(201, "Error fetching reproxy information"),
+  ErrorFetchingConfig(202, "Error fetching repo configuration"),
+  ErrorFetchingStatus(203, "Error fetching repo status"),
 
-  ErrorCreatingCollection(30, "Error creating collection"),
-  ErrorVersioningCollection(31, "Error versioning collection"),
-  ErrorDeletingCollection(32, "Error deleting collection"),
-  ErrorFetchingCollection(33, "Error fetching collection information"),
-  ErrorFetchingCollections(34, "Error fetching collections from bucket"),
-  ErrorFetchingCollectionVersions(35, "Error fectching collection versions"),
-
-
-  ErrorFetchingReProxyUrl(12, "Problem fetching reproxy URLs"),
-  ErrorCopyingFileFrom(13, "Error copying file from store"),
-  ErrorCopyingFileTo(14, "Error copying file to store"),
-  ErrorFetchingMetaData(15, "Error fetching metadata"),
-  ErrorDeletingObject(16,"Error deleting object"),
-  ErrorRenameNotSupported(17,"ContentRepo:renameFile not supported"),
-
-
-
+  ErrorCreatingCollection(300, "Error creating collection"),
+  ErrorVersioningCollection(301, "Error versioning collection"),
+  ErrorDeletingCollection(302, "Error deleting collection"),
+  ErrorFetchingCollection(303, "Error fetching collection information"),
+  ErrorFetchingCollections(304, "Error fetching collections from bucket"),
+  ErrorFetchingCollectionVersions(305, "Error fectching collection versions"),
   ;
 
   private final int value;

@@ -8,20 +8,20 @@ import static org.plos.crepo.util.BaseUrlGenerator.replaceUrl;
  */
 public class ConfigUrlGenerator {
 
-  private static final String hasReproxyUrl = "${repoServer}/hasXReproxy";
-  private static final String repoConfigUrl = "${repoServer}/config";
-  private static final String repoStatusUrl = "${repoServer}/status";
+  private static final String HAS_REPROXY_URL = "${repoServer}/hasXReproxy";
+  private static final String REPO_CONFIG_URL = "${repoServer}/config";
+  private static final String REPO_STATUS_URL = "${repoServer}/status";
 
   public static String getHasReproxyUrl(String repoServer) {
-    return replaceUrl(hasReproxyUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(HAS_REPROXY_URL, getUrlBasicMap(repoServer));
   }
 
   public static String getRepoConfigUrl(String repoServer) {
-    return replaceUrl(repoConfigUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(REPO_CONFIG_URL, getUrlBasicMap(repoServer));
   }
 
   public static String getRepoStatusUrl(String repoServer) {
-    return replaceUrl(repoStatusUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(REPO_STATUS_URL, getUrlBasicMap(repoServer));
   }
 
 }
