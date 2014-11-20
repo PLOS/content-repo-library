@@ -8,7 +8,6 @@ import org.plos.crepo.service.config.CRepoConfigService;
 import org.plos.crepo.service.objects.CRepoObjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +17,6 @@ import java.util.Map;
 /**
  * Facade used as an entry point to all the content repo services.
  */
-@Service
 public class ContentRepoServiceImpl implements CRepoObjectService, CRepoConfigService, CRepoCollectionService, CRepoBucketService {
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoServiceImpl.class);

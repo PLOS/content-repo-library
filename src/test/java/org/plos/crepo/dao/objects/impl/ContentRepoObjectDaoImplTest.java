@@ -10,15 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.plos.crepo.util.ObjectUrlGenerator;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -26,12 +26,10 @@ import java.io.IOException;
 import java.sql.Timestamp;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(HttpResponseUtil.class)
+@PrepareForTest({HttpResponseUtil.class, ObjectUrlGenerator.class})
 public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
 
   private static final String BUCKET_NAME = "bucket1";
@@ -46,29 +44,28 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private static final String CONTENT_TYPE = "text/plain";
 
   @Mock
-  private ObjectUrlGenerator objectUrlGenerator;
+  private ContentRepoAccessConfig repoAccessConfig;
 
-  @InjectMocks
   private ContentRepoObjectDaoImpl contentRepoObjectDaoImpl;
 
   @Before
   public void setUp(){
-    contentRepoObjectDaoImpl = new ContentRepoObjectDaoImpl();
-    initMocks(this);
-    Whitebox.setInternalState(contentRepoObjectDaoImpl, "repoServer", REPO_SERVER);
+    contentRepoObjectDaoImpl = new ContentRepoObjectDaoImpl(repoAccessConfig);
+    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
+    PowerMockito.mockStatic(ObjectUrlGenerator.class);
   }
 
   @Test
   public void getLatestObjectTest() throws IOException {
 
-    when(objectUrlGenerator.getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getLatestRepoObj(BUCKET_NAME, OBJECT_KEY);
 
-    verify(objectUrlGenerator).getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -80,9 +77,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getLatestObjectThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -93,22 +90,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
-    verify(objectUrlGenerator).getLatestObjectUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectUsingVersionCksTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjUsingVersionCks(BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
 
-    verify(objectUrlGenerator).getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -120,9 +117,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectUsingVersionCksThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -137,22 +134,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
 
     }
 
-    verify(objectUrlGenerator).getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectUsingVersionNumTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjUsingVersionNum(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
 
-    verify(objectUrlGenerator).getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -164,9 +161,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectUsingVersionNumThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -177,22 +174,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
-    verify(objectUrlGenerator).getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getLatestObjectMetaTest() throws IOException {
 
-    when(objectUrlGenerator.getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjMetaLatestVersion(BUCKET_NAME, OBJECT_KEY);
 
-    verify(objectUrlGenerator).getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -204,9 +201,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getLatestObjectMetaThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -217,22 +214,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verify(objectUrlGenerator).getLatestObjectMetaUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectMetaUsingVersionCksTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
 
-    verify(objectUrlGenerator).getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -244,9 +241,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectMetaUsingVersionCksThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -257,22 +254,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verify(objectUrlGenerator).getObjectMetaUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectMetaUsingVersionNumTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
 
-    verify(objectUrlGenerator).getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -284,9 +281,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectMetaUsingVersionNumThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -297,22 +294,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verify(objectUrlGenerator).getObjectMetaUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectMetaUsingTagTest() throws IOException {
 
-    when(objectUrlGenerator.getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjMetaUsingTag(BUCKET_NAME, OBJECT_KEY, TAG);
 
-    verify(objectUrlGenerator).getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -324,9 +321,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectMetaUsingTagThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -337,22 +334,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verify(objectUrlGenerator).getGetObjMetaUsingTagUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, TAG);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void getObjectVersionsMetaTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.getRepoObjVersionsMeta(BUCKET_NAME, OBJECT_KEY);
 
-    verify(objectUrlGenerator).getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -364,9 +361,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void getObjectVersionsMetaThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -377,22 +374,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectVersions);
     }
 
-    verify(objectUrlGenerator).getObjectVersionsUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void deleteObjectUsingVersionCksTest() throws IOException {
 
-    when(objectUrlGenerator.getDeleteObjectVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.deleteRepoObjUsingVersionCks(BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
 
-    verify(objectUrlGenerator).getDeleteObjectVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -402,9 +399,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void deleteObjectUsingVersionCksThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getDeleteObjectVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -415,22 +412,22 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
-    verify(objectUrlGenerator).getDeleteObjectVersionCksUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_CHECKSUM);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
   @Test
   public void deleteObjectUsingVersionNumTest() throws IOException {
 
-    when(objectUrlGenerator.getDeleteObjectVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
-    mockCommonCalls(HttpStatus.SC_OK);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
     HttpResponse response = contentRepoObjectDaoImpl.deleteRepoObjUsingVersionNumber(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
 
-    verify(objectUrlGenerator).getDeleteObjectVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
+    PowerMockito.verifyStatic();
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -440,9 +437,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void deleteObjectUsingVersionNumThrowsExcTest() throws IOException {
 
-    when(objectUrlGenerator.getDeleteObjectVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getObjectUsingVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
@@ -453,8 +450,8 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
-    verify(objectUrlGenerator).getDeleteObjectVersionNumUrl(REPO_SERVER, BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
-    verifyCommonCalls(httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 
@@ -479,9 +476,9 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   }
 
   private void postObjectsTest(String create) throws IOException {
-    when(objectUrlGenerator.getCreateObjectUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getCreateObjectUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
-    mockCommonCalls(HttpStatus.SC_CREATED);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_CREATED);
 
     RepoObject repoObject = mock(RepoObject.class);
     mockRepoObjectCalls(repoObject);
@@ -494,21 +491,21 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     }
 
-    verify(objectUrlGenerator).getCreateObjectUrl(REPO_SERVER);
     verifyRepoObjectCalls(repoObject);
-    verifyCommonCalls(httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
     HttpPost httpPost = httpPostArgument.getValue();
     verifyHttpPost(httpPost);
+    PowerMockito.verifyStatic();
 
   }
 
   public void postObjectsWithExc(String create, ErrorType errorType) throws IOException {
-    when(objectUrlGenerator.getCreateObjectUrl(REPO_SERVER)).thenReturn(SOME_URL);
+    when(ObjectUrlGenerator.getCreateObjectUrl(REPO_SERVER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
-    mockCommonCalls(HttpStatus.SC_BAD_REQUEST);
+    mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
     RepoObject repoObject = mock(RepoObject.class);
     mockRepoObjectCalls(repoObject);
@@ -526,8 +523,8 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     }
 
     verifyRepoObjectCalls(repoObject);
-    verify(objectUrlGenerator).getCreateObjectUrl(REPO_SERVER);
-    verifyCommonCalls(httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    PowerMockito.verifyStatic();
 
   }
 

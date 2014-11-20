@@ -14,12 +14,10 @@ import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.BucketUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
 public class ContentRepoBucketDaoImpl extends ContentRepoBaseDao implements ContentRepoBucketsDao {
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoBucketDaoImpl.class);

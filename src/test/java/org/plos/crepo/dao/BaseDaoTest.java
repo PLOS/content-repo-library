@@ -9,6 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.HttpResponseUtil;
@@ -23,7 +24,9 @@ import static org.mockito.Mockito.*;
 
 public class BaseDaoTest {
 
+  protected static final String SOME_URL = "http://someUrl";
   protected static final String REPO_SERVER = "http://testServer";
+  protected static final String BUCKET_NAME = "bucket1";
 
   @Mock
   protected CloseableHttpClient httpClient;
@@ -35,7 +38,6 @@ public class BaseDaoTest {
   protected StatusLine statusLine;
 
   private static final String ERROR_MESSAGE = "bad request test";
-  protected static final String SOME_URL = "http://someUrl";
   protected static final String  EXCEPTION_EXPECTED = "A Content Repo Exception was expected. ";
 
   protected void verifyException(ContentRepoException ex, HttpResponse response, ErrorType errorType) {
@@ -49,14 +51,14 @@ public class BaseDaoTest {
     Mockito.when(HttpResponseUtil.getErrorMessage(mockResponse)).thenReturn(ERROR_MESSAGE);
   }
 
-  protected void mockCommonCalls(int status) throws IOException {
-    when(httpClient.execute(isA(HttpRequestBase.class))).thenReturn(mockResponse);
+  protected void mockCommonCalls(ContentRepoAccessConfig accessConfig, int status) throws IOException {
+    when(accessConfig.open(isA(HttpRequestBase.class))).thenReturn(mockResponse);
     when(mockResponse.getStatusLine()).thenReturn(statusLine);
     when(statusLine.getStatusCode()).thenReturn(status);
   }
 
-  protected void verifyCommonCalls(ArgumentCaptor argCaptor, StatusLine statusLine, int getStatusLineCalls, int getStatusCodeCalls) throws IOException {
-    verify(httpClient).execute((HttpUriRequest) argCaptor.capture());
+  protected void verifyCommonCalls(ContentRepoAccessConfig accessConfig, ArgumentCaptor argCaptor, StatusLine statusLine, int getStatusLineCalls, int getStatusCodeCalls) throws IOException {
+    verify(accessConfig).open((HttpUriRequest) argCaptor.capture());
     verify(mockResponse, times(getStatusLineCalls)).getStatusLine();
     verify(statusLine, times(getStatusCodeCalls)).getStatusCode();
     HttpRequestBase httpRequest = (HttpRequestBase) argCaptor.getValue();

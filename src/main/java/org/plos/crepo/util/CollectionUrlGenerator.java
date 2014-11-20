@@ -2,61 +2,49 @@ package org.plos.crepo.util;
 
 import java.util.Map;
 
-import static org.plos.crepo.util.BaseUrlGenerator.getBucketBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.getContentInBucketMap;
-import static org.plos.crepo.util.BaseUrlGenerator.getUrlBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.replaceUrl;
+import static org.plos.crepo.util.BaseUrlGenerator.*;
 
 /**
  * Generates the content repo urls for collections services.
  */
 public class CollectionUrlGenerator {
 
-  private static final String getCollUsingVersionNumUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&version=${versionNumber}";
-  private static final String getCollUsingTagUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&tag=${tag}";
-  private static final String getCollVersionCksUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&versionChecksum=${versionChecksum}";
-  private static final String getCollVersionsUrl = "${repoServer}/collections/versions/${bucketName}?key=${collectionKey}";
-  private static final String getCollectionsUsingTagUrl = "${crepo.url.getCollectionsUrl}&tag=${tag}";
-  private static final String getCollectionsUrl = "${repoServer}/collections?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
-  private static final String deleteCollUsingVersionCksUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&versionChecksum=${versionChecksum}";
-  private static final String deleteCollUsingVersionNumUrl = "${repoServer}/collections/${bucketName}?key=${collectionKey}&version=${versionNumber}";
-  private static final String createCollUrl = "${repoServer}/collections";
+  private static final String CREATE_COLLECTION_URL = "${repoServer}/collections";
+  private static final String COLLECTION_URL = "${repoServer}/collections/${bucketName}?key=${collectionKey}";
+  private static final String COLLECTION_USING_VERSION_NUM_URL = COLLECTION_URL + "&version=${versionNumber}";
+  private static final String COLLECTION_USING_VERSION_CKS_URL = COLLECTION_URL + "&versionChecksum=${versionChecksum}";
+  private static final String COLLECTION_USING_TAG_URL = COLLECTION_URL +  "&tag=${tag}";
+  private static final String COLLECTION_VERSIONS_URL = "${repoServer}/collections/versions/${bucketName}?key=${collectionKey}";
+  private static final String COLLECTIONS_URL = "${repoServer}/collections?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
+  private static final String COLLECTIONS_USING_TAG_URL = COLLECTIONS_URL + "&tag=${tag}";
 
-
-  public static String getGetCollUsingVersionNumUrl(String repoServer, String bucketName, String collKey, int versionNumber) {
-    return replaceUrl(getCollUsingVersionNumUrl, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));
+  public static String getCollectionVersionNumUrl(String repoServer, String bucketName, String collKey, int versionNumber) {
+    return replaceUrl(COLLECTION_USING_VERSION_NUM_URL, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));
   }
 
-  public static String getGetCollUsingTagUrl(String repoServer, String bucketName, String collKey, String tag) {
-    return replaceUrl(getCollUsingTagUrl, getCollectionMapWithTag(repoServer, bucketName, collKey, tag));
+  public static String getCollectionTagUrl(String repoServer, String bucketName, String collKey, String tag) {
+    return replaceUrl(COLLECTION_USING_TAG_URL, getCollectionMapWithTag(repoServer, bucketName, collKey, tag));
   }
 
-  public static String getGetCollVersionCksUrl(String repoServer, String bucketName, String collKey, String versionChecksum) {
-    return replaceUrl(getCollVersionCksUrl, getCollectionMapWithVersionCks(repoServer, bucketName, collKey, versionChecksum));
+  public static String getCollectionVersionCksUrl(String repoServer, String bucketName, String collKey, String versionChecksum) {
+    return replaceUrl(COLLECTION_USING_VERSION_CKS_URL, getCollectionMapWithVersionCks(repoServer, bucketName, collKey, versionChecksum));
   }
 
-  public static String getGetCollVersionsUrl(String repoServer, String bucketName, String collKey) {
-    return replaceUrl(getCollVersionsUrl, getCollectionBasicMap(repoServer, bucketName, collKey));
+  public static String getCollectionVersionsUrl(String repoServer, String bucketName, String collKey) {
+    return replaceUrl(COLLECTION_VERSIONS_URL, getCollectionBasicMap(repoServer, bucketName, collKey));
   }
 
-  public static String getDeleteCollUsingVersionCksUrl(String repoServer, String bucketName, String collKey, String versionChecksum) {
-    return replaceUrl(deleteCollUsingVersionCksUrl, getCollectionMapWithVersionCks(repoServer, bucketName, collKey, versionChecksum));
-  }
 
-  public static String getDeleteCollUsingVersionNumUrl(String repoServer, String bucketName, String collKey, int versionNumber) {
-    return replaceUrl(deleteCollUsingVersionNumUrl, getCollectionMapWithVersionNum(repoServer, bucketName, collKey, versionNumber));
-  }
-
-  public static String getGetCollectionsUsingTagUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
-    return replaceUrl(getCollectionsUsingTagUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
+  public static String getCollectionsUsingTagUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
+    return replaceUrl(COLLECTIONS_USING_TAG_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
   }
 
   public static String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDelete) {
-    return replaceUrl(getCollectionsUrl, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDelete));
+    return replaceUrl(COLLECTIONS_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDelete));
   }
 
   public static String getCreateCollUrl(String repoServer) {
-    return replaceUrl(createCollUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(CREATE_COLLECTION_URL, getUrlBasicMap(repoServer));
   }
 
   private static Map<String, String> getCollectionBasicMap(String repoServer, String bucketName, String collKey) {

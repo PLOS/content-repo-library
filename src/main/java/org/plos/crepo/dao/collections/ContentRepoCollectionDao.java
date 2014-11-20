@@ -1,7 +1,6 @@
 package org.plos.crepo.dao.collections;
 
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.plos.crepo.model.RepoCollection;
 

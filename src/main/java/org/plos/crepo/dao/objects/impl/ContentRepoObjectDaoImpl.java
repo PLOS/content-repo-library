@@ -16,9 +16,7 @@ import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.util.ObjectUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements ContentRepoObjectDao {
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoObjectDaoImpl.class);
@@ -83,13 +81,13 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public CloseableHttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getDeleteObjectVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getObjectUsingVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
     return executeRequest(request, ErrorType.ErrorDeletingObject);
   }
 
   @Override
   public CloseableHttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber) {
-    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getDeleteObjectVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
+    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getObjectUsingVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
     return executeRequest(request, ErrorType.ErrorDeletingObject);
   }
 

@@ -2,19 +2,20 @@ package org.plos.crepo.integration;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.http.HttpResponse;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.plos.crepo.Application;
+import org.plos.crepo.config.BasicContentRepoAccessConfig;
+import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
+import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoCollectionObject;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.service.contentRepo.impl.ContentRepoServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.plos.crepo.service.contentRepo.impl.factory.ContentRepoServiceFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -23,8 +24,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
 public class ContentRepoTest {
 
   private static final String EXCEPTION_EXPECTED = "An exception was expected. ";
@@ -47,11 +46,36 @@ public class ContentRepoTest {
   private static final String collectionKey3 = "collectionKey3";
 
   private static final String TAG = "TEST_TAG";
+  private static final String BUCKET_NAME = "TEST_BUCKET";
+  private static final String REPO_SERVER_URL = "http://localhost:8080";
 
   private Timestamp creationDateTime;
 
-  @Autowired
-  private ContentRepoServiceImpl contentRepoService;
+  private static ContentRepoServiceImpl contentRepoService;
+
+  private ContentRepoBucketsDao contentRepoDao;
+
+  @BeforeClass
+  public static void initialSetUp() {
+    BasicContentRepoAccessConfig.Builder configBuilder = BasicContentRepoAccessConfig.builder();
+    configBuilder.setRepoServer(REPO_SERVER_URL);
+    configBuilder.setBucketName(BUCKET_NAME);
+
+    ContentRepoServiceFactory factory = new ContentRepoServiceFactory();
+    BasicContentRepoAccessConfig config = configBuilder.build();
+    contentRepoService = factory.createContentRepoService(config);
+
+    ContentRepoBucketsDao contentRepoDao = new ContentRepoBucketDaoImpl(config);
+
+    HttpResponse response = null;
+    try {
+      response = contentRepoDao.getBucket(BUCKET_NAME);
+    } catch(ContentRepoException ce){
+      // if it does not exist, create it
+      contentRepoDao.createBucket(BUCKET_NAME);
+    }
+
+  }
 
   @Before
   public void setUp(){

@@ -1,28 +1,26 @@
 package org.plos.crepo.util;
 
-import static org.plos.crepo.util.BaseUrlGenerator.getBucketBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.getUrlBasicMap;
-import static org.plos.crepo.util.BaseUrlGenerator.replaceUrl;
+import static org.plos.crepo.util.BaseUrlGenerator.*;
 
 /**
  * Generates the content repo urls for buckets services.
  */
 public class BucketUrlGenerator {
 
-  private static final String createBucket = "${repoServer}/buckets";
-  private static final String getBucketsUrl = "${repoServer}/buckets";
-  private static final String getBucketUrl = "${repoServer}/buckets/${bucketName}";
+  private static final String CREATE_BUCKET = "${repoServer}/buckets";
+  private static final String BUCKETS_URL = "${repoServer}/buckets";
+  private static final String BUCKET_URL = "${repoServer}/buckets/${bucketName}";
 
   public static String getCreateBucketUrl(String repoServer) {
-    return replaceUrl(createBucket, getUrlBasicMap(repoServer));
+    return replaceUrl(CREATE_BUCKET, getUrlBasicMap(repoServer));
   }
 
   public static String getBucketsUrl(String repoServer) {
-    return replaceUrl(getBucketsUrl, getUrlBasicMap(repoServer));
+    return replaceUrl(BUCKETS_URL, getUrlBasicMap(repoServer));
   }
 
   public static String getBucketUrl(String repoServer, String key) {
-    return replaceUrl(getBucketUrl, getBucketBasicMap(repoServer, key));
+    return replaceUrl(BUCKET_URL, getBucketBasicMap(repoServer, key));
   }
 
 }

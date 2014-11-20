@@ -1,6 +1,5 @@
 package org.plos.crepo.dao.config.impl;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.plos.crepo.config.ContentRepoAccessConfig;
@@ -10,9 +9,7 @@ import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.util.ConfigUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class ContentRepoConfigDaoImpl extends ContentRepoBaseDao implements ContentRepoConfigDao {
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoConfigDaoImpl.class);

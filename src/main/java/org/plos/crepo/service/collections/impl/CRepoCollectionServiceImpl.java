@@ -10,18 +10,17 @@ import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.service.BaseCrepoService;
 import org.plos.crepo.service.collections.CRepoCollectionService;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class CRepoCollectionServiceImpl implements CRepoCollectionService {
+public class CRepoCollectionServiceImpl extends BaseCrepoService implements CRepoCollectionService {
 
   private static final Logger log = LoggerFactory.getLogger(CRepoCollectionServiceImpl.class);
 
@@ -42,10 +41,7 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when creating a collection. RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
   }
 
@@ -56,10 +52,7 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when creating a collection. RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
 
   }
@@ -71,11 +64,13 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
     try (CloseableHttpResponse response = contentRepoCollectionDao.deleteCollectionUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)){
       return true;
     } catch (IOException e) {
-      log.error("Error handling the response when deleting a collection using the version checksum. Key: " + key + ", versionChecksum: "
-          + versionChecksum + " RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when deleting a collection using the version checksum. Key: ")
+          .append(key)
+          .append(", versionChecksum: ")
+          .append(versionChecksum)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
 
   }
@@ -86,11 +81,13 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
     try (CloseableHttpResponse response = contentRepoCollectionDao.deleteCollectionUsingVersionNumb(accessConfig.getBucketName(), key, versionNumber)){
       return true;
     } catch (IOException e) {
-      log.error("Error handling the response when deleting a collection using the version number. Key: " + key + ", versionNumber: "
-          + versionNumber + " RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when deleting a collection using the version number. Key: ")
+          .append(key)
+          .append(", versionNumber: ")
+          .append(versionNumber)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
   }
 
@@ -102,11 +99,13 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when getting a collection using the version checksum. Key: " + key
-          + ", versionChecksum: " + versionChecksum + " RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when getting a collection using the version checksum. Key: ")
+          .append(key)
+          .append(", versionChecksum: ")
+          .append(versionChecksum)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
   }
 
@@ -117,11 +116,13 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when getting a collection using the version number. Key: " + key + ", versionNumber: "
-          + versionNumber + " RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when getting a collection using the version number. Key: ")
+          .append(key)
+          .append(", versionNumber: ")
+          .append(versionNumber)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
   }
 
@@ -133,10 +134,13 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when getting a collection using a tag. Key: "+ key + ", tag: " + tag + " RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when getting a collection using the version tag. Key: ")
+          .append(key)
+          .append(", tag: ")
+          .append(tag)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
   }
 
@@ -147,10 +151,11 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when getting the versions of a collection. Key: " + key + "RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      StringBuilder logMessage = new StringBuilder()
+          .append("Error handling the response when getting the versions of a collection. Key: ")
+          .append(key)
+          .append(" RepoMessage: ");
+      throw serviceServerException(e, logMessage.toString());
     }
   }
 
@@ -160,10 +165,7 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<List<Map<String, Object>>>() {
       }.getType());
     } catch (IOException e) {
-      log.error("Error handling the response when getting all the collections. RepoMessage: ", e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ServerError)
-          .baseException(e)
-          .build();
+      throw serviceServerException(e, "Error handling the response when getting all the collections. RepoMessage: ");
     }
 
   }
@@ -196,4 +198,8 @@ public class CRepoCollectionServiceImpl implements CRepoCollectionService {
     }
   }
 
+  @Override
+  protected Logger getLog() {
+    return log;
+  }
 }
