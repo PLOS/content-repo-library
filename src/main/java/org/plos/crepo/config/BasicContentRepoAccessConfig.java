@@ -10,6 +10,19 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import java.io.IOException;
 
+/**
+ * A basic configuration object. Stores constant string values for the repo server URL and bucket name. Maintains a
+ * {@link PoolingHttpClientConnectionManager} instance with configurable values for {@code setMaxTotal} and {@code
+ * setDefaultMaxPerRoute}.
+ * <p/>
+ * Note that every instance of this class constructs its own {@link PoolingHttpClientConnectionManager} object.
+ * Generally, only one instance of {@code BasicContentRepoAccessConfig} should be configured per application context, in
+ * order to avoid having redundant connection managers, which could cause performance problems.
+ * <p/>
+ * If your application context already has a separate {@link HttpClientConnectionManager} object, it is better not to
+ * use this class. Instead, implement your own {@link ContentRepoAccessConfig} object whose {@link
+ * ContentRepoAccessConfig#open} method uses your existing connection manager to open a response.
+ */
 public class BasicContentRepoAccessConfig implements ContentRepoAccessConfig {
 
   private final String bucketName;
