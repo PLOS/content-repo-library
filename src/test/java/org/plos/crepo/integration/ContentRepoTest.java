@@ -96,7 +96,7 @@ public class ContentRepoTest {
     return r.nextInt(High-Low) + Low;
   }
 
-  @Test
+  /*@Test*/
   public void objectErrorTest(){
 
     try{
@@ -269,7 +269,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void collectionErrorTest(){
 
     try{
@@ -349,7 +349,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void bucketErrorTest(){
 
     try{
@@ -382,7 +382,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void creationAndMetadataTest() {
 
     File file = null;
@@ -469,7 +469,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void autoCreationObjectTest() {
 
     File file = null;
@@ -543,7 +543,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void hasXProxyAndRedirectUrlTest(){
 
     assertFalse(contentRepoService.hasXReproxy());
@@ -608,7 +608,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void creationAndContentTest() throws IOException {
     File file = null;
     try {
@@ -683,7 +683,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void collectionsTest(){
 
     byte[] content1 = testData1.getBytes();
@@ -777,7 +777,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void repoConfigTest(){
 
     Map<String, Object> repoConfig = contentRepoService.getRepoConfig();
@@ -794,7 +794,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void collectionsTagTest(){
 
     byte[] content1 = testData1.getBytes();
@@ -875,7 +875,7 @@ public class ContentRepoTest {
 
   }
 
-  @Test
+  /*@Test*/
   public void repoObjectsTagTest(){
 
     byte[] content1 = testData1.getBytes();
