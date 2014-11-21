@@ -105,6 +105,13 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
     return executeRequest(request, ErrorType.ErrorVersioningObject);
   }
 
+  @Override
+  public CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType){
+    HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
+    request.setEntity(getObjectEntity(bucketName, repoObject, CreationMethod.AUTO, contentType));
+    return executeRequest(request, ErrorType.ErrorAutoCreatingObject);
+  }
+
   private HttpEntity getObjectEntity(String bucketName, RepoObject repoObject, CreationMethod creationType, String contentType) {
     MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
     multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);

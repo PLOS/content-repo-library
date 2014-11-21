@@ -336,7 +336,16 @@ public class CRepoObjectServiceImpl extends BaseCrepoService implements CRepoObj
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when versioning an object. RepoMessage: ");
     }
+  }
 
+  @Override
+  public Map<String, Object> autoCreateRepoObject(RepoObject repoObject) {
+    RepoObjectValidator.validate(repoObject);
+    try ( CloseableHttpResponse response = contentRepoObjectDao.autoCreateRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))){
+      return gson.fromJson(HttpResponseUtil.getResponseAsString(response), new TypeToken<Map<String, Object>>() {}.getType());
+    } catch (IOException e) {
+      throw serviceServerException(e, "Error handling the response when trying to auto create an object. RepoMessage: ");
+    }
   }
 
   @Override

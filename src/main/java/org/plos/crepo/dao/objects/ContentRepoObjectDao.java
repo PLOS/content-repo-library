@@ -30,6 +30,8 @@ public interface ContentRepoObjectDao {
 
   CloseableHttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType);
 
+  CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType);
+
   CloseableHttpResponse getRedirectURL(String bucketName, String key);
 
   CloseableHttpResponse getObjects(String bucketName, int offset, int limit, boolean includeDeleted);

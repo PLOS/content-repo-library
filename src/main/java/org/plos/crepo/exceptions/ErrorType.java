@@ -17,7 +17,7 @@ public enum ErrorType {
   ErrorAccessingFile(100, "Error accessing file"),
   ErrorCreatingObject(101, "Error creating new object"),
   ErrorVersioningObject(102, "Error versioning new object"),
-  ErrorFetchingObject(103, "Error fetching object from content repo"),
+  ErrorAutoCreatingObject(103, "Error when trying to auto create an object"),
   ErrorFetchingObjectMeta(104, "Error fetching object meta data from content repo"),
   ErrorFetchingObjectVersions(105, "Error fetching object versions from content repo"),
   ErrorCreatingBucket(106, "Error creating bucket on server"),
@@ -25,6 +25,7 @@ public enum ErrorType {
   EmptyContent(108, "Content is empty. A File object or a byte[] must be specified. "),
   ErrorFetchingReProxyUrl(109, "Problem fetching reproxy URLs"),
   ErrorDeletingObject(110,"Error deleting object"),
+  ErrorFetchingObject(111, "Error fetching object from content repo"),
 
 
   ErrorFetchingBucketMeta(200, "Error fetching buckets meta"),

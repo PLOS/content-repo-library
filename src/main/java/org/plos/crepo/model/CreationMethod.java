@@ -3,7 +3,9 @@ package org.plos.crepo.model;
 public enum CreationMethod {
 
   NEW("new"),
-  VERSION("version");
+  VERSION("version"),
+  AUTO("auto"),
+  ;
 
   private String value;
 

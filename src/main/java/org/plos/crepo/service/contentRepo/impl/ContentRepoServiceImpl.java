@@ -143,6 +143,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
+  public Map<String, Object> autoCreateRepoObject(RepoObject repoObject) {
+    return cRepoObjectService.autoCreateRepoObject(repoObject);
+  }
+
+  @Override
   public List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
     return cRepoObjectService.getRepoObjects(offset, limit, includeDeleted, tag);
   }
