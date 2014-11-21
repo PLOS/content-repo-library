@@ -184,6 +184,15 @@ public interface CRepoObjectService {
   Map<String, Object> versionRepoObject(RepoObject repoObject);
 
   /**
+   * Create/version a repo object using <code>repoObject</code> depending if the object
+   * already exists or not
+   * @param repoObject a RepoObject containing the meta data & content of the new
+   * repo object
+   * @return a map with the repo object metadata
+   */
+  Map<String, Object> autoCreateRepoObject(RepoObject repoObject);
+
+  /**
    * Returns all the object in the configured bucket. It uses the offset and limit to
    * paginate the response.
    * @param offset an int value to indicate the page number of the pagination

@@ -466,6 +466,11 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   }
 
   @Test
+  public void autoCreateObjectTest() throws IOException {
+    postObjectsTest("AUTO");
+  }
+
+  @Test
   public void createObjectThrownExcTest() throws IOException {
     postObjectsWithExc("NEW", ErrorType.ErrorCreatingObject);
   }
@@ -473,6 +478,11 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Test
   public void versionObjectThrownExcTest() throws IOException {
     postObjectsWithExc("VERSION", ErrorType.ErrorVersioningObject);
+  }
+
+  @Test
+  public void autoCreateObjectThrownExcTest() throws IOException {
+    postObjectsWithExc("AUTO", ErrorType.ErrorAutoCreatingObject);
   }
 
   private void postObjectsTest(String create) throws IOException {
@@ -487,8 +497,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
 
     if ("NEW".equals(create)){
       response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    } else{
+    } else if ("VERSION".equals(create)) {
       response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    } else{
+      response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     }
 
     verifyRepoObjectCalls(repoObject);
@@ -515,8 +527,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     try{
       if ("NEW".equals(create)){
         response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-      } else{
+      } else if ("VERSION".equals(create)){
         response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+      } else {
+        response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
       }
     } catch(ContentRepoException ex){
       verifyException(ex, response, errorType);
