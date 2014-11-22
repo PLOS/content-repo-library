@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.plos</groupId>
     <artifactId>content-repo-library</artifactId>
-    <version>1.2.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>Content Repo Client</name>
 
     <!-- The packaging format, use war for web projects -->
@@ -129,6 +129,19 @@
                 </configuration>
             </plugin>
 
+          <plugin>
+            <!-- For pushing to Maven 2 repo from a Maven 3 client -->
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.7</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>2.5</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
         </plugins>
 
     </build>
@@ -168,5 +181,22 @@
         </repository>
 
     </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>ambra</id>
+      <url>scp://maven.ambraproject.org/home/maven2/repository/release</url>
+    </repository>
+    <snapshotRepository>
+      <id>ambra.snapshot</id>
+      <url>scp://maven.ambraproject.org/home/maven2/repository/snapshot</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+    <site>
+      <id>ambra.javadoc</id>
+      <!-- This is where the site-deploy phase will put the documentation -->
+      <url>scp://maven.ambraproject.org/home/maven2/javadoc</url>
+    </site>
+  </distributionManagement>
 
 </project>
