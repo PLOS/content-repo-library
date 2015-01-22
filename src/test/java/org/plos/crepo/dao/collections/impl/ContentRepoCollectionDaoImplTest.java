@@ -1,5 +1,6 @@
 package org.plos.crepo.dao.collections.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.CharEncoding;
@@ -27,11 +28,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, CollectionUrlGenerator.class})
@@ -443,7 +447,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
   private void mockRepoCollectionCalls(RepoCollection repoCollection) {
     when(repoCollection.getKey()).thenReturn(COLLECTION_KEY);
-    when(repoCollection.getObjects()).thenReturn(new ArrayList<RepoCollectionObject>());
+    when(repoCollection.getObjects()).thenReturn(ImmutableList.<RepoCollectionObject>of());
     when(repoCollection.getTimestamp()).thenReturn(STRING_TIMESTAMP);
     when(repoCollection.getTag()).thenReturn(TAG);
     when(repoCollection.getCreationDateTime()).thenReturn(STRING_TIMESTAMP);

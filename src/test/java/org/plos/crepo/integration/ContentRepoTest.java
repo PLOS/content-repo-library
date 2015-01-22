@@ -271,28 +271,28 @@ public class ContentRepoTest {
   public void collectionErrorTest(){
 
     try{
-      contentRepoService.createCollection(new RepoCollection("", null));
+      contentRepoService.createCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
     }
 
     try{
-      contentRepoService.createCollection(new RepoCollection("dsakjds", null));
+      contentRepoService.createCollection(RepoCollection.create("dsakjds", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingCollection);
     }
 
     try{
-      contentRepoService.versionCollection(new RepoCollection("", null));
+      contentRepoService.versionCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
     }
 
     try{
-      contentRepoService.versionCollection(new RepoCollection("dsakjds", null));
+      contentRepoService.versionCollection(RepoCollection.create("dsakjds", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningCollection);
@@ -715,8 +715,11 @@ public class ContentRepoTest {
     RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey5, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey1, repoObjs);
-    repoCollMeta1.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
+    RepoCollection repoCollMeta1 = RepoCollection.builder()
+        .setKey(collectionKey1)
+        .setObjects(repoObjs)
+        .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
+        .build();
     Map<String, Object> collection1 = contentRepoService.createCollection(repoCollMeta1);
     assertNotNull(collection1);
     String collVersionChecksum1 = (String) collection1.get("versionChecksum");
@@ -826,15 +829,23 @@ public class ContentRepoTest {
     RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey7, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = new RepoCollection(collectionKey2, repoObjs);
-    repoCollMeta1.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
-    repoCollMeta1.setTag(TAG);
+    RepoCollection repoCollMeta1 = RepoCollection.builder()
+        .setKey(collectionKey2)
+        .setObjects(repoObjs)
+        .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
+        .setTag(TAG)
+        .build();
     Map<String, Object> collection1 = contentRepoService.createCollection(repoCollMeta1);
     assertNotNull(collection1);
     String collVersionChecksum1 = (String) collection1.get("versionChecksum");
 
     repoObjs.remove(1);
-    repoCollMeta1.setTag("");
+    repoCollMeta1 = RepoCollection.builder()
+        .setKey(collectionKey2)
+        .setObjects(repoObjs)
+        .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
+        .setTag("")
+        .build();
     Map<String, Object> collection2 = contentRepoService.versionCollection(repoCollMeta1);
     assertNotNull(collection2);
     String collVersionChecksum2 = (String) collection2.get("versionChecksum");
@@ -843,14 +854,22 @@ public class ContentRepoTest {
     assertNotNull(collection3);
     assertEquals(collVersionChecksum1, collection3.get("versionChecksum"));
 
-    repoCollMeta1.setTag(TAG);
+    repoCollMeta1 = RepoCollection.builder()
+        .setKey(collectionKey2)
+        .setObjects(repoObjs)
+        .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
+        .setTag(TAG)
+        .build();
     Map<String, Object> collection4 = contentRepoService.versionCollection(repoCollMeta1);
     assertNotNull(collection4);
     String collVersionChecksum4 = (String) collection4.get("versionChecksum");
 
-    RepoCollection repoCollMeta2 = new RepoCollection(collectionKey3, repoObjs);
-    repoCollMeta2.setCreationDateTime(new Timestamp(new Date().getTime()).toString());
-    repoCollMeta2.setTag(TAG);
+    RepoCollection repoCollMeta2 = RepoCollection.builder()
+        .setKey(collectionKey3)
+        .setObjects(repoObjs)
+        .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
+        .setTag(TAG)
+        .build();
     Map<String, Object> collection5 = contentRepoService.createCollection(repoCollMeta2);
     assertNotNull(collection5);
     String collVersionChecksum5 = (String) collection5.get("versionChecksum");
