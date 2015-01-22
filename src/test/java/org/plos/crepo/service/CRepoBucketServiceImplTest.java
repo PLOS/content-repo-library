@@ -1,4 +1,4 @@
-package org.plos.crepo.service.buckets.impl;
+package org.plos.crepo.service;
 
 
 import com.google.gson.Gson;
@@ -13,6 +13,7 @@ import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.service.BaseServiceTest;
+import org.plos.crepo.service.ContentRepoService;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -34,15 +35,18 @@ import static org.mockito.Mockito.*;
 @PrepareForTest({HttpResponseUtil.class, Gson.class})
 public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
-  private CRepoBucketServiceImpl cRepoBucketServiceImpl;
+  private ContentRepoService cRepoBucketServiceImpl;
 
   @Mock
   private ContentRepoBucketsDao contentRepoBucketsDao;
 
   @Before
   public void setUp(){
-    cRepoBucketServiceImpl = new CRepoBucketServiceImpl(contentRepoBucketsDao);
     gson = PowerMockito.mock(Gson.class);
+    cRepoBucketServiceImpl = new TestContentRepoServiceBuilder()
+        .setGson(gson)
+        .setBucketsDao(contentRepoBucketsDao)
+        .build();
     Whitebox.setInternalState(cRepoBucketServiceImpl, "gson", gson);
   }
 

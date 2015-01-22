@@ -1,4 +1,4 @@
-package org.plos.crepo.service.config.impl;
+package org.plos.crepo.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -32,15 +32,18 @@ import static org.mockito.Mockito.*;
 @PrepareForTest({HttpResponseUtil.class, Gson.class})
 public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
-  private CRepoConfigServiceImpl cRepoConfigServiceImpl;
+  private ContentRepoService cRepoConfigServiceImpl;
 
   @Mock
   private ContentRepoConfigDao contentRepoConfigDao;
 
   @Before
   public void setUp(){
-    cRepoConfigServiceImpl = new CRepoConfigServiceImpl(contentRepoConfigDao);
     gson = PowerMockito.mock(Gson.class);
+    cRepoConfigServiceImpl = new TestContentRepoServiceBuilder()
+        .setGson(gson)
+        .setConfigDao(contentRepoConfigDao)
+        .build();
     Whitebox.setInternalState(cRepoConfigServiceImpl, "gson", gson);
   }
 

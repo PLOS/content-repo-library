@@ -14,8 +14,7 @@ import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoCollectionObject;
 import org.plos.crepo.model.RepoObject;
-import org.plos.crepo.service.contentRepo.impl.ContentRepoServiceImpl;
-import org.plos.crepo.service.contentRepo.impl.factory.ContentRepoServiceFactory;
+import org.plos.crepo.service.ContentRepoServiceImpl;
 
 import java.io.*;
 import java.net.URL;
@@ -66,9 +65,8 @@ public class ContentRepoTest {
     configBuilder.setRepoServer(REPO_SERVER_URL);
     configBuilder.setBucketName(BUCKET_NAME);
 
-    ContentRepoServiceFactory factory = new ContentRepoServiceFactory();
     BasicContentRepoAccessConfig config = configBuilder.build();
-    contentRepoService = factory.createContentRepoService(config);
+    contentRepoService = new ContentRepoServiceImpl(config);
 
     ContentRepoBucketsDao contentRepoDao = new ContentRepoBucketDaoImpl(config);
 

@@ -1,4 +1,4 @@
-package org.plos.crepo.service.objects.impl;
+package org.plos.crepo.service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,7 +48,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   private static final String CONTENT_TYPE = "text/plain";
   private String URLS = URL1 + " " + URL2;
 
-  private CRepoObjectServiceImpl cRepoObjectServiceImpl;
+  private ContentRepoService cRepoObjectServiceImpl;
 
   @Mock
   private ContentRepoObjectDao contentRepoObjectDao;
@@ -61,8 +61,11 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Before
   public void setUp(){
-    cRepoObjectServiceImpl = new CRepoObjectServiceImpl(repoAccessConfig, contentRepoObjectDao);
     gson = PowerMockito.mock(Gson.class);
+    cRepoObjectServiceImpl = new TestContentRepoServiceBuilder()
+        .setAccessConfig(repoAccessConfig)
+        .setObjectDao(contentRepoObjectDao)
+        .build();
     Whitebox.setInternalState(cRepoObjectServiceImpl, "gson", gson);
     when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
 
