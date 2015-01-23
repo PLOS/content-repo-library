@@ -686,9 +686,9 @@ public class ContentRepoTest {
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
     List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
-    RepoObjectVersion rpa1 = new RepoObjectVersion(repoObjKey4, fileVersionChecksum1);
+    RepoObjectVersion rpa1 = RepoObjectVersion.createFromHex(repoObjKey4, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoObjectVersion rpa2 = new RepoObjectVersion(repoObjKey5, fileVersionChecksum2);
+    RepoObjectVersion rpa2 = RepoObjectVersion.createFromHex(repoObjKey5, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()
@@ -800,9 +800,9 @@ public class ContentRepoTest {
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
     List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
-    RepoObjectVersion rpa1 = new RepoObjectVersion(repoObjKey6, fileVersionChecksum1);
+    RepoObjectVersion rpa1 = RepoObjectVersion.createFromHex(repoObjKey6, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoObjectVersion rpa2 = new RepoObjectVersion(repoObjKey7, fileVersionChecksum2);
+    RepoObjectVersion rpa2 = RepoObjectVersion.createFromHex(repoObjKey7, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()
