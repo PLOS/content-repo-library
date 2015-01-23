@@ -14,6 +14,9 @@ import org.plos.crepo.dao.objects.ContentRepoObjectDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.RepoObjectVersion;
+import org.plos.crepo.model.RepoObjectVersionNumber;
+import org.plos.crepo.model.RepoObjectVersionTag;
 import org.plos.crepo.model.validator.RepoObjectValidator;
 import org.plos.crepo.service.BaseServiceTest;
 import org.plos.crepo.util.HttpResponseUtil;
@@ -142,7 +145,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY, VERSION_CHECKSUM);
+    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -172,7 +175,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     List<URL> urls = null;
     try{
-      urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY, VERSION_CHECKSUM);
+      urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -252,7 +255,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingVersionChecksum(KEY, VERSION_CHECKSUM);
+    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -279,7 +282,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> objectResponse = null;
     try{
-      objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingVersionChecksum(KEY, VERSION_CHECKSUM);
+      objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -305,7 +308,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingVersionNum(KEY, VERSION_NUMBER);
+    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -332,7 +335,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> objectResponse = null;
     try{
-      objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingVersionNum(KEY, VERSION_NUMBER);
+      objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -358,7 +361,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingTag(KEY, TAG);
+    Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(new RepoObjectVersionTag(KEY, TAG));
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -385,7 +388,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> objectResponse = null;
     try{
-      objectResponse = cRepoObjectServiceImpl.getRepoObjMetaUsingTag(KEY, TAG);
+      objectResponse = cRepoObjectServiceImpl.getRepoObjMeta(new RepoObjectVersionTag(KEY, TAG));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -565,7 +568,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.deleteRepoObjUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionNum(KEY, VERSION_NUMBER);
+    boolean deleted = cRepoObjectServiceImpl.deleteRepoObj(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     assertTrue(deleted);
@@ -581,7 +584,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     boolean deleted = false;
     try{
-      deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionNum(KEY, VERSION_NUMBER);
+      deleted = cRepoObjectServiceImpl.deleteRepoObj(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -597,7 +600,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionCks(KEY, VERSION_CHECKSUM);
+    boolean deleted = cRepoObjectServiceImpl.deleteRepoObj(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(httpResponse).close();
@@ -614,7 +617,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     boolean deleted = false;
     try{
-      deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionCks(KEY, VERSION_CHECKSUM);
+      deleted = cRepoObjectServiceImpl.deleteRepoObj(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());

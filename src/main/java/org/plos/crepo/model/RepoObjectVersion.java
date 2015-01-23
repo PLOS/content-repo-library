@@ -2,6 +2,9 @@ package org.plos.crepo.model;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.BaseEncoding;
+import org.apache.commons.lang3.StringUtils;
+import org.plos.crepo.exceptions.ContentRepoException;
+import org.plos.crepo.exceptions.ErrorType;
 
 public class RepoObjectVersion {
 
@@ -9,6 +12,7 @@ public class RepoObjectVersion {
   private final byte[] versionChecksum;
 
   private RepoObjectVersion(String key, byte[] versionChecksum) {
+    RepoObject.validateObjectKey(key);
     this.key = Preconditions.checkNotNull(key);
     this.versionChecksum = Preconditions.checkNotNull(versionChecksum);
     validate(this.versionChecksum);
@@ -27,6 +31,7 @@ public class RepoObjectVersion {
    * @throws IllegalArgumentException if {@code versionChecksum} is not valid hexadecimal
    */
   public static RepoObjectVersion createFromHex(String key, String versionChecksum) {
+    validateObjectCks(versionChecksum);
     return new RepoObjectVersion(key, BaseEncoding.base16().decode(versionChecksum));
   }
 
@@ -46,12 +51,19 @@ public class RepoObjectVersion {
     return key;
   }
 
-  public String getHexadecimalVersionChecksum() {
+  public String getHexVersionChecksum() {
     return BaseEncoding.base16().encode(versionChecksum);
   }
 
   public byte[] getVersionChecksum() {
     return versionChecksum.clone(); // prevent alterations by foreign code
+  }
+
+  private static void validateObjectCks(String versionChecksum) {
+    if (StringUtils.isEmpty(versionChecksum)) {
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectCks)
+          .build();
+    }
   }
 
   @Override

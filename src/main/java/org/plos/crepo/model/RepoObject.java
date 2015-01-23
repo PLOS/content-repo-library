@@ -1,5 +1,9 @@
 package org.plos.crepo.model;
 
+import org.apache.commons.lang3.StringUtils;
+import org.plos.crepo.exceptions.ContentRepoException;
+import org.plos.crepo.exceptions.ErrorType;
+
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -24,6 +28,13 @@ public class RepoObject {
     this.timestamp = builder.timestamp;
     this.fileContent = builder.fileContent;
     this.byteContent = builder.byteContent;
+  }
+
+  public static void validateObjectKey(String key) {
+    if (StringUtils.isEmpty(key)) {
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectKey)
+          .build();
+    }
   }
 
   public String getKey() {
