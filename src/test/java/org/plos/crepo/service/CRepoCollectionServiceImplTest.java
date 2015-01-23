@@ -185,7 +185,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     when(contentRepoCollectionDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionNumb(KEY, VERSION_NUMBER);
+    boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionNumb(KEY, VERSION_NUMBER);
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(httpResponse).close();
@@ -199,7 +199,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    Boolean deleted = false;
+    boolean deleted = false;
     try{
       deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionNumb(KEY, VERSION_NUMBER);
     } catch(ContentRepoException exception){
@@ -217,7 +217,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionCks(KEY, VERSION_CHECKSUM);
+    boolean deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionCks(KEY, VERSION_CHECKSUM);
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(httpResponse).close();
@@ -231,7 +231,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest{
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    Boolean deleted = false;
+    boolean deleted = false;
     try{
       deleted = cRepoCollectionServiceImpl.deleteCollectionUsingVersionCks(KEY, VERSION_CHECKSUM);
     } catch(ContentRepoException exception){

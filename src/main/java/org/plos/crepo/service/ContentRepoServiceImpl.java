@@ -73,7 +73,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   // ------------------------ Config ------------------------
 
   @Override
-  public Boolean hasXReproxy() {
+  public boolean hasXReproxy() {
     try (CloseableHttpResponse response = contentRepoConfigDao.hasReProxy()) {
       String resString = HttpResponseUtil.getResponseAsString(response);
       return Boolean.parseBoolean(resString);
@@ -384,7 +384,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
 
   @Override
-  public Boolean deleteLatestRepoObj(String key) {
+  public boolean deleteLatestRepoObj(String key) {
     validateObjectKey(key);
     Map<String, Object> repoObj = this.getRepoObjMetaLatestVersion(key);
     String versionChecksum = (String) repoObj.get("versionChecksum");
@@ -401,7 +401,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum) {
+  public boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
     try (CloseableHttpResponse response = contentRepoObjectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
@@ -419,7 +419,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber) {
+  public boolean deleteRepoObjUsingVersionNum(String key, int versionNumber) {
     validateObjectKey(key);
     try (CloseableHttpResponse response = contentRepoObjectDao.deleteRepoObjUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
       return true;
@@ -552,7 +552,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Boolean deleteCollectionUsingVersionCks(String key, String versionChecksum) {
+  public boolean deleteCollectionUsingVersionCks(String key, String versionChecksum) {
     validateCollectionKey(key);
     validateCollectionCks(versionChecksum);
     try (CloseableHttpResponse response = contentRepoCollectionDao.deleteCollectionUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
@@ -570,7 +570,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Boolean deleteCollectionUsingVersionNumb(String key, int versionNumber) {
+  public boolean deleteCollectionUsingVersionNumb(String key, int versionNumber) {
     validateCollectionKey(key);
     try (CloseableHttpResponse response = contentRepoCollectionDao.deleteCollectionUsingVersionNumb(accessConfig.getBucketName(), key, versionNumber)) {
       return true;

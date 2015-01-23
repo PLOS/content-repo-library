@@ -17,7 +17,7 @@ public interface ContentRepoService {
    *
    * @return - true if the repo can provide redirects for HTTP access to files.
    */
-  public Boolean hasXReproxy();
+  public boolean hasXReproxy();
 
   /**
    * Returns the content repo server configuration
@@ -198,7 +198,7 @@ public interface ContentRepoService {
    * int)} instead.
    */
   @Deprecated
-  Boolean deleteLatestRepoObj(String key);
+  boolean deleteLatestRepoObj(String key);
 
   /**
    * Deletes the specific version of a repo object using the key <code>key</code> & the version checksum
@@ -208,7 +208,7 @@ public interface ContentRepoService {
    * @param versionChecksum a single string representing the version checksum of the repo object
    * @return true if the object was successfully deleted.
    */
-  Boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum);
+  boolean deleteRepoObjUsingVersionCks(String key, String versionChecksum);
 
   /**
    * Deletes the specific version of a repo object using the key <code>key</code> & the version checksum
@@ -218,7 +218,7 @@ public interface ContentRepoService {
    * @param versionNumber an int value representing the version number of the repo object
    * @return true if the object was successfully deleted.
    */
-  Boolean deleteRepoObjUsingVersionNum(String key, int versionNumber);
+  boolean deleteRepoObjUsingVersionNum(String key, int versionNumber);
 
   /**
    * Creates a repo object using <code>repoObject</code>
@@ -282,7 +282,7 @@ public interface ContentRepoService {
    * @param versionChecksum a single string representing the version checksum of the repo collection
    * @return a map with the data of the collection
    */
-  Boolean deleteCollectionUsingVersionCks(String key, String versionChecksum);
+  boolean deleteCollectionUsingVersionCks(String key, String versionChecksum);
 
   /**
    * Deletes a repo collection using the key <code>key</code> and the version number <code>versionNumber</code>
@@ -291,7 +291,7 @@ public interface ContentRepoService {
    * @param versionNumber an int value representing the version number of the repo collection
    * @return true if the collection was successfully deleted
    */
-  Boolean deleteCollectionUsingVersionNumb(String key, int versionNumber);
+  boolean deleteCollectionUsingVersionNumb(String key, int versionNumber);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and version checksum

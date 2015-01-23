@@ -565,7 +565,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.deleteRepoObjUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionNum(KEY, VERSION_NUMBER);
+    boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionNum(KEY, VERSION_NUMBER);
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     assertTrue(deleted);
@@ -579,7 +579,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    Boolean deleted = false;
+    boolean deleted = false;
     try{
       deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionNum(KEY, VERSION_NUMBER);
     } catch(ContentRepoException exception){
@@ -597,7 +597,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionCks(KEY, VERSION_CHECKSUM);
+    boolean deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionCks(KEY, VERSION_CHECKSUM);
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(httpResponse).close();
@@ -612,7 +612,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    Boolean deleted = false;
+    boolean deleted = false;
     try{
       deleted = cRepoObjectServiceImpl.deleteRepoObjUsingVersionCks(KEY, VERSION_CHECKSUM);
     } catch(ContentRepoException exception){

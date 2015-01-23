@@ -60,7 +60,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Boolean hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
+    boolean hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
 
     verify(contentRepoConfigDao).hasReProxy();
     verify(httpResponse).close();
@@ -84,7 +84,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    Boolean hasXReproxy = false;
+    boolean hasXReproxy = false;
     try{
       hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
     } catch(ContentRepoException exception){

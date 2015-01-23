@@ -559,7 +559,7 @@ public class ContentRepoTest {
     assertNotNull(repoObj1);
     String fileVersionChecksum = (String) repoObj1.get("versionChecksum");
 
-    Boolean deleted = contentRepoService.deleteLatestRepoObj(repoObjKey2);
+    boolean deleted = contentRepoService.deleteLatestRepoObj(repoObjKey2);
     assertTrue(deleted);
 
     Map<String, Object> repoObj2 = null;
@@ -674,7 +674,7 @@ public class ContentRepoTest {
     assertEquals(fileContent4,fileContent5);
     assertEquals(fileContent4,fileContent6);
 
-    Boolean deleted = contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum);
+    boolean deleted = contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum);
     assertTrue(deleted);
     deleted = contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum2);
     assertTrue(deleted);
@@ -745,7 +745,7 @@ public class ContentRepoTest {
     assertEquals(collVersionChecksum1, collection3.get("versionChecksum"));
     assertEquals(collection3, collection4);
 
-    Boolean deleted = contentRepoService.deleteCollectionUsingVersionCks(collectionKey1, collVersionChecksum2);
+    boolean deleted = contentRepoService.deleteCollectionUsingVersionCks(collectionKey1, collVersionChecksum2);
     assertTrue(deleted);
 
     Map<String, Object> collection5 = null;
