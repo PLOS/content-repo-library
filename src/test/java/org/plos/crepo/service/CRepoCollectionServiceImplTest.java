@@ -43,6 +43,8 @@ import static org.mockito.Mockito.when;
 public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   private static final String VERSION_CHECKSUM = "EWQW432423FSDF235CFDSW";
+  private static final RepoObjectVersion DUMMY_VERSION = createDummyVersion(KEY, VERSION_CHECKSUM);
+  private static final String VERSION_HEX = DUMMY_VERSION.getHexVersionChecksum();
   private static final String BUCKET_NAME = "bucketName";
   private static final int VERSION_NUMBER = 0;
   private static final String TAG = "tag";
@@ -221,39 +223,39 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void deleteCollectionUsingVersionCksTest() throws IOException {
-    when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
+    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(DUMMY_VERSION);
 
-    verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(httpResponse).close();
     assertTrue(deleted);
   }
 
   @Test
   public void deleteCollectionUsingVersionCksThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
 
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     boolean deleted = false;
     try {
-      deleted = cRepoCollectionServiceImpl.deleteCollection(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
+      deleted = cRepoCollectionServiceImpl.deleteCollection(DUMMY_VERSION);
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
 
-    verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(httpResponse).close();
     assertFalse(deleted);
   }
 
   @Test
   public void getCollectionUsingVersionCksTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String, Object> expectedResponse = mock(HashMap.class);
@@ -262,9 +264,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(DUMMY_VERSION);
 
-    verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse).close();
     PowerMockito.verifyStatic();
@@ -275,7 +277,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingVersionCksThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
     Map<String, Object> expectedResponse = mock(HashMap.class);
@@ -289,13 +291,13 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     Map<String, Object> collectionResponse = null;
 
     try {
-      collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoObjectVersion.createFromHex(KEY, VERSION_CHECKSUM));
+      collectionResponse = cRepoCollectionServiceImpl.getCollection(DUMMY_VERSION);
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
 
-    verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_CHECKSUM);
+    verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse).close();
     PowerMockito.verifyStatic();
