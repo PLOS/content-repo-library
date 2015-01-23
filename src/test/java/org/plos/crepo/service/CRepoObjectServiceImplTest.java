@@ -84,7 +84,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
-    URL[] urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
+    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -93,9 +93,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     PowerMockito.verifyStatic();
 
     assertNotNull(urls);
-    assertEquals(2, urls.length);
-    assertEquals(URL1, urls[0].toString());
-    assertEquals(URL2, urls[1].toString());
+    assertEquals(2, urls.size());
+    assertEquals(URL1, urls.get(0).toString());
+    assertEquals(URL2, urls.get(1).toString());
   }
 
   @Test
@@ -112,7 +112,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    URL[] urls = null;
+    List<URL> urls = null;
     try{
       urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
     } catch(ContentRepoException exception){
@@ -142,7 +142,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
-    URL[] urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY, VERSION_CHECKSUM);
+    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY, VERSION_CHECKSUM);
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_CHECKSUM);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -151,9 +151,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     PowerMockito.verifyStatic();
 
     assertNotNull(urls);
-    assertEquals(2, urls.length);
-    assertEquals(URL1, urls[0].toString());
-    assertEquals(URL2, urls[1].toString());
+    assertEquals(2, urls.size());
+    assertEquals(URL1, urls.get(0).toString());
+    assertEquals(URL2, urls.get(1).toString());
   }
 
   @Test
@@ -170,7 +170,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     IOException expectedException = mock(IOException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
-    URL[] urls = null;
+    List<URL> urls = null;
     try{
       urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY, VERSION_CHECKSUM);
     } catch(ContentRepoException exception){

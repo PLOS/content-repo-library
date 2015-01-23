@@ -1,6 +1,7 @@
 package org.plos.crepo.service;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -155,37 +157,37 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   // ------------------------ Objects ------------------------
 
   @Override
-  public URL[] getRepoObjRedirectURL(String key) {
+  public List<URL> getRepoObjRedirectURL(String key) {
     validateObjectKey(key);
     return getUrlsFromMeta(this.getRepoObjMetaLatestVersion(key));
   }
 
   @Override
-  public URL[] getRepoObjRedirectURL(String key, String versionChecksum) {
+  public List<URL> getRepoObjRedirectURL(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
     return getUrlsFromMeta(this.getRepoObjMetaUsingVersionChecksum(key, versionChecksum));
   }
 
-  private URL[] getUrlsFromMeta(Map<String, Object> repoObjValues) {
+  private List<URL> getUrlsFromMeta(Map<String, Object> repoObjValues) {
     String paths = (String) repoObjValues.get("reproxyURL");
 
     if (StringUtils.isEmpty(paths)) {
-      return new URL[]{};
+      return ImmutableList.of();
     }
 
     return getUrls(paths);
   }
 
-  private URL[] getUrls(String paths) {
+  private List<URL> getUrls(String paths) {
     String[] pathArray = paths.split("\\s");
 
     int pathCount = pathArray.length;
-    URL[] urls = new URL[pathCount];
+    List<URL> urls = new ArrayList<>(pathCount);
 
     for (int i = 0; i < pathCount; i++) {
       try {
-        urls[i] = new URL(pathArray[i]);
+        urls.add(new URL(pathArray[i]));
       } catch (MalformedURLException e) {
         log.error("Error trying to get the urls. paths: " + paths + " + repoMessage:  ", e);
         throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingReProxyUrl)

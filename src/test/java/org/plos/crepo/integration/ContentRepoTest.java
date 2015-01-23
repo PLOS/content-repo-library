@@ -595,11 +595,11 @@ public class ContentRepoTest {
     assertNotNull(repoObj4);
     String fileVersionChecksum4 = (String) repoObj4.get("versionChecksum");
 
-    URL[] url = contentRepoService.getRepoObjRedirectURL(repoObjKey2);
-    assertEquals(0, url.length);
+    List<URL> url = contentRepoService.getRepoObjRedirectURL(repoObjKey2);
+    assertEquals(0, url.size());
 
     url = contentRepoService.getRepoObjRedirectURL(repoObjKey2, fileVersionChecksum3);
-    assertEquals(0, url.length);
+    assertEquals(0, url.size());
 
     contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey2, fileVersionChecksum3);
     contentRepoService.deleteRepoObjUsingVersionCks(repoObjKey2, fileVersionChecksum4);

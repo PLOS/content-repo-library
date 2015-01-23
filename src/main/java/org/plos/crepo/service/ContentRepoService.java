@@ -73,7 +73,7 @@ public interface ContentRepoService {
    * #getRepoObjByteArrayUsingVersionNum(String, int)} instead.
    */
   @Deprecated
-  public URL[] getRepoObjRedirectURL(String key);
+  public List<URL> getRepoObjRedirectURL(String key);
 
   /**
    * Returns a URL array which can be used as a links to the specified repo object content.
@@ -82,7 +82,7 @@ public interface ContentRepoService {
    * @param versionChecksum a single string representing the version checksum of the repo object
    * @return a URL array
    */
-  public URL[] getRepoObjRedirectURL(String key, String versionChecksum);
+  public List<URL> getRepoObjRedirectURL(String key, String versionChecksum);
 
   /**
    * Returns the content of the latest version of an object using the most recent creation date time
