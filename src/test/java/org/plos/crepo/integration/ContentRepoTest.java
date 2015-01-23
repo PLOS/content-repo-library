@@ -6,14 +6,13 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.plos.crepo.config.BasicContentRepoAccessConfig;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoCollectionObject;
+import org.plos.crepo.model.RepoObjectVersion;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.service.ContentRepoServiceImpl;
 
@@ -686,10 +685,10 @@ public class ContentRepoTest {
     assertNotNull(repoObj2);
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoCollectionObject> repoObjs = new ArrayList<RepoCollectionObject>();
-    RepoCollectionObject rpa1 = new RepoCollectionObject(repoObjKey4, fileVersionChecksum1);
+    List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
+    RepoObjectVersion rpa1 = new RepoObjectVersion(repoObjKey4, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey5, fileVersionChecksum2);
+    RepoObjectVersion rpa2 = new RepoObjectVersion(repoObjKey5, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()
@@ -800,10 +799,10 @@ public class ContentRepoTest {
     assertNotNull(repoObj2);
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoCollectionObject> repoObjs = new ArrayList<RepoCollectionObject>();
-    RepoCollectionObject rpa1 = new RepoCollectionObject(repoObjKey6, fileVersionChecksum1);
+    List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
+    RepoObjectVersion rpa1 = new RepoObjectVersion(repoObjKey6, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoCollectionObject rpa2 = new RepoCollectionObject(repoObjKey7, fileVersionChecksum2);
+    RepoObjectVersion rpa2 = new RepoObjectVersion(repoObjKey7, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()

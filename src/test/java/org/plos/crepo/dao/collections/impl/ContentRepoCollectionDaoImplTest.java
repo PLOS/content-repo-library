@@ -20,7 +20,7 @@ import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoCollectionObject;
+import org.plos.crepo.model.RepoObjectVersion;
 import org.plos.crepo.util.CollectionUrlGenerator;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -447,7 +447,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
   private void mockRepoCollectionCalls(RepoCollection repoCollection) {
     when(repoCollection.getKey()).thenReturn(COLLECTION_KEY);
-    when(repoCollection.getObjects()).thenReturn(ImmutableList.<RepoCollectionObject>of());
+    when(repoCollection.getObjects()).thenReturn(ImmutableList.<RepoObjectVersion>of());
     when(repoCollection.getTimestamp()).thenReturn(STRING_TIMESTAMP);
     when(repoCollection.getTag()).thenReturn(TAG);
     when(repoCollection.getCreationDateTime()).thenReturn(STRING_TIMESTAMP);

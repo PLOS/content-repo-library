@@ -1,11 +1,11 @@
 package org.plos.crepo.model;
 
-public class RepoCollectionObject {
+public class RepoObjectVersion {
 
   private final String key; // what the user specifies
   private final String versionChecksum;
 
-  public RepoCollectionObject(String key, String versionChecksum) {
+  public RepoObjectVersion(String key, String versionChecksum) {
     this.key = key;
     this.versionChecksum = versionChecksum;
   }
@@ -23,7 +23,7 @@ public class RepoCollectionObject {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    RepoCollectionObject that = (RepoCollectionObject) o;
+    RepoObjectVersion that = (RepoObjectVersion) o;
 
     if (!key.equals(that.key)) return false;
     if (!versionChecksum.equals(that.versionChecksum)) return false;
