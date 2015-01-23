@@ -1,5 +1,6 @@
 package org.plos.crepo.integration;
 
+import com.google.common.io.ByteStreams;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.http.HttpResponse;
@@ -106,7 +107,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getLatestRepoObjStream("invalidKey");
+      contentRepoService.getLatestRepoObj("invalidKey");
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
@@ -114,7 +115,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getLatestRepoObjByteArray("invalidKey");
+      contentRepoService.getRepoObjUsingVersionCks("invalidKey", "bdjksabdaks");
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
@@ -122,31 +123,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObjStreamUsingVersionCks("invalidKey", "bdjksabdaks");
-      fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
-      assertTrue(fe.getMessage().contains("not found"));
-    }
-
-    try{
-      contentRepoService.getRepoObjByteArrayUsingVersionCks(repoObjKey1, "fdsafds");
-      fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
-      assertTrue(fe.getMessage().contains("not found"));
-    }
-
-    try{
-      contentRepoService.getRepoObjStreamUsingVersionNum("invalidKey", 0);
-      fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
-      assertTrue(fe.getMessage().contains("not found"));
-    }
-
-    try{
-      contentRepoService.getRepoObjByteArrayUsingVersionNum("invalidKey", 0);
+      contentRepoService.getRepoObjUsingVersionNum("invalidKey", 0);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
@@ -630,7 +607,7 @@ public class ContentRepoTest {
     String fileVersionChecksum = (String) repoObj1.get("versionChecksum");
     Double versionNumber = (Double) repoObj1.get("versionNumber");
 
-    InputStream content1 = contentRepoService.getLatestRepoObjStream(repoObjKey3);
+    InputStream content1 = contentRepoService.getLatestRepoObj(repoObjKey3);
     assertNotNull(content1);
 
     // version object 1 ---> object 2
@@ -644,10 +621,10 @@ public class ContentRepoTest {
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
     Double versionNumber2 = (Double) repoObj2.get("versionNumber");
 
-    InputStream content2 = contentRepoService.getRepoObjStreamUsingVersionCks(repoObjKey3, fileVersionChecksum);
+    InputStream content2 = contentRepoService.getRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum);
     assertNotNull(content2);
 
-    InputStream content3 = contentRepoService.getRepoObjStreamUsingVersionNum(repoObjKey3, versionNumber.intValue());
+    InputStream content3 = contentRepoService.getRepoObjUsingVersionNum(repoObjKey3, versionNumber.intValue());
     assertNotNull(content3);
 
     String fileContent1 = IOUtils.toString(content1, CharEncoding.UTF_8);
@@ -658,9 +635,9 @@ public class ContentRepoTest {
     assertEquals(fileContent1, fileContent2);
     assertEquals(fileContent3, fileContent2);
 
-    byte[] content4 = contentRepoService.getLatestRepoObjByteArray(repoObjKey3);
-    byte[] content5 = contentRepoService.getRepoObjByteArrayUsingVersionCks(repoObjKey3, fileVersionChecksum2);
-    byte[] content6 = contentRepoService.getRepoObjByteArrayUsingVersionNum(repoObjKey3, versionNumber2.intValue());
+    byte[] content4 = ByteStreams.toByteArray(contentRepoService.getLatestRepoObj(repoObjKey3));
+    byte[] content5 = ByteStreams.toByteArray(contentRepoService.getRepoObjUsingVersionCks(repoObjKey3, fileVersionChecksum2));
+    byte[] content6 = ByteStreams.toByteArray(contentRepoService.getRepoObjUsingVersionNum(repoObjKey3, versionNumber2.intValue()));
 
     assertNotNull(content4);
     assertNotNull(content5);

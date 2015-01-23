@@ -69,8 +69,7 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return - URL that can be used as a redirect for the file
-   * @deprecated use {@link #getRepoObjByteArrayUsingVersionCks(String, String)} or {@link
-   * #getRepoObjByteArrayUsingVersionNum(String, int)} instead.
+   * @deprecated use {@link #getRepoObjRedirectURL(String, String)} instead.
    */
   @Deprecated
   public List<URL> getRepoObjRedirectURL(String key);
@@ -89,22 +88,11 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return an InputStream of the content
-   * @deprecated use {@link #getRepoObjStreamUsingVersionCks(String, String)} or {@link
-   * #getRepoObjStreamUsingVersionNum(String, int)} instead.
+   * @deprecated use {@link #getRepoObjUsingVersionCks(String, String)} or {@link
+   * #getRepoObjUsingVersionNum(String, int)} instead.
    */
   @Deprecated
-  InputStream getLatestRepoObjStream(String key);
-
-  /**
-   * Returns the content of the latest version of an object using the most recent creation date time
-   *
-   * @param key a single string representing the key of the repo object
-   * @return a byte array og the content
-   * @deprecated use {@link #getRepoObjByteArrayUsingVersionCks(String, String)} or {@link
-   * #getRepoObjByteArrayUsingVersionNum(String, int)} instead.
-   */
-  @Deprecated
-  byte[] getLatestRepoObjByteArray(String key);
+  InputStream getLatestRepoObj(String key);
 
   /**
    * Returns the content of the repo object specified by <code>key</code> & the <code>versionChecksum</code>
@@ -113,17 +101,7 @@ public interface ContentRepoService {
    * @param versionChecksum a single string representing the version checksum of the repo object
    * @return an InputStream representing the repo object content.
    */
-  InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum);
-
-  /**
-   * Returns the content of the repo object specified by <code>key</code> & the <code>versionChecksum</code>
-   *
-   * @param key             a single string representing the key of the repo object
-   * @param versionChecksum a single string representing the version checksum of the repo object
-   * @param versionChecksum
-   * @return a byte array representing the repo object content
-   */
-  byte[] getRepoObjByteArrayUsingVersionCks(String key, String versionChecksum);
+  InputStream getRepoObjUsingVersionCks(String key, String versionChecksum);
 
   /**
    * Returns the content of the repo object specified by <code>key</code> & the <code>versionNumber</code>
@@ -132,16 +110,7 @@ public interface ContentRepoService {
    * @param versionNumber an int value representing the version number of the repo object
    * @return an InputStream object with the content.
    */
-  InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber);
-
-  /**
-   * Returns the content of the repo object specified by <code>key</code> & the <code>versionNumber</code>
-   *
-   * @param key           a single string representing the key of the repo object
-   * @param versionNumber an int value representing the version number of the repo object
-   * @return a byte array representing the repo object content
-   */
-  byte[] getRepoObjByteArrayUsingVersionNum(String key, int versionNumber);
+  InputStream getRepoObjUsingVersionNum(String key, int versionNumber);
 
   /**
    * Returns the meta data of the latest version of an object using the most recent creation date time.

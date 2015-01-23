@@ -199,7 +199,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getLatestRepoObjStream(String key) {
+  public InputStream getLatestRepoObj(String key) {
     validateObjectKey(key);
     CloseableHttpResponse response = contentRepoObjectDao.getLatestRepoObj(accessConfig.getBucketName(), key);
     try {
@@ -215,23 +215,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public byte[] getLatestRepoObjByteArray(String key) {
-    InputStream file = this.getLatestRepoObjStream(key);
-    try {
-      byte[] bytes = IOUtils.toByteArray(file);
-      file.close();
-      return bytes;
-    } catch (IOException e) {
-      log.error("Error converting the InputStream in a byte[] getting the latest repoObj. key " + key, e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
-          .baseException(e)
-          .key(key)
-          .build();
-    }
-  }
-
-  @Override
-  public InputStream getRepoObjStreamUsingVersionCks(String key, String versionChecksum) {
+  public InputStream getRepoObjUsingVersionCks(String key, String versionChecksum) {
     validateObjectKey(key);
     validateObjectCks(versionChecksum);
     CloseableHttpResponse response = contentRepoObjectDao.getRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum);
@@ -248,24 +232,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public byte[] getRepoObjByteArrayUsingVersionCks(String key, String versionChecksum) {
-    InputStream file = this.getRepoObjStreamUsingVersionCks(key, versionChecksum);
-    try {
-      byte[] bytes = IOUtils.toByteArray(file);
-      file.close();
-      return bytes;
-    } catch (IOException e) {
-      log.error("Error converting the InputStream in a byte[]. key " + key + " versionChecksum: " + versionChecksum, e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
-          .baseException(e)
-          .key(key)
-          .build();
-    }
-  }
-
-
-  @Override
-  public InputStream getRepoObjStreamUsingVersionNum(String key, int versionNumber) {
+  public InputStream getRepoObjUsingVersionNum(String key, int versionNumber) {
     validateObjectKey(key);
     CloseableHttpResponse response = contentRepoObjectDao.getRepoObjUsingVersionNum(accessConfig.getBucketName(), key, versionNumber);
 
@@ -274,22 +241,6 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     } catch (IOException e) {
       log.error(" Error trying to get the content from the response, using version number." +
           " accessConfig.getBucketName() " + accessConfig.getBucketName() + " Key: " + key + " versionNumber: " + versionNumber, e);
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
-          .baseException(e)
-          .key(key)
-          .build();
-    }
-  }
-
-  @Override
-  public byte[] getRepoObjByteArrayUsingVersionNum(String key, int versionNumber) {
-    InputStream file = this.getRepoObjStreamUsingVersionNum(key, versionNumber);
-    try {
-      byte[] bytes = IOUtils.toByteArray(file);
-      file.close();
-      return bytes;
-    } catch (IOException e) {
-      log.error("Error getting the content type from file. Key: " + key + " versionNumber " + versionNumber, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
           .key(key)
