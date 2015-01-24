@@ -2,9 +2,9 @@ package org.plos.crepo.service;
 
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoObject;
-import org.plos.crepo.model.RepoObjectVersion;
-import org.plos.crepo.model.RepoObjectVersionNumber;
-import org.plos.crepo.model.RepoObjectVersionTag;
+import org.plos.crepo.model.RepoVersion;
+import org.plos.crepo.model.RepoVersionNumber;
+import org.plos.crepo.model.RepoVersionTag;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -72,7 +72,7 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return - URL that can be used as a redirect for the file
-   * @deprecated use {@link #getRepoObjRedirectURL(RepoObjectVersion)} instead.
+   * @deprecated use {@link #getRepoObjRedirectURL(org.plos.crepo.model.RepoVersion)} instead.
    */
   @Deprecated
   public List<URL> getRepoObjRedirectURL(String key);
@@ -83,14 +83,14 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo object
    * @return a URL array
    */
-  public List<URL> getRepoObjRedirectURL(RepoObjectVersion version);
+  public List<URL> getRepoObjRedirectURL(RepoVersion version);
 
   /**
    * Returns the content of the latest version of an object using the most recent creation date time
    *
    * @param key a single string representing the key of the repo object
    * @return an InputStream of the content
-   * @deprecated use {@link #getRepoObj(RepoObjectVersion)} or {@link #getRepoObj(RepoObjectVersionNumber)} instead.
+   * @deprecated use {@link #getRepoObj(org.plos.crepo.model.RepoVersion)} or {@link #getRepoObj(org.plos.crepo.model.RepoVersionNumber)} instead.
    */
   @Deprecated
   InputStream getLatestRepoObj(String key);
@@ -101,7 +101,7 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo object
    * @return an InputStream representing the repo object content.
    */
-  InputStream getRepoObj(RepoObjectVersion version);
+  InputStream getRepoObj(RepoVersion version);
 
   /**
    * Returns the content of the repo object specified by <code>key</code> & the <code>versionNumber</code>
@@ -109,14 +109,14 @@ public interface ContentRepoService {
    * @param number the version number of the repo object
    * @return an InputStream object with the content.
    */
-  InputStream getRepoObj(RepoObjectVersionNumber number);
+  InputStream getRepoObj(RepoVersionNumber number);
 
   /**
    * Returns the meta data of the latest version of an object using the most recent creation date time.
    *
    * @param key a single string representing the key of the repo object
    * @return a map with the repo object meta data.
-   * @deprecated use {@link #getRepoObjMeta(RepoObjectVersion)} or {@link #getRepoObjMeta(RepoObjectVersionNumber)}
+   * @deprecated use {@link #getRepoObjMeta(org.plos.crepo.model.RepoVersion)} or {@link #getRepoObjMeta(org.plos.crepo.model.RepoVersionNumber)}
    * instead.
    */
   @Deprecated
@@ -128,7 +128,7 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo object
    * @return a map with the repo object meta data.
    */
-  Map<String, Object> getRepoObjMeta(RepoObjectVersion version);
+  Map<String, Object> getRepoObjMeta(RepoVersion version);
 
   /**
    * Returns the meta data of the repo object specified by <code>key</code> & <code>versionNumber</code>
@@ -136,7 +136,7 @@ public interface ContentRepoService {
    * @param number the version number of the repo object
    * @return a map with the repo object meta data.
    */
-  Map<String, Object> getRepoObjMeta(RepoObjectVersionNumber number);
+  Map<String, Object> getRepoObjMeta(RepoVersionNumber number);
 
   /**
    * Returns a repo object using the given key <code>key</code> and tag <code>tag</code>
@@ -144,7 +144,7 @@ public interface ContentRepoService {
    * @param tag the tag of the repo object.
    * @return a map with the data of the repo object
    */
-  Map<String, Object> getRepoObjMeta(RepoObjectVersionTag tag);
+  Map<String, Object> getRepoObjMeta(RepoVersionTag tag);
 
   /**
    * Returns the meta data of all the versions for the given repo object, using the repo object key <code>key</code>
@@ -159,7 +159,7 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return true if the object was successfully deleted.
-   * @deprecated use {@link #deleteRepoObj(RepoObjectVersion)} or {@link #deleteRepoObj(RepoObjectVersionNumber)}
+   * @deprecated use {@link #deleteRepoObj(org.plos.crepo.model.RepoVersion)} or {@link #deleteRepoObj(org.plos.crepo.model.RepoVersionNumber)}
    * instead.
    */
   @Deprecated
@@ -172,7 +172,7 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo object
    * @return true if the object was successfully deleted.
    */
-  boolean deleteRepoObj(RepoObjectVersion version);
+  boolean deleteRepoObj(RepoVersion version);
 
   /**
    * Deletes the specific version of a repo object using the key <code>key</code> & the version checksum
@@ -181,7 +181,7 @@ public interface ContentRepoService {
    * @param number the version number of the repo object
    * @return true if the object was successfully deleted.
    */
-  boolean deleteRepoObj(RepoObjectVersionNumber number);
+  boolean deleteRepoObj(RepoVersionNumber number);
 
   /**
    * Creates a repo object using <code>repoObject</code>
@@ -244,7 +244,7 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo collection
    * @return a map with the data of the collection
    */
-  boolean deleteCollection(RepoObjectVersion version);
+  boolean deleteCollection(RepoVersion version);
 
   /**
    * Deletes a repo collection using the key <code>key</code> and the version number <code>versionNumber</code>
@@ -252,7 +252,7 @@ public interface ContentRepoService {
    * @param number the version number of the repo collection
    * @return true if the collection was successfully deleted
    */
-  boolean deleteCollection(RepoObjectVersionNumber number);
+  boolean deleteCollection(RepoVersionNumber number);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and version checksum
@@ -261,7 +261,7 @@ public interface ContentRepoService {
    * @param version the version checksum of the repo collection
    * @return a map with the data of the collection
    */
-  Map<String, Object> getCollection(RepoObjectVersion version);
+  Map<String, Object> getCollection(RepoVersion version);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and version number
@@ -270,7 +270,7 @@ public interface ContentRepoService {
    * @param number the version number of the repo collection
    * @return a map with the data of the collection
    */
-  Map<String, Object> getCollection(RepoObjectVersionNumber number);
+  Map<String, Object> getCollection(RepoVersionNumber number);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and tag <code>tag</code> If there are more
@@ -279,7 +279,7 @@ public interface ContentRepoService {
    * @param tag the tag of the repo collection.
    * @return a map with the data of the collection
    */
-  Map<String, Object> getCollection(RepoObjectVersionTag tag);
+  Map<String, Object> getCollection(RepoVersionTag tag);
 
   /**
    * Returns all the versions of a repo collection using the given key <code>key</code>

@@ -14,9 +14,9 @@ import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoObjectVersion;
-import org.plos.crepo.model.RepoObjectVersionNumber;
-import org.plos.crepo.model.RepoObjectVersionTag;
+import org.plos.crepo.model.RepoVersion;
+import org.plos.crepo.model.RepoVersionNumber;
+import org.plos.crepo.model.RepoVersionTag;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   private static final String VERSION_CHECKSUM = "EWQW432423FSDF235CFDSW";
-  private static final RepoObjectVersion DUMMY_VERSION = createDummyVersion(KEY, VERSION_CHECKSUM);
+  private static final RepoVersion DUMMY_VERSION = createDummyVersion(KEY, VERSION_CHECKSUM);
   private static final String VERSION_HEX = DUMMY_VERSION.getHexVersionChecksum();
   private static final String BUCKET_NAME = "bucketName";
   private static final int VERSION_NUMBER = 0;
@@ -194,7 +194,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
+    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(httpResponse).close();
@@ -210,7 +210,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     boolean deleted = false;
     try {
-      deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
+      deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -316,7 +316,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -342,7 +342,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoObjectVersionNumber(KEY, VERSION_NUMBER));
+      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -368,7 +368,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoObjectVersionTag(KEY, TAG));
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG));
 
     verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME, KEY, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -394,7 +394,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoObjectVersionTag(KEY, TAG));
+      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());

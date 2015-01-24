@@ -6,13 +6,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 
-public class RepoObjectVersion {
+/**
+ * The native identifier for a version of a repo object or collection. Uses a checksum.
+ */
+public class RepoVersion {
 
   private final String key; // what the user specifies
   private final byte[] versionChecksum;
 
-  private RepoObjectVersion(String key, byte[] versionChecksum) {
-    RepoObject.validateObjectKey(key);
+  private RepoVersion(String key, byte[] versionChecksum) {
+    validateKey(key);
     this.key = Preconditions.checkNotNull(key);
     this.versionChecksum = Preconditions.checkNotNull(versionChecksum);
     validate(this.versionChecksum);
@@ -20,6 +23,13 @@ public class RepoObjectVersion {
 
   private static void validate(byte[] versionChecksum) {
     // TODO
+  }
+
+  public static void validateKey(String key) {
+    if (StringUtils.isEmpty(key)) {
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyKey)
+          .build();
+    }
   }
 
   /**
@@ -30,9 +40,9 @@ public class RepoObjectVersion {
    * @return the repo object version
    * @throws IllegalArgumentException if {@code versionChecksum} is not valid hexadecimal
    */
-  public static RepoObjectVersion createFromHex(String key, String versionChecksum) {
+  public static RepoVersion createFromHex(String key, String versionChecksum) {
     validateObjectCks(versionChecksum);
-    return new RepoObjectVersion(key, BaseEncoding.base16().decode(versionChecksum));
+    return new RepoVersion(key, BaseEncoding.base16().decode(versionChecksum));
   }
 
   /**
@@ -42,9 +52,9 @@ public class RepoObjectVersion {
    * @param versionChecksum the version's checksum
    * @return
    */
-  public static RepoObjectVersion create(String key, byte[] versionChecksum) {
+  public static RepoVersion create(String key, byte[] versionChecksum) {
     byte[] defensiveCopy = versionChecksum.clone(); // prevent alterations after building
-    return new RepoObjectVersion(key, defensiveCopy);
+    return new RepoVersion(key, defensiveCopy);
   }
 
   public String getKey() {
@@ -61,7 +71,7 @@ public class RepoObjectVersion {
 
   private static void validateObjectCks(String versionChecksum) {
     if (StringUtils.isEmpty(versionChecksum)) {
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectCks)
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyCks)
           .build();
     }
   }
@@ -71,7 +81,7 @@ public class RepoObjectVersion {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    RepoObjectVersion that = (RepoObjectVersion) o;
+    RepoVersion that = (RepoVersion) o;
 
     if (!key.equals(that.key)) return false;
     if (!versionChecksum.equals(that.versionChecksum)) return false;

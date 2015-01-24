@@ -6,15 +6,15 @@ import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 
 /**
- * An identifier for a version of a repo object, using a user-defined tag.
+ * An identifier for a version of a repo object or collection, using a user-defined tag.
  */
-public class RepoObjectVersionTag {
+public class RepoVersionTag {
 
   private final String key;
   private final String tag;
 
-  public RepoObjectVersionTag(String key, String tag) {
-    RepoObject.validateObjectKey(key);
+  public RepoVersionTag(String key, String tag) {
+    RepoVersion.validateKey(key);
     validateObjectTag(tag);
     this.key = Preconditions.checkNotNull(key);
     this.tag = Preconditions.checkNotNull(tag);
@@ -30,7 +30,7 @@ public class RepoObjectVersionTag {
 
   private static void validateObjectTag(String tag) {
     if (StringUtils.isEmpty(tag)) {
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectTag)
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyTag)
           .build();
     }
   }
@@ -39,7 +39,7 @@ public class RepoObjectVersionTag {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    RepoObjectVersionTag that = (RepoObjectVersionTag) o;
+    RepoVersionTag that = (RepoVersionTag) o;
     return key.equals(that.key) && tag.equals(that.tag);
   }
 

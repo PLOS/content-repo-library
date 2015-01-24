@@ -12,10 +12,10 @@ import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoObjectVersion;
+import org.plos.crepo.model.RepoVersion;
 import org.plos.crepo.model.RepoObject;
-import org.plos.crepo.model.RepoObjectVersionNumber;
-import org.plos.crepo.model.RepoObjectVersionTag;
+import org.plos.crepo.model.RepoVersionNumber;
+import org.plos.crepo.model.RepoVersionTag;
 import org.plos.crepo.service.ContentRepoServiceImpl;
 
 import java.io.*;
@@ -100,7 +100,7 @@ public class ContentRepoTest {
   public void objectErrorTest(){
 
     try{
-      contentRepoService.getRepoObjRedirectURL(RepoObjectVersion.createFromHex(repoObjKey1, "gdsfds"));
+      contentRepoService.getRepoObjRedirectURL(RepoVersion.createFromHex(repoObjKey1, "gdsfds"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -116,7 +116,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObj(RepoObjectVersion.createFromHex("invalidKey", "bdjksabdaks"));
+      contentRepoService.getRepoObj(RepoVersion.createFromHex("invalidKey", "bdjksabdaks"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
@@ -124,7 +124,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObj(new RepoObjectVersionNumber("invalidKey", 0));
+      contentRepoService.getRepoObj(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
@@ -140,7 +140,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex("invalidKey", "dsaa232"));
+      contentRepoService.getRepoObjMeta(RepoVersion.createFromHex("invalidKey", "dsaa232"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -148,7 +148,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObjMeta(new RepoObjectVersionNumber("invalidKey", 0));
+      contentRepoService.getRepoObjMeta(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -156,7 +156,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getRepoObjMeta(new RepoObjectVersionTag("invalidKey", "tag"));
+      contentRepoService.getRepoObjMeta(new RepoVersionTag("invalidKey", "tag"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -167,7 +167,7 @@ public class ContentRepoTest {
       contentRepoService.getRepoObjVersions(null);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try{
@@ -178,7 +178,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex("invalidKey", "dsadas"));
+      contentRepoService.deleteRepoObj(RepoVersion.createFromHex("invalidKey", "dsadas"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
@@ -186,7 +186,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.deleteRepoObj(new RepoObjectVersionNumber("invalidKey", 0));
+      contentRepoService.deleteRepoObj(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
@@ -197,7 +197,7 @@ public class ContentRepoTest {
       contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("").build());
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
@@ -218,7 +218,7 @@ public class ContentRepoTest {
       contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("").build());
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyObjectKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
@@ -252,7 +252,7 @@ public class ContentRepoTest {
       contentRepoService.createCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try{
@@ -266,7 +266,7 @@ public class ContentRepoTest {
       contentRepoService.versionCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try{
@@ -277,7 +277,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getCollection(RepoObjectVersion.createFromHex("invalidKey", "dsaa232"));
+      contentRepoService.getCollection(RepoVersion.createFromHex("invalidKey", "dsaa232"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
@@ -285,7 +285,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getCollection(new RepoObjectVersionNumber("invalidKey", 0));
+      contentRepoService.getCollection(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
@@ -293,7 +293,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.getCollection(new RepoObjectVersionTag("invalidKey", "tag"));
+      contentRepoService.getCollection(new RepoVersionTag("invalidKey", "tag"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
@@ -304,11 +304,11 @@ public class ContentRepoTest {
       contentRepoService.getCollectionVersions(null);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
-      assertEquals(fe.getErrorType(), ErrorType.EmptyCollectionKey);
+      assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try{
-      contentRepoService.deleteCollection(RepoObjectVersion.createFromHex("invalidKey", "dsadas"));
+      contentRepoService.deleteCollection(RepoVersion.createFromHex("invalidKey", "dsadas"));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
@@ -316,7 +316,7 @@ public class ContentRepoTest {
     }
 
     try{
-      contentRepoService.deleteCollection(new RepoObjectVersionNumber("invalidKey", 0));
+      contentRepoService.deleteCollection(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
@@ -402,9 +402,9 @@ public class ContentRepoTest {
     assertEquals(fileVersionChecksum2, versions.get(1).get("versionChecksum"));
 
     // get object 1 by version checksum
-    Map<String, Object> repoObj3 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey1, fileVersionChecksum));
+    Map<String, Object> repoObj3 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey1, fileVersionChecksum));
     // get object 1 by version number
-    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMeta(new RepoObjectVersionNumber(repoObjKey1, versionNumber.intValue()));
+    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMeta(new RepoVersionNumber(repoObjKey1, versionNumber.intValue()));
 
     assertNotNull(repoObj3);
     assertNotNull(repoObj4);
@@ -417,12 +417,12 @@ public class ContentRepoTest {
     assertEquals(repoObj2, repoObj5);
 
     // delete using version checksum ---> object 1
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey1, fileVersionChecksum));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey1, fileVersionChecksum));
 
     Map<String, Object> repoObj6 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      repoObj6 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey1, fileVersionChecksum));
+      repoObj6 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey1, fileVersionChecksum));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
@@ -431,11 +431,11 @@ public class ContentRepoTest {
     }
 
     // delete using version number ---> object 2
-    contentRepoService.deleteRepoObj(new RepoObjectVersionNumber(repoObjKey1, versionNumber2.intValue()));
+    contentRepoService.deleteRepoObj(new RepoVersionNumber(repoObjKey1, versionNumber2.intValue()));
 
     try{
       // get object 2 by version checksum ----> must be null
-      repoObj6 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey1, fileVersionChecksum2));
+      repoObj6 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey1, fileVersionChecksum2));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
@@ -491,12 +491,12 @@ public class ContentRepoTest {
     assertEquals(fileVersionChecksum2, versions.get(1).get("versionChecksum"));
 
     // delete using version checksum ---> object 1
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey10, fileVersionChecksum));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey10, fileVersionChecksum));
 
     Map<String, Object> repoObj6 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      repoObj6 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey10, fileVersionChecksum));
+      repoObj6 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey10, fileVersionChecksum));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
@@ -505,11 +505,11 @@ public class ContentRepoTest {
     }
 
     // delete using version number ---> object 2
-    contentRepoService.deleteRepoObj(new RepoObjectVersionNumber(repoObjKey10, versionNumber2.intValue()));
+    contentRepoService.deleteRepoObj(new RepoVersionNumber(repoObjKey10, versionNumber2.intValue()));
 
     try{
       // get object 2 by version checksum ----> must be null
-      repoObj6 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey10, fileVersionChecksum2));
+      repoObj6 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey10, fileVersionChecksum2));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj6);
@@ -543,7 +543,7 @@ public class ContentRepoTest {
     Map<String, Object> repoObj2 = null;
     try{
       // get object 1 by version checksum ----> must be null
-      repoObj2 = contentRepoService.getRepoObjMeta(RepoObjectVersion.createFromHex(repoObjKey2, fileVersionChecksum));
+      repoObj2 = contentRepoService.getRepoObjMeta(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(repoObj2);
@@ -576,11 +576,11 @@ public class ContentRepoTest {
     List<URL> url = contentRepoService.getRepoObjRedirectURL(repoObjKey2);
     assertEquals(0, url.size());
 
-    url = contentRepoService.getRepoObjRedirectURL(RepoObjectVersion.createFromHex(repoObjKey2, fileVersionChecksum3));
+    url = contentRepoService.getRepoObjRedirectURL(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum3));
     assertEquals(0, url.size());
 
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey2, fileVersionChecksum3));
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey2, fileVersionChecksum4));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum3));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum4));
 
   }
 
@@ -622,10 +622,10 @@ public class ContentRepoTest {
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
     Double versionNumber2 = (Double) repoObj2.get("versionNumber");
 
-    InputStream content2 = contentRepoService.getRepoObj(RepoObjectVersion.createFromHex(repoObjKey3, fileVersionChecksum));
+    InputStream content2 = contentRepoService.getRepoObj(RepoVersion.createFromHex(repoObjKey3, fileVersionChecksum));
     assertNotNull(content2);
 
-    InputStream content3 = contentRepoService.getRepoObj(new RepoObjectVersionNumber(repoObjKey3, versionNumber.intValue()));
+    InputStream content3 = contentRepoService.getRepoObj(new RepoVersionNumber(repoObjKey3, versionNumber.intValue()));
     assertNotNull(content3);
 
     String fileContent1 = IOUtils.toString(content1, CharEncoding.UTF_8);
@@ -637,8 +637,8 @@ public class ContentRepoTest {
     assertEquals(fileContent3, fileContent2);
 
     byte[] content4 = ByteStreams.toByteArray(contentRepoService.getLatestRepoObj(repoObjKey3));
-    byte[] content5 = ByteStreams.toByteArray(contentRepoService.getRepoObj(RepoObjectVersion.createFromHex(repoObjKey3, fileVersionChecksum2)));
-    byte[] content6 = ByteStreams.toByteArray(contentRepoService.getRepoObj(new RepoObjectVersionNumber(repoObjKey3, versionNumber2.intValue())));
+    byte[] content5 = ByteStreams.toByteArray(contentRepoService.getRepoObj(RepoVersion.createFromHex(repoObjKey3, fileVersionChecksum2)));
+    byte[] content6 = ByteStreams.toByteArray(contentRepoService.getRepoObj(new RepoVersionNumber(repoObjKey3, versionNumber2.intValue())));
 
     assertNotNull(content4);
     assertNotNull(content5);
@@ -652,9 +652,9 @@ public class ContentRepoTest {
     assertEquals(fileContent4,fileContent5);
     assertEquals(fileContent4,fileContent6);
 
-    boolean deleted = contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey3, fileVersionChecksum));
+    boolean deleted = contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey3, fileVersionChecksum));
     assertTrue(deleted);
-    deleted = contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey3, fileVersionChecksum2));
+    deleted = contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey3, fileVersionChecksum2));
     assertTrue(deleted);
 
   }
@@ -687,10 +687,10 @@ public class ContentRepoTest {
     assertNotNull(repoObj2);
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
-    RepoObjectVersion rpa1 = RepoObjectVersion.createFromHex(repoObjKey4, fileVersionChecksum1);
+    List<RepoVersion> repoObjs = new ArrayList<RepoVersion>();
+    RepoVersion rpa1 = RepoVersion.createFromHex(repoObjKey4, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoObjectVersion rpa2 = RepoObjectVersion.createFromHex(repoObjKey5, fileVersionChecksum2);
+    RepoVersion rpa2 = RepoVersion.createFromHex(repoObjKey5, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()
@@ -715,21 +715,21 @@ public class ContentRepoTest {
     assertEquals(collVersionChecksum1, versions.get(0).get("versionChecksum"));
     assertEquals(collVersionChecksum2, versions.get(1).get("versionChecksum"));
 
-    Map<String, Object> collection3 = contentRepoService.getCollection(RepoObjectVersion.createFromHex(collectionKey1, collVersionChecksum1));
-    Map<String, Object> collection4 = contentRepoService.getCollection(new RepoObjectVersionNumber(collectionKey1, collVersionNumber1.intValue()));
+    Map<String, Object> collection3 = contentRepoService.getCollection(RepoVersion.createFromHex(collectionKey1, collVersionChecksum1));
+    Map<String, Object> collection4 = contentRepoService.getCollection(new RepoVersionNumber(collectionKey1, collVersionNumber1.intValue()));
 
     assertNotNull(collection3);
     assertNotNull(collection4);
     assertEquals(collVersionChecksum1, collection3.get("versionChecksum"));
     assertEquals(collection3, collection4);
 
-    boolean deleted = contentRepoService.deleteCollection(RepoObjectVersion.createFromHex(collectionKey1, collVersionChecksum2));
+    boolean deleted = contentRepoService.deleteCollection(RepoVersion.createFromHex(collectionKey1, collVersionChecksum2));
     assertTrue(deleted);
 
     Map<String, Object> collection5 = null;
     try{
       // get object 2 by version checksum ----> must be null
-      collection5 = contentRepoService.getCollection(new RepoObjectVersionNumber(collectionKey1, collVersionNumber2.intValue()));
+      collection5 = contentRepoService.getCollection(new RepoVersionNumber(collectionKey1, collVersionNumber2.intValue()));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(collection5);
@@ -737,13 +737,13 @@ public class ContentRepoTest {
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    deleted = contentRepoService.deleteCollection(new RepoObjectVersionNumber(collectionKey1, collVersionNumber1.intValue()));
+    deleted = contentRepoService.deleteCollection(new RepoVersionNumber(collectionKey1, collVersionNumber1.intValue()));
     assertTrue(deleted);
 
     Map<String, Object> collection6 = null;
     try{
       // get object 2 by version checksum ----> must be null
-      collection6 = contentRepoService.getCollection(RepoObjectVersion.createFromHex(collectionKey1, collVersionChecksum1));
+      collection6 = contentRepoService.getCollection(RepoVersion.createFromHex(collectionKey1, collVersionChecksum1));
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertNull(collection6);
@@ -751,8 +751,8 @@ public class ContentRepoTest {
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey4, fileVersionChecksum1));
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey5, fileVersionChecksum2));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey4, fileVersionChecksum1));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey5, fileVersionChecksum2));
 
   }
 
@@ -801,10 +801,10 @@ public class ContentRepoTest {
     assertNotNull(repoObj2);
     String fileVersionChecksum2 = (String) repoObj2.get("versionChecksum");
 
-    List<RepoObjectVersion> repoObjs = new ArrayList<RepoObjectVersion>();
-    RepoObjectVersion rpa1 = RepoObjectVersion.createFromHex(repoObjKey6, fileVersionChecksum1);
+    List<RepoVersion> repoObjs = new ArrayList<RepoVersion>();
+    RepoVersion rpa1 = RepoVersion.createFromHex(repoObjKey6, fileVersionChecksum1);
     repoObjs.add(rpa1);
-    RepoObjectVersion rpa2 = RepoObjectVersion.createFromHex(repoObjKey7, fileVersionChecksum2);
+    RepoVersion rpa2 = RepoVersion.createFromHex(repoObjKey7, fileVersionChecksum2);
     repoObjs.add(rpa2);
 
     RepoCollection repoCollMeta1 = RepoCollection.builder()
@@ -828,7 +828,7 @@ public class ContentRepoTest {
     assertNotNull(collection2);
     String collVersionChecksum2 = (String) collection2.get("versionChecksum");
 
-    Map<String, Object> collection3 = contentRepoService.getCollection(new RepoObjectVersionTag(collectionKey2, TAG));
+    Map<String, Object> collection3 = contentRepoService.getCollection(new RepoVersionTag(collectionKey2, TAG));
     assertNotNull(collection3);
     assertEquals(collVersionChecksum1, collection3.get("versionChecksum"));
 
@@ -860,13 +860,13 @@ public class ContentRepoTest {
     assertNotNull(collectionsTag);
     assertEquals(3, collectionsTag.size());
 
-    contentRepoService.deleteCollection(RepoObjectVersion.createFromHex(collectionKey2, collVersionChecksum1));
-    contentRepoService.deleteCollection(RepoObjectVersion.createFromHex(collectionKey2, collVersionChecksum2));
-    contentRepoService.deleteCollection(RepoObjectVersion.createFromHex(collectionKey2, collVersionChecksum4));
-    contentRepoService.deleteCollection(RepoObjectVersion.createFromHex(collectionKey3, collVersionChecksum5));
+    contentRepoService.deleteCollection(RepoVersion.createFromHex(collectionKey2, collVersionChecksum1));
+    contentRepoService.deleteCollection(RepoVersion.createFromHex(collectionKey2, collVersionChecksum2));
+    contentRepoService.deleteCollection(RepoVersion.createFromHex(collectionKey2, collVersionChecksum4));
+    contentRepoService.deleteCollection(RepoVersion.createFromHex(collectionKey3, collVersionChecksum5));
 
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey6, fileVersionChecksum1));
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey7, fileVersionChecksum2));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey6, fileVersionChecksum1));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey7, fileVersionChecksum2));
 
   }
 
@@ -908,7 +908,7 @@ public class ContentRepoTest {
     assertNotNull(repoObj3);
     String fileVersionChecksum3 = (String) repoObj3.get("versionChecksum");
 
-    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMeta(new RepoObjectVersionTag(repoObjKey8, TAG));
+    Map<String, Object> repoObj4 = contentRepoService.getRepoObjMeta(new RepoVersionTag(repoObjKey8, TAG));
     assertNotNull(repoObj4);
     assertEquals(fileVersionChecksum1, repoObj4.get("versionChecksum"));
 
@@ -924,9 +924,9 @@ public class ContentRepoTest {
     assertNotNull(repoObjects);
     assertEquals(3, repoObjects.size());
 
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey8, fileVersionChecksum1));
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey8, fileVersionChecksum2));
-    contentRepoService.deleteRepoObj(RepoObjectVersion.createFromHex(repoObjKey9, fileVersionChecksum3));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey8, fileVersionChecksum1));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey8, fileVersionChecksum2));
+    contentRepoService.deleteRepoObj(RepoVersion.createFromHex(repoObjKey9, fileVersionChecksum3));
 
   }
 

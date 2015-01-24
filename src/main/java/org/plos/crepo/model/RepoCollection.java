@@ -8,7 +8,7 @@ import java.util.List;
 public class RepoCollection {
 
   private final String key; // what the user specifies
-  private final ImmutableList<RepoObjectVersion> objects;
+  private final ImmutableList<RepoVersion> objects;
   private final String timestamp;   // created time
   private final String tag;
   private final String creationDateTime;   // created time
@@ -22,7 +22,7 @@ public class RepoCollection {
     this.creationDateTime = builder.creationDateTime;
   }
 
-  public static RepoCollection create(String key, List<RepoObjectVersion> objects) {
+  public static RepoCollection create(String key, List<RepoVersion> objects) {
     return builder()
         .setKey(key)
         .setObjects(objects)
@@ -41,7 +41,7 @@ public class RepoCollection {
     return tag;
   }
 
-  public ImmutableList<RepoObjectVersion> getObjects() {
+  public ImmutableList<RepoVersion> getObjects() {
     return objects;
   }
 
@@ -58,7 +58,7 @@ public class RepoCollection {
     private String key;
     private String timestamp;
     private String tag;
-    private List<RepoObjectVersion> objects;
+    private List<RepoVersion> objects;
     private String creationDateTime;
 
     private Builder() {
@@ -95,11 +95,11 @@ public class RepoCollection {
       return this;
     }
 
-    public List<RepoObjectVersion> getObjects() {
+    public List<RepoVersion> getObjects() {
       return objects;
     }
 
-    public Builder setObjects(List<RepoObjectVersion> objects) {
+    public Builder setObjects(List<RepoVersion> objects) {
       this.objects = objects;
       return this;
     }

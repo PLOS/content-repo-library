@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 public class RepoCollectionEntity {
 
   private final String key; // what the user specifies
-  private final ImmutableList<RepoObjectVersion> objects;
+  private final ImmutableList<RepoVersion> objects;
   private final String timestamp;   // created time
   private final String tag;
   private final String creationDateTime;   // created time
@@ -37,7 +37,7 @@ public class RepoCollectionEntity {
     return key;
   }
 
-  public ImmutableList<RepoObjectVersion> getObjects() {
+  public ImmutableList<RepoVersion> getObjects() {
     return objects;
   }
 

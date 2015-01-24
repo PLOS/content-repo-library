@@ -30,13 +30,6 @@ public class RepoObject {
     this.byteContent = builder.byteContent;
   }
 
-  public static void validateObjectKey(String key) {
-    if (StringUtils.isEmpty(key)) {
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectKey)
-          .build();
-    }
-  }
-
   public String getKey() {
     return key;
   }

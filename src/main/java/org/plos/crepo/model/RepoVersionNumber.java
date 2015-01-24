@@ -3,15 +3,15 @@ package org.plos.crepo.model;
 import com.google.common.base.Preconditions;
 
 /**
- * An identifier for a version of a repo object, using the version number.
+ * An identifier for a version of a repo object or collection, using the version number.
  */
-public class RepoObjectVersionNumber {
+public class RepoVersionNumber {
 
   private final String key;
   private final int number;
 
-  public RepoObjectVersionNumber(String key, int number) {
-    RepoObject.validateObjectKey(key);
+  public RepoVersionNumber(String key, int number) {
+    RepoVersion.validateKey(key);
     this.key = Preconditions.checkNotNull(key);
     this.number = number;
     Preconditions.checkArgument(this.number >= 0);
@@ -29,7 +29,7 @@ public class RepoObjectVersionNumber {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    RepoObjectVersionNumber that = (RepoObjectVersionNumber) o;
+    RepoVersionNumber that = (RepoVersionNumber) o;
     return number == that.number && key.equals(that.key);
   }
 
