@@ -88,7 +88,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
+    List<URL> urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -118,7 +118,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     List<URL> urls = null;
     try{
-      urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(KEY);
+      urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
@@ -146,7 +146,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<URL> urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(DUMMY_VERSION);
+    List<URL> urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
@@ -176,7 +176,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
     List<URL> urls = null;
     try{
-      urls = cRepoObjectServiceImpl.getRepoObjRedirectURL(DUMMY_VERSION);
+      urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
     } catch(ContentRepoException exception){
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());

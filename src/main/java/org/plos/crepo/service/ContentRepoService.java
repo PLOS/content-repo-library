@@ -9,7 +9,6 @@ import org.plos.crepo.model.RepoVersionNumber;
 import org.plos.crepo.model.RepoVersionTag;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -67,25 +66,6 @@ public interface ContentRepoService {
 
 
   // ------------------------ Objects ------------------------
-
-  /**
-   * Get a URL array which can be used as a links to the specified repo object content via XReproxy-url http header
-   * redirection.
-   *
-   * @param key a single string representing the key of the repo object
-   * @return - URL that can be used as a redirect for the file
-   * @deprecated use {@link #getRepoObjRedirectURL(org.plos.crepo.model.RepoVersion)} instead.
-   */
-  @Deprecated
-  public List<URL> getRepoObjRedirectURL(String key);
-
-  /**
-   * Returns a URL array which can be used as a links to the specified repo object content.
-   *
-   * @param version the version checksum of the repo object
-   * @return a URL array
-   */
-  public List<URL> getRepoObjRedirectURL(RepoVersion version);
 
   /**
    * Returns the content of the latest version of an object using the most recent creation date time

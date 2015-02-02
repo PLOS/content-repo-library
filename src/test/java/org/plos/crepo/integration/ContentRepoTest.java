@@ -115,7 +115,7 @@ public class ContentRepoTest {
   public void objectErrorTest(){
 
     try{
-      contentRepoService.getRepoObjRedirectURL(RepoVersion.createFromHex(repoObjKey1, "gdsfds"));
+      contentRepoService.getRepoObjectMetadata(RepoVersion.createFromHex(repoObjKey1, "gdsfds")).getReproxyUrls();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
@@ -588,10 +588,10 @@ public class ContentRepoTest {
     assertNotNull(repoObj4);
     String fileVersionChecksum4 = (String) repoObj4.get("versionChecksum");
 
-    List<URL> url = contentRepoService.getRepoObjRedirectURL(repoObjKey2);
+    List<URL> url = contentRepoService.getLatestRepoObjectMetadata(repoObjKey2).getReproxyUrls();
     assertEquals(0, url.size());
 
-    url = contentRepoService.getRepoObjRedirectURL(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum3));
+    url = contentRepoService.getRepoObjectMetadata(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum3)).getReproxyUrls();
     assertEquals(0, url.size());
 
     contentRepoService.deleteRepoObject(RepoVersion.createFromHex(repoObjKey2, fileVersionChecksum3));

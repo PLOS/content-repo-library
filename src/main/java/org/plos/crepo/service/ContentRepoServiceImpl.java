@@ -1,7 +1,6 @@
 package org.plos.crepo.service;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,46 +158,6 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
 
   // ------------------------ Objects ------------------------
-
-  @Override
-  public List<URL> getRepoObjRedirectURL(String key) {
-    RepoVersion.validateKey(key);
-    return getUrlsFromMeta(this.getLatestRepoObjectMetadata(key));
-  }
-
-  @Override
-  public List<URL> getRepoObjRedirectURL(RepoVersion version) {
-    return getUrlsFromMeta(getRepoObjectMetadata(version));
-  }
-
-  private List<URL> getUrlsFromMeta(RepoObjectMetadata repoObjValues) {
-    String paths = (String) repoObjValues.getMapView().get("reproxyURL");
-
-    if (StringUtils.isEmpty(paths)) {
-      return ImmutableList.of();
-    }
-
-    return getUrls(paths);
-  }
-
-  private List<URL> getUrls(String paths) {
-    String[] pathArray = paths.split("\\s");
-
-    int pathCount = pathArray.length;
-    List<URL> urls = new ArrayList<>(pathCount);
-
-    for (int i = 0; i < pathCount; i++) {
-      try {
-        urls.add(new URL(pathArray[i]));
-      } catch (MalformedURLException e) {
-        log.error("Error trying to get the urls. paths: " + paths + " + repoMessage:  ", e);
-        throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingReProxyUrl)
-            .baseException(e)
-            .build();
-      }
-    }
-    return urls;
-  }
 
   @Override
   public InputStream getLatestRepoObject(String key) {
