@@ -162,12 +162,12 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public List<URL> getRepoObjRedirectURL(String key) {
     RepoVersion.validateKey(key);
-    return getUrlsFromMeta(this.getRepoObjMetaLatestVersion(key));
+    return getUrlsFromMeta(this.getLatestRepoObjectMetadata(key));
   }
 
   @Override
   public List<URL> getRepoObjRedirectURL(RepoVersion version) {
-    return getUrlsFromMeta(getRepoObjMeta(version));
+    return getUrlsFromMeta(getRepoObjectMetadata(version));
   }
 
   private List<URL> getUrlsFromMeta(Map<String, Object> repoObjValues) {
@@ -200,7 +200,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getLatestRepoObj(String key) {
+  public InputStream getLatestRepoObject(String key) {
     RepoVersion.validateKey(key);
     CloseableHttpResponse response = objectDao.getLatestRepoObj(accessConfig.getBucketName(), key);
     try {
@@ -216,7 +216,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getRepoObj(RepoVersion version) {
+  public InputStream getRepoObject(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     CloseableHttpResponse response = objectDao.getRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum);
@@ -233,7 +233,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getRepoObj(RepoVersionNumber number) {
+  public InputStream getRepoObject(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     CloseableHttpResponse response = objectDao.getRepoObjUsingVersionNum(accessConfig.getBucketName(), key, versionNumber);
@@ -251,7 +251,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMetaLatestVersion(String key) {
+  public Map<String, Object> getLatestRepoObjectMetadata(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaLatestVersion(accessConfig.getBucketName(), key)) {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), MAP_TOKEN);
@@ -266,7 +266,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersion version) {
+  public Map<String, Object> getRepoObjectMetadata(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionChecksum(accessConfig.getBucketName(), key, versionChecksum)) {
@@ -283,7 +283,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersionNumber number) {
+  public Map<String, Object> getRepoObjectMetadata(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
@@ -301,7 +301,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersionTag tagObj) {
+  public Map<String, Object> getRepoObjectMetadata(RepoVersionTag tagObj) {
     String key = tagObj.getKey();
     String tag = tagObj.getTag();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingTag(accessConfig.getBucketName(), key, tag)) {
@@ -319,7 +319,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<Map<String, Object>> getRepoObjVersions(String key) {
+  public List<Map<String, Object>> getRepoObjectVersions(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = objectDao.getRepoObjVersionsMeta(accessConfig.getBucketName(), key)) {
       return gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
@@ -335,9 +335,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
 
   @Override
-  public boolean deleteLatestRepoObj(String key) {
+  public boolean deleteLatestRepoObject(String key) {
     RepoVersion.validateKey(key);
-    Map<String, Object> repoObj = this.getRepoObjMetaLatestVersion(key);
+    Map<String, Object> repoObj = this.getLatestRepoObjectMetadata(key);
     String versionChecksum = (String) repoObj.get("versionChecksum");
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
       return true;
@@ -352,7 +352,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public boolean deleteRepoObj(RepoVersion version) {
+  public boolean deleteRepoObject(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
@@ -370,7 +370,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public boolean deleteRepoObj(RepoVersionNumber number) {
+  public boolean deleteRepoObject(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
