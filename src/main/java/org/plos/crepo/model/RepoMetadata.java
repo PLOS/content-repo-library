@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -55,17 +56,12 @@ public class RepoMetadata {
     return (tag == null) ? Optional.<RepoVersionTag>absent() : Optional.of(new RepoVersionTag(key, tag));
   }
 
-  private static Calendar parseCalendar(String s) {
-    Preconditions.checkNotNull(s);
-    return null; // TODO
+  public Timestamp getTimestamp() {
+    return Timestamp.valueOf((String) raw.get("timestamp"));
   }
 
-  public Calendar getTimestamp() {
-    return parseCalendar((String) raw.get("timestamp"));
-  }
-
-  public Calendar getCreationDate() {
-    return parseCalendar((String) raw.get("creationDate"));
+  public Timestamp getCreationDate() {
+    return Timestamp.valueOf((String) raw.get("creationDate"));
   }
 
   public Status getStatus() {
