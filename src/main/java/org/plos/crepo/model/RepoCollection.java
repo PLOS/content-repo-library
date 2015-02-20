@@ -1,14 +1,15 @@
 package org.plos.crepo.model;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
-import java.util.List;
+import java.util.Collection;
 
 public class RepoCollection {
 
   private final String key; // what the user specifies
-  private final ImmutableList<RepoVersion> objects;
+  private final ImmutableCollection<RepoVersion> objects;
   private final String timestamp;   // created time
   private final String tag;
   private final String creationDateTime;   // created time
@@ -22,7 +23,7 @@ public class RepoCollection {
     this.creationDateTime = builder.creationDateTime;
   }
 
-  public static RepoCollection create(String key, List<RepoVersion> objects) {
+  public static RepoCollection create(String key, Collection<RepoVersion> objects) {
     return builder()
         .setKey(key)
         .setObjects(objects)
@@ -41,7 +42,7 @@ public class RepoCollection {
     return tag;
   }
 
-  public ImmutableList<RepoVersion> getObjects() {
+  public ImmutableCollection<RepoVersion> getObjects() {
     return objects;
   }
 
@@ -58,7 +59,7 @@ public class RepoCollection {
     private String key;
     private String timestamp;
     private String tag;
-    private List<RepoVersion> objects;
+    private Collection<RepoVersion> objects;
     private String creationDateTime;
 
     private Builder() {
@@ -95,11 +96,11 @@ public class RepoCollection {
       return this;
     }
 
-    public List<RepoVersion> getObjects() {
+    public Collection<RepoVersion> getObjects() {
       return objects;
     }
 
-    public Builder setObjects(List<RepoVersion> objects) {
+    public Builder setObjects(Collection<RepoVersion> objects) {
       this.objects = objects;
       return this;
     }
