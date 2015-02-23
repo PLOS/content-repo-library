@@ -33,9 +33,14 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, Gson.class, RepoObjectValidator.class})
@@ -68,7 +73,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   private ContentRepoAccessConfig repoAccessConfig;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     gson = PowerMockito.mock(Gson.class);
     cRepoObjectServiceImpl = new TestContentRepoServiceBuilder()
         .setAccessConfig(repoAccessConfig)
@@ -110,7 +115,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -119,9 +124,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     List<URL> urls = null;
-    try{
+    try {
       urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -166,7 +171,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -175,9 +180,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     List<URL> urls = null;
-    try{
+    try {
       urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -197,7 +202,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -220,7 +225,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -229,9 +234,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -250,7 +255,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -273,7 +278,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -282,9 +287,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -303,7 +308,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -326,7 +331,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = mock(HashMap.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -335,9 +340,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -356,7 +361,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -379,7 +384,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(Map.class);
+    Map<String, Object> expectedResponse = mock(Map.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -388,9 +393,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionTag(KEY, TAG)).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -409,7 +414,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -432,7 +437,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -441,9 +446,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
-    try{
+    try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjectVersions(KEY));
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -462,7 +467,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -485,7 +490,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -494,9 +499,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
-    try{
+    try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, TAG));
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -515,7 +520,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -538,7 +543,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
+    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -547,9 +552,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
-    try{
+    try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, null));
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -584,9 +589,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     boolean deleted = false;
-    try{
+    try {
       deleted = cRepoObjectServiceImpl.deleteRepoObject(new RepoVersionNumber(KEY, VERSION_NUMBER));
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -617,9 +622,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     boolean deleted = false;
-    try{
+    try {
       deleted = cRepoObjectServiceImpl.deleteRepoObject(DUMMY_VERSION);
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -640,7 +645,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -671,7 +676,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(Map.class);
+    Map<String, Object> expectedResponse = mock(Map.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -680,9 +685,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
@@ -708,7 +713,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = TEST_METADATA;
+    Map<String, Object> expectedResponse = TEST_METADATA;
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -738,7 +743,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(Map.class);
+    Map<String, Object> expectedResponse = mock(Map.class);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -747,9 +752,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doThrow(expectedException).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
-    try{
+    try {
       objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
-    } catch(ContentRepoException exception){
+    } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(expectedException, exception.getCause());
     }
