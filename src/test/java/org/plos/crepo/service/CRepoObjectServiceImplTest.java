@@ -53,6 +53,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   private static final String URL2 = "http://url1";
   private static final String CONTENT_TYPE = "text/plain";
   private static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
+  private static final ImmutableList<Map<String, Object>> TEST_METADATA_LIST = ImmutableList.<Map<String, Object>>of(TEST_METADATA);
   private static final ImmutableList<String> URLS = ImmutableList.of(URL1, URL2);
 
   private ContentRepoService cRepoObjectServiceImpl;
@@ -408,7 +409,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -431,7 +432,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -461,7 +462,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -484,7 +485,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -514,7 +515,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
@@ -537,7 +538,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    List<Map<String,Object>> expectedResponse = mock(List.class);
+    List<Map<String,Object>> expectedResponse = TEST_METADATA_LIST;
     Type type = new TypeToken<List<Map<String, Object>>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
