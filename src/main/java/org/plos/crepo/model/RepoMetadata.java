@@ -17,6 +17,7 @@ public class RepoMetadata {
   }
 
   protected static Object recursiveImmutableCopy(Object obj) {
+    Preconditions.checkNotNull(obj);
     if (obj instanceof Iterable) {
       ImmutableList.Builder<Object> builder = ImmutableList.builder();
       for (Object element : (Iterable<?>) obj) {
