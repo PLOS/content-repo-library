@@ -2,10 +2,10 @@ package org.plos.crepo.service;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
@@ -19,7 +19,9 @@ import org.plos.crepo.dao.objects.impl.ContentRepoObjectDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.RepoCollectionMetadata;
 import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.RepoObjectMetadata;
 import org.plos.crepo.model.RepoVersion;
 import org.plos.crepo.model.RepoVersionNumber;
 import org.plos.crepo.model.RepoVersionTag;
@@ -33,8 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -173,47 +173,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   // ------------------------ Objects ------------------------
 
   @Override
-  public List<URL> getRepoObjRedirectURL(String key) {
-    RepoVersion.validateKey(key);
-    return getUrlsFromMeta(this.getRepoObjMetaLatestVersion(key));
-  }
-
-  @Override
-  public List<URL> getRepoObjRedirectURL(RepoVersion version) {
-    return getUrlsFromMeta(getRepoObjMeta(version));
-  }
-
-  private List<URL> getUrlsFromMeta(Map<String, Object> repoObjValues) {
-    String paths = (String) repoObjValues.get("reproxyURL");
-
-    if (StringUtils.isEmpty(paths)) {
-      return ImmutableList.of();
-    }
-
-    return getUrls(paths);
-  }
-
-  private List<URL> getUrls(String paths) {
-    String[] pathArray = paths.split("\\s");
-
-    int pathCount = pathArray.length;
-    List<URL> urls = new ArrayList<>(pathCount);
-
-    for (int i = 0; i < pathCount; i++) {
-      try {
-        urls.add(new URL(pathArray[i]));
-      } catch (MalformedURLException e) {
-        log.error("Error trying to get the urls. paths: " + paths + " + repoMessage:  ", e);
-        throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingReProxyUrl)
-            .baseException(e)
-            .build();
-      }
-    }
-    return urls;
-  }
-
-  @Override
-  public InputStream getLatestRepoObj(String key) {
+  public InputStream getLatestRepoObject(String key) {
     RepoVersion.validateKey(key);
     CloseableHttpResponse response = objectDao.getLatestRepoObj(accessConfig.getBucketName(), key);
     try {
@@ -229,7 +189,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getRepoObj(RepoVersion version) {
+  public InputStream getRepoObject(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     CloseableHttpResponse response = objectDao.getRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum);
@@ -246,7 +206,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public InputStream getRepoObj(RepoVersionNumber number) {
+  public InputStream getRepoObject(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     CloseableHttpResponse response = objectDao.getRepoObjUsingVersionNum(accessConfig.getBucketName(), key, versionNumber);
@@ -263,11 +223,25 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     }
   }
 
+  private RepoObjectMetadata buildRepoObjectMetadata(CloseableHttpResponse response) throws IOException {
+    Map<String, Object> raw = readJsonResponse(response, MAP_TOKEN);
+    return new RepoObjectMetadata(raw);
+  }
+
+  private List<RepoObjectMetadata> buildRepoObjectMetadataList(CloseableHttpResponse response) throws IOException {
+    List<Map<String, Object>> rawList = readJsonResponse(response, LIST_OF_MAPS_TOKENS);
+    List<RepoObjectMetadata> list = new ArrayList<>(rawList.size());
+    for (Map<String, Object> rawObj : rawList) {
+      list.add(new RepoObjectMetadata(rawObj));
+    }
+    return list;
+  }
+
   @Override
-  public Map<String, Object> getRepoObjMetaLatestVersion(String key) {
+  public RepoObjectMetadata getLatestRepoObjectMetadata(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaLatestVersion(accessConfig.getBucketName(), key)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data. Key: ")
@@ -279,11 +253,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersion version) {
+  public RepoObjectMetadata getRepoObjectMetadata(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionChecksum(accessConfig.getBucketName(), key, versionChecksum)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the version checksum. Key: ")
@@ -296,11 +270,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersionNumber number) {
+  public RepoObjectMetadata getRepoObjectMetadata(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the version number. Key: ")
@@ -314,11 +288,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getRepoObjMeta(RepoVersionTag tagObj) {
+  public RepoObjectMetadata getRepoObjectMetadata(RepoVersionTag tagObj) {
     String key = tagObj.getKey();
     String tag = tagObj.getTag();
     try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingTag(accessConfig.getBucketName(), key, tag)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the tag. Key: ")
@@ -332,10 +306,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<Map<String, Object>> getRepoObjVersions(String key) {
+  public List<RepoObjectMetadata> getRepoObjectVersions(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = objectDao.getRepoObjVersionsMeta(accessConfig.getBucketName(), key)) {
-      return readJsonResponse(response, LIST_OF_MAPS_TOKENS);
+      return buildRepoObjectMetadataList(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the versions of an object. Key: ")
@@ -348,10 +322,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
 
   @Override
-  public boolean deleteLatestRepoObj(String key) {
+  public boolean deleteLatestRepoObject(String key) {
     RepoVersion.validateKey(key);
-    Map<String, Object> repoObj = this.getRepoObjMetaLatestVersion(key);
-    String versionChecksum = (String) repoObj.get("versionChecksum");
+    RepoObjectMetadata repoObj = this.getLatestRepoObjectMetadata(key);
+    String versionChecksum = repoObj.getVersion().getHexVersionChecksum();
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
       return true;
     } catch (IOException e) {
@@ -365,7 +339,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public boolean deleteRepoObj(RepoVersion version) {
+  public boolean deleteRepoObject(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
@@ -383,7 +357,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public boolean deleteRepoObj(RepoVersionNumber number) {
+  public boolean deleteRepoObject(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
@@ -401,40 +375,40 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> createRepoObject(RepoObject repoObject) {
+  public RepoObjectMetadata createRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
     try (CloseableHttpResponse response =
              objectDao.createRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating an object. RepoMessage: ");
     }
   }
 
   @Override
-  public Map<String, Object> versionRepoObject(RepoObject repoObject) {
+  public RepoObjectMetadata versionRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
     try (CloseableHttpResponse response = objectDao.versionRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when versioning an object. RepoMessage: ");
     }
   }
 
   @Override
-  public Map<String, Object> autoCreateRepoObject(RepoObject repoObject) {
+  public RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
     try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when trying to auto create an object. RepoMessage: ");
     }
   }
 
   @Override
-  public List<Map<String, Object>> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
+  public List<RepoObjectMetadata> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getObjectsCloseableResp(offset, limit, includeDeleted, tag)) {
-      return readJsonResponse(response, LIST_OF_MAPS_TOKENS);
+      return buildRepoObjectMetadataList(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when fetching a list of objects. RepoMessage: ");
     }
@@ -468,21 +442,35 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   // ------------------------ Collections ------------------------
 
+  private RepoCollectionMetadata buildRepoCollectionMetadata(HttpResponse response) {
+    Map<String, Object> raw = gson.fromJson(HttpResponseUtil.getResponseAsString(response), MAP_TOKEN);
+    return new RepoCollectionMetadata(raw);
+  }
+
+  private List<RepoCollectionMetadata> buildRepoCollectionMetadataList(HttpResponse response) {
+    List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
+    List<RepoCollectionMetadata> list = new ArrayList<>(rawList.size());
+    for (Map<String, Object> rawObj : rawList) {
+      list.add(new RepoCollectionMetadata(rawObj));
+    }
+    return list;
+  }
+
   @Override
-  public Map<String, Object> createCollection(RepoCollection repoCollection) {
+  public RepoCollectionMetadata createCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.createCollection(accessConfig.getBucketName(), repoCollection)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
   }
 
   @Override
-  public Map<String, Object> versionCollection(RepoCollection repoCollection) {
+  public RepoCollectionMetadata versionCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.versionCollection(accessConfig.getBucketName(), repoCollection)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -525,11 +513,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getCollection(RepoVersion version) {
+  public RepoCollectionMetadata getCollection(RepoVersion version) {
     String key = version.getKey();
     String versionChecksum = version.getHexVersionChecksum();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version checksum. Key: ")
@@ -542,11 +530,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getCollection(RepoVersionNumber number) {
+  public RepoCollectionMetadata getCollection(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version number. Key: ")
@@ -559,11 +547,11 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public Map<String, Object> getCollection(RepoVersionTag tagObj) {
+  public RepoCollectionMetadata getCollection(RepoVersionTag tagObj) {
     String key = tagObj.getKey();
     String tag = tagObj.getTag();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingTag(accessConfig.getBucketName(), key, tag)) {
-      return readJsonResponse(response, MAP_TOKEN);
+      return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version tag. Key: ")
@@ -576,10 +564,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<Map<String, Object>> getCollectionVersions(String key) {
+  public List<RepoCollectionMetadata> getCollectionVersions(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = collectionDao.getCollectionVersions(accessConfig.getBucketName(), key)) {
-      return readJsonResponse(response, LIST_OF_MAPS_TOKENS);
+      return buildRepoCollectionMetadataList(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting the versions of a collection. Key: ")
@@ -590,9 +578,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<Map<String, Object>> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
+  public List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getCollectionsCloseableResp(offset, limit, includeDeleted, tag)) {
-      return readJsonResponse(response, LIST_OF_MAPS_TOKENS);
+      return buildRepoCollectionMetadataList(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when getting all the collections. RepoMessage: ");
     }
