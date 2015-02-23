@@ -1,5 +1,6 @@
 package org.plos.crepo.service;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -51,8 +52,8 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   private static final String URL1 = "http://url1";
   private static final String URL2 = "http://url1";
   private static final String CONTENT_TYPE = "text/plain";
-  public static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
-  private String URLS = URL1 + " " + URL2;
+  private static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
+  private static final ImmutableList<String> URLS = ImmutableList.of(URL1, URL2);
 
   private ContentRepoService cRepoObjectServiceImpl;
 
@@ -83,18 +84,16 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = ImmutableMap.<String, Object>of("reproxyURL", URLS);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-    when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
     List<URL> urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(expectedResponse).get("reproxyURL");
     verify(httpResponse).close();
     PowerMockito.verifyStatic();
 
@@ -141,18 +140,16 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     mockStatics(httpResponse);
 
-    Map<String,Object> expectedResponse = mock(HashMap.class);
+    Map<String, Object> expectedResponse = ImmutableMap.<String, Object>of("reproxyURL", URLS);
     Type type = new TypeToken<Map<String, Object>>() {
     }.getType();
     when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-    when(expectedResponse.get("reproxyURL")).thenReturn(URLS);
     Mockito.doNothing().when(httpResponse).close();
 
     List<URL> urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(expectedResponse).get("reproxyURL");
     verify(httpResponse).close();
     PowerMockito.verifyStatic();
 
