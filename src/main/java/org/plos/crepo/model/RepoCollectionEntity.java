@@ -1,11 +1,11 @@
 package org.plos.crepo.model;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableCollection;
 
 public class RepoCollectionEntity {
 
   private final String key; // what the user specifies
-  private final ImmutableList<RepoVersion> objects;
+  private final ImmutableCollection<RepoVersion> objects;
   private final String timestamp;   // created time
   private final String tag;
   private final String creationDateTime;   // created time
@@ -37,7 +37,7 @@ public class RepoCollectionEntity {
     return key;
   }
 
-  public ImmutableList<RepoVersion> getObjects() {
+  public ImmutableCollection<RepoVersion> getObjects() {
     return objects;
   }
 
