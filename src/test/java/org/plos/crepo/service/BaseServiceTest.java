@@ -67,4 +67,7 @@ public class BaseServiceTest {
         });
   }
 
+  protected static class TestExpectedException extends IOException {
+  }
+
 }
