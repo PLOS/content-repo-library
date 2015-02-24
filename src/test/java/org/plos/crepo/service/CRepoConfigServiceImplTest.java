@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +68,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
     boolean hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
 
     verify(contentRepoConfigDao).hasReProxy();
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertTrue(hasXReproxy);
@@ -97,7 +98,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
     }
 
     verify(contentRepoConfigDao).hasReProxy();
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertFalse(hasXReproxy);
@@ -119,7 +120,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoConfigDao).getRepoConfig();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(configResponse);
@@ -150,7 +151,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoConfigDao).getRepoConfig();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(configResponse);
@@ -172,7 +173,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoConfigDao).getRepoStatus();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(statusResponse);
@@ -202,7 +203,7 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoConfigDao).getRepoStatus();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(statusResponse);

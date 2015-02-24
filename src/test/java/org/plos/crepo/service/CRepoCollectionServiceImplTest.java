@@ -35,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -99,7 +100,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     verify(repoCollection).getKey();
     verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -132,7 +133,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     verify(repoCollection).getKey();
     verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -157,7 +158,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     verify(repoCollection).getKey();
     verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -190,7 +191,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     verify(repoCollection).getKey();
     verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -205,7 +206,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     boolean deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertTrue(deleted);
   }
 
@@ -225,7 +226,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     }
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertFalse(deleted);
   }
 
@@ -237,7 +238,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     boolean deleted = cRepoCollectionServiceImpl.deleteCollection(DUMMY_VERSION);
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertTrue(deleted);
   }
 
@@ -257,7 +258,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     }
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertFalse(deleted);
   }
 
@@ -276,7 +277,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -307,7 +308,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -328,7 +329,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -359,7 +360,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -380,7 +381,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME, KEY, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -410,7 +411,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME, KEY, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -431,7 +432,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionVersions(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -462,7 +463,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionVersions(BUCKET_NAME, KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -483,7 +484,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -513,7 +514,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
@@ -535,7 +536,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(collectionResponse);
@@ -566,7 +567,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoCollectionDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);

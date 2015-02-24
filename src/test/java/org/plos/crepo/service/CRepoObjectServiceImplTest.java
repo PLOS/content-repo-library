@@ -37,7 +37,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -86,21 +85,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjRedirectURLTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = ImmutableMap.<String, Object>of("reproxyURL", URLS);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<URL> urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(urls);
@@ -111,29 +104,22 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjRedirectURLThrowsExcTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     List<URL> urls = null;
     try {
       urls = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getReproxyUrls();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(urls);
@@ -142,21 +128,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjRedirectURLCksTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = ImmutableMap.<String, Object>of("reproxyURL", URLS);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<URL> urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(urls);
@@ -169,27 +149,20 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getRepoObjRedirectURLCksThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
 
     IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     List<URL> urls = null;
     try {
       urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(urls);
@@ -198,21 +171,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjMetaLatestVersionTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(TEST_METADATA);
+    when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getMapView();
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -223,27 +190,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getRepoObjMetaLatestVersionThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjMetaLatestVersion(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.getLatestRepoObjectMetadata(KEY).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaLatestVersion(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -251,21 +210,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getObjectMetaUsingVersionCksTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getMapView();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -276,27 +229,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getObjectMetaUsingVersionCksThrowsTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -304,21 +249,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjMetaUsingVersionNumTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -329,27 +268,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getRepoObjMetaUsingVersionNumThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -360,7 +291,6 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Map<String, Object> expectedResponse = TEST_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
     when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
-
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionTag(KEY, TAG)).getMapView();
@@ -377,27 +307,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getRepoObjMetaUsingTagThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionTag(KEY, TAG)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -405,21 +327,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getObjVersionsTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjectVersions(KEY));
 
     verify(contentRepoObjectDao).getRepoObjVersionsMeta(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -430,27 +346,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getObjVersionsThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getRepoObjVersionsMeta(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
     try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjectVersions(KEY));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getRepoObjVersionsMeta(BUCKET_NAME, KEY);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -458,21 +366,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getObjectsUsingTagTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, TAG));
 
     verify(contentRepoObjectDao).getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -483,27 +385,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getObjectsUsingTagThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
     try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, TAG));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getObjectsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -511,21 +405,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getObjectsTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(TEST_METADATA_LIST);
+    when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, null));
 
     verify(contentRepoObjectDao).getObjects(BUCKET_NAME, OFFSET, LIMIT, true);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -536,27 +424,19 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getObjectsThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoObjectDao.getObjects(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    List<Map<String, Object>> expectedResponse = TEST_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     List<Map<String, Object>> objectResponse = null;
     try {
       objectResponse = asRawList(cRepoObjectServiceImpl.getRepoObjects(OFFSET, LIMIT, true, null));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoObjectDao).getObjects(BUCKET_NAME, OFFSET, LIMIT, true);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
@@ -604,7 +484,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     boolean deleted = cRepoObjectServiceImpl.deleteRepoObject(DUMMY_VERSION);
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertTrue(deleted);
   }
 
@@ -625,38 +505,31 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     }
 
     verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     assertFalse(deleted);
   }
 
   @Test
   public void createRepoObjectTest() throws Exception {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    Map<String, Object> expectedResponse = TEST_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    Mockito.doNothing().when(httpResponse).close();
 
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-    Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
 
     verify(repoObject).getContentType();
     verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
     assertEquals(expectedResponse, objectResponse);
-
   }
 
 
@@ -669,57 +542,42 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(repoObject).getContentType();
     verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
-
   }
 
   @Test
   public void versionRepoObjectTest() throws Exception {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    Map<String, Object> expectedResponse = TEST_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    Mockito.doNothing().when(httpResponse).close();
 
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-    Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
 
     verify(repoObject).getContentType();
     verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
@@ -736,33 +594,23 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(IOException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
       objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(IOException.class, exception.getCause().getClass());
     }
 
     verify(repoObject).getContentType();
     verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(objectResponse);
-
   }
-
 
 }

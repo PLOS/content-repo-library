@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -68,7 +69,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).getBucket(KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(bucketResponse);
@@ -100,7 +101,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).getBucket(KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(bucketResponse);
@@ -123,7 +124,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).getBuckets();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(bucketResponse);
@@ -156,7 +157,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).getBuckets();
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(bucketResponse);
@@ -179,7 +180,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).createBucket(KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(bucketResponse);
@@ -211,7 +212,7 @@ public class CRepoBucketServiceImplTest extends BaseServiceTest {
 
     verify(contentRepoBucketsDao).createBucket(KEY);
     verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(bucketResponse);
