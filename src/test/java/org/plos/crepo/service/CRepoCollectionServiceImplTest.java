@@ -3,7 +3,6 @@ package org.plos.crepo.service;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -67,9 +65,6 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
   @Mock
   private ContentRepoAccessConfig repoAccessConfig;
 
-  @Mock
-  private CloseableHttpResponse httpResponse;
-
   @Before
   public void setUp() {
     cRepoCollectionServiceImpl = new TestContentRepoServiceBuilder()
@@ -82,14 +77,12 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void createCollectionTest() throws IOException {
+    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
@@ -105,24 +98,21 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void createCollectionThrowsExpTest() throws IOException {
+    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
       collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(repoCollection).getKey();
@@ -136,14 +126,12 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void versionCollectionTest() throws IOException {
+    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
@@ -159,24 +147,21 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void versionCollectionThrowsExpTest() throws IOException {
+    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+
     RepoCollection repoCollection = mock(RepoCollection.class);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
       collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(repoCollection).getKey();
@@ -185,11 +170,11 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
-
   }
 
   @Test
   public void deleteCollectionUsingVersionNumbTest() throws IOException {
+    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoCollectionDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
@@ -202,17 +187,17 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void deleteCollectionUsingVersionNumbThrowsExpTest() throws IOException {
+    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoCollectionDao.deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     boolean deleted = false;
     try {
       deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumb(BUCKET_NAME, KEY, VERSION_NUMBER);
@@ -222,6 +207,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void deleteCollectionUsingVersionCksTest() throws IOException {
+    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
@@ -234,17 +220,17 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void deleteCollectionUsingVersionCksThrowsExpTest() throws IOException {
+    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoCollectionDao.deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     boolean deleted = false;
     try {
       deleted = cRepoCollectionServiceImpl.deleteCollection(DUMMY_VERSION);
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
@@ -254,12 +240,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingVersionCksTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(DUMMY_VERSION).getMapView();
@@ -274,15 +257,11 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingVersionCksThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
 
@@ -290,7 +269,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
       collectionResponse = cRepoCollectionServiceImpl.getCollection(DUMMY_VERSION).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
@@ -302,12 +281,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingVersionNumberTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
@@ -322,22 +298,18 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingVersionNumberThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
       collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
 
@@ -350,12 +322,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingTagTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG)).getMapView();
@@ -370,22 +339,18 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionUsingTagThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
       collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME, KEY, TAG);
@@ -397,12 +362,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionVersionsTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(KEY));
@@ -418,22 +380,18 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionVersionsThrowsExpTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = null;
     try {
       collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(KEY));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).getCollectionVersions(BUCKET_NAME, KEY);
@@ -445,12 +403,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionsUsingTagTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, TAG));
@@ -465,22 +420,18 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionsUsingTagThrowsExcTest() throws IOException {
-    when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = null;
     try {
       collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, TAG));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
@@ -493,12 +444,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionsTest() throws IOException {
-    when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, null));
@@ -514,22 +462,18 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getCollectionsThrowsExcTest() throws IOException {
-    when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     List<Map<String, Object>> expectedResponse = TEST_COLL_METADATA_LIST;
-    Type type = new TypeToken<List<Map<String, Object>>>() {
-    }.getType();
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
 
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     List<Map<String, Object>> collectionResponse = null;
     try {
       collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, null));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoCollectionDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
@@ -537,8 +481,6 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     PowerMockito.verifyStatic();
 
     assertNull(collectionResponse);
-
   }
-
 
 }

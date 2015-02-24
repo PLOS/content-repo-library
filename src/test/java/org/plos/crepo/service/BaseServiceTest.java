@@ -36,7 +36,7 @@ public class BaseServiceTest {
   protected static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
   protected static final ImmutableList<Map<String, Object>> TEST_METADATA_LIST = ImmutableList.<Map<String, Object>>of(TEST_METADATA);
 
-  protected Gson gson = new Gson();
+  protected final Gson gson = new Gson();
 
   protected CloseableHttpResponse mockJsonResponse(final Object responseBody) throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
@@ -50,11 +50,6 @@ public class BaseServiceTest {
       }
     });
     return httpResponse;
-  }
-
-  protected void mockStatics(HttpResponse mockResponse) {
-    PowerMockito.mockStatic(HttpResponseUtil.class);
-    Mockito.when(HttpResponseUtil.getResponseAsString(mockResponse)).thenReturn(JSON_MSG);
   }
 
   protected static RepoVersion createDummyVersion(String key, String dummyChecksum) {
