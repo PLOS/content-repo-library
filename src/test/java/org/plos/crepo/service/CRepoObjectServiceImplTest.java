@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,7 +75,6 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Before
   public void setUp() {
-    gson = PowerMockito.mock(Gson.class);
     cRepoObjectServiceImpl = new TestContentRepoServiceBuilder()
         .setAccessConfig(repoAccessConfig)
         .setObjectDao(contentRepoObjectDao)
@@ -357,21 +357,16 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoObjMetaUsingTagTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
     Map<String, Object> expectedResponse = TEST_METADATA;
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
+    CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
+
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(new RepoVersionTag(KEY, TAG)).getMapView();
 
     verify(contentRepoObjectDao).getRepoObjMetaUsingTag(BUCKET_NAME, KEY, TAG);
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
-    verify(httpResponse).close();
+    verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNotNull(objectResponse);
