@@ -2,6 +2,8 @@ package org.plos.crepo.service;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
@@ -30,6 +32,9 @@ public class BaseServiceTest {
   protected static final String KEY = "key";
   protected static final String JSON_MSG = "{\"test\":\"mockJsonTest\" }";
   protected static final String FAIL_MSG = "a ContentRepoException was expected";
+
+  protected static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
+  protected static final ImmutableList<Map<String, Object>> TEST_METADATA_LIST = ImmutableList.<Map<String, Object>>of(TEST_METADATA);
 
   protected Gson gson = new Gson();
 

@@ -1,7 +1,6 @@
 package org.plos.crepo.service;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +17,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
@@ -27,7 +24,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -44,7 +40,6 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
   @Before
   public void setUp() {
-    gson = PowerMockito.mock(Gson.class);
     cRepoConfigServiceImpl = new TestContentRepoServiceBuilder()
         .setGson(gson)
         .setConfigDao(contentRepoConfigDao)
@@ -54,15 +49,8 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
   @Test
   public void hasXReproxyTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    CloseableHttpResponse httpResponse = mockJsonResponse(true);
     when(contentRepoConfigDao.hasReProxy()).thenReturn(httpResponse);
-    PowerMockito.mockStatic(HttpResponseUtil.class);
-    Mockito.when(HttpResponseUtil.getResponseAsString(httpResponse)).thenReturn("true");
-
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     boolean hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
@@ -76,25 +64,17 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
   @Test
   public void hasXReproxyThrowsExcTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    CloseableHttpResponse httpResponse = mockJsonResponse(true);
     when(contentRepoConfigDao.hasReProxy()).thenReturn(httpResponse);
-    PowerMockito.mockStatic(HttpResponseUtil.class);
-    Mockito.when(HttpResponseUtil.getResponseAsString(httpResponse)).thenReturn("true");
 
-    Map<String, Object> expectedResponse = mock(HashMap.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     boolean hasXReproxy = false;
     try {
       hasXReproxy = cRepoConfigServiceImpl.hasXReproxy();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoConfigDao).hasReProxy();
@@ -106,20 +86,14 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoConfigTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    Map<String, Object> expectedResponse = TEST_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(TEST_METADATA);
     when(contentRepoConfigDao.getRepoConfig()).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> configResponse = cRepoConfigServiceImpl.getRepoConfig();
 
     verify(contentRepoConfigDao).getRepoConfig();
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -131,26 +105,17 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
   public void getRepoConfigThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoConfigDao.getRepoConfig()).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> configResponse = null;
     try {
       configResponse = cRepoConfigServiceImpl.getRepoConfig();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoConfigDao).getRepoConfig();
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -159,20 +124,14 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
 
   @Test
   public void getRepoStatusTest() throws IOException {
-    CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+    Map<String, Object> expectedResponse = TEST_METADATA;
+    CloseableHttpResponse httpResponse = mockJsonResponse(TEST_METADATA);
     when(contentRepoConfigDao.getRepoStatus()).thenReturn(httpResponse);
-    mockStatics(httpResponse);
-
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> statusResponse = cRepoConfigServiceImpl.getRepoStatus();
 
     verify(contentRepoConfigDao).getRepoStatus();
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -184,30 +143,22 @@ public class CRepoConfigServiceImplTest extends BaseServiceTest {
   public void getRepoStatusThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     when(contentRepoConfigDao.getRepoStatus()).thenReturn(httpResponse);
-    mockStatics(httpResponse);
 
-    Map<String, Object> expectedResponse = mock(Map.class);
-    Type type = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    when(gson.fromJson(eq(JSON_MSG), eq(type))).thenReturn(expectedResponse);
-    IOException expectedException = mock(IOException.class);
-    Mockito.doThrow(expectedException).when(httpResponse).close();
+    Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> statusResponse = null;
     try {
       statusResponse = cRepoConfigServiceImpl.getRepoStatus();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
-      assertEquals(expectedException, exception.getCause());
+      assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
     verify(contentRepoConfigDao).getRepoStatus();
-    verify(gson).fromJson(eq(JSON_MSG), eq(type));
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
     assertNull(statusResponse);
   }
-
 
 }

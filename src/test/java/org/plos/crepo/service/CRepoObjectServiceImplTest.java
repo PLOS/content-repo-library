@@ -55,8 +55,6 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   private static final String URL1 = "http://url1";
   private static final String URL2 = "http://url1";
   private static final String CONTENT_TYPE = "text/plain";
-  private static final ImmutableMap<String, Object> TEST_METADATA = ImmutableMap.<String, Object>of("testField", "testValue");
-  private static final ImmutableList<Map<String, Object>> TEST_METADATA_LIST = ImmutableList.<Map<String, Object>>of(TEST_METADATA);
   private static final ImmutableList<String> URLS = ImmutableList.of(URL1, URL2);
 
   private ContentRepoService cRepoObjectServiceImpl;
