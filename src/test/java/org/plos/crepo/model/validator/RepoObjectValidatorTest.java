@@ -47,7 +47,7 @@ public class RepoObjectValidatorTest {
       repoObjectValidator.validate(repoObject);
       fail("A content repo app was expected. ");
     } catch(ContentRepoException e){
-      assertEquals(ErrorType.EmptyObjectKey, e.getErrorType());
+      assertEquals(ErrorType.EmptyKey, e.getErrorType());
     }
 
   }

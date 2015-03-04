@@ -10,7 +10,7 @@ public class RepoObjectValidator {
   public static void validate(RepoObject repoObject) {
 
     if (StringUtils.isEmpty(repoObject.getKey())) {
-      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyObjectKey)
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyKey)
           .build();
     }
 

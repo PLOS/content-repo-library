@@ -6,12 +6,9 @@ package org.plos.crepo.exceptions;
 public enum ErrorType {
 
   ServerError(0, "Server error"), // this message is not used
-  EmptyObjectKey(1, "Empty repo object key"),
-  EmptyObjectCks(2, "Empty repo object version checksum"),
-  EmptyObjectTag(3, "Empty repo object tag"),
-  EmptyCollectionKey(4, "Empty repo collection key"),
-  EmptyCollectionCks(5, "Empty repo collection version checksum"),
-  EmptyCollectionTag(6, "Empty repo collection tag"),
+  EmptyKey(1, "Empty repo object or collection key"),
+  EmptyCks(2, "Empty repo object or collection version checksum"),
+  EmptyTag(3, "Empty repo object or collection tag"),
   EmptyBucketKey(7, "Empty bucket key"),
 
   ErrorAccessingFile(100, "Error accessing file"),
