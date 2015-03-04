@@ -9,7 +9,10 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-public class RepoMetadata {
+/**
+ * Represents metadata about a repo entity, to output to the client.
+ */
+public abstract class RepoMetadata {
   protected final Map<String, Object> raw;
 
   RepoMetadata(Map<String, Object> raw) {

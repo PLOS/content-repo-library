@@ -6,6 +6,9 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
+/**
+ * Represents input from the client, describing a collection to create or modify.
+ */
 public class RepoCollection {
 
   private final String key; // what the user specifies

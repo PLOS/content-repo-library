@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents output to the client, describing an object.
+ */
 public class RepoObjectMetadata extends RepoMetadata {
 
   public RepoObjectMetadata(Map<String, Object> raw) {
