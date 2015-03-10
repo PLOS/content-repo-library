@@ -4,22 +4,46 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Represents metadata about a repo entity, to output to the client.
  */
 public abstract class RepoMetadata {
-  protected final Map<String, Object> raw;
+  protected final ImmutableMap<String, Object> raw;
 
+  @SuppressWarnings("unchecked")
+    // recursiveImmutableCopy guarantees type safety
   RepoMetadata(Map<String, Object> raw) {
-    this.raw = (Map<String, Object>) recursiveImmutableCopy(raw);
+    this.raw = (ImmutableMap<String, Object>) recursiveImmutableCopy(raw);
   }
 
-  protected static Object recursiveImmutableCopy(Object obj) {
+  private static ImmutableMap<String, Object> defensiveCopy(Map<String, Object> raw) {
+    ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+    for (Map.Entry<String, Object> entry : raw.entrySet()) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      value = "userMetadata".equals(key) ? recursiveUnmodifiableNullableCopy(value) : recursiveImmutableCopy(value);
+      builder.put(key, value);
+    }
+    return builder.build();
+  }
+
+  /**
+   * Make a deep immutable copy of the raw metadata. Requires all elements to be non-null. Because it was parsed from
+   * JSON, require all maps to have only {@code String}s as keys.
+   */
+  private static Object recursiveImmutableCopy(Object obj) {
     Preconditions.checkNotNull(obj);
     if (obj instanceof Iterable) {
       ImmutableList.Builder<Object> builder = ImmutableList.builder();
@@ -29,16 +53,47 @@ public abstract class RepoMetadata {
       return builder.build();
     }
     if (obj instanceof Map) {
-      ImmutableMap.Builder<Object, Object> builder = ImmutableMap.builder();
+      ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
       for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
-        builder.put(recursiveImmutableCopy(entry.getKey()), recursiveImmutableCopy(entry.getValue()));
+        String key = (String) entry.getKey();
+        Object value = recursiveImmutableCopy(entry.getValue());
+        builder.put(key, value);
       }
       return builder.build();
+    }
+    if (!(obj instanceof String || obj instanceof Number || obj instanceof Boolean)) {
+      // TODO: Throw an exception if a non-JSON-compatible, possibly mutable type is detected?
     }
     return obj;
   }
 
-  public Map<String, Object> getMapView() {
+  /**
+   * Make a deep immutable copy of user-defined metadata. Allows null values in maps and lists. Because it was parsed
+   * from JSON, require all maps to have only non-null {@code String}s as keys.
+   */
+  private static Object recursiveUnmodifiableNullableCopy(Object obj) {
+    if (obj instanceof Collection) {
+      List<Object> list = new ArrayList<>(((Collection<?>) obj).size());
+      for (Object element : (Collection<?>) obj) {
+        list.add(recursiveUnmodifiableNullableCopy(element));
+      }
+      return Collections.unmodifiableList(list);
+    }
+    if (obj instanceof Map) {
+      Map<Object, Object> map = Maps.newHashMapWithExpectedSize(((Map<?, ?>) obj).size());
+      for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
+        String key = Preconditions.checkNotNull((String) entry.getKey());
+        map.put(key, recursiveUnmodifiableNullableCopy(entry.getValue()));
+      }
+      return Collections.unmodifiableMap(map);
+    }
+    if (obj != null && !(obj instanceof String || obj instanceof Number || obj instanceof Boolean)) {
+      // TODO: Throw an exception if a non-JSON-compatible, possibly mutable type is detected?
+    }
+    return obj;
+  }
+
+  public ImmutableMap<String, Object> getMapView() {
     return raw;
   }
 
@@ -70,6 +125,28 @@ public abstract class RepoMetadata {
 
   public Status getStatus() {
     return Status.valueOf((String) raw.get("status"));
+  }
+
+  public Optional<String> getRawUserMetadata() {
+    return Optional.fromNullable((String) raw.get("userMetadata"));
+  }
+
+  public Optional<Object> getJsonUserMetadata() {
+    Optional<String> raw = getRawUserMetadata();
+    if (!raw.isPresent()) return Optional.absent();
+
+    Object parsed;
+    try {
+      parsed = new Gson().fromJson(raw.get(), Object.class);
+    } catch (JsonSyntaxException e) {
+      return Optional.absent(); // TODO: Exception more appropriate instead?
+    }
+    
+    if (parsed == null) {
+      // Possible if the user submitted the string "null" as the JSON value
+      return Optional.absent();
+    }
+    return Optional.of(recursiveUnmodifiableNullableCopy(parsed));
   }
 
   @Override
