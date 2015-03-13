@@ -6,15 +6,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents metadata about a repo entity, to output to the client.
@@ -31,10 +33,7 @@ public abstract class RepoMetadata {
   private static ImmutableMap<String, Object> defensiveCopy(Map<String, Object> raw) {
     ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
     for (Map.Entry<String, Object> entry : raw.entrySet()) {
-      String key = entry.getKey();
-      Object value = entry.getValue();
-      value = "userMetadata".equals(key) ? recursiveUnmodifiableNullableCopy(value) : recursiveImmutableCopy(value);
-      builder.put(key, value);
+      builder.put(entry.getKey(), recursiveImmutableCopy(entry.getValue()));
     }
     return builder.build();
   }
@@ -62,32 +61,6 @@ public abstract class RepoMetadata {
       return builder.build();
     }
     if (!(obj instanceof String || obj instanceof Number || obj instanceof Boolean)) {
-      // TODO: Throw an exception if a non-JSON-compatible, possibly mutable type is detected?
-    }
-    return obj;
-  }
-
-  /**
-   * Make a deep immutable copy of user-defined metadata. Allows null values in maps and lists. Because it was parsed
-   * from JSON, require all maps to have only non-null {@code String}s as keys.
-   */
-  private static Object recursiveUnmodifiableNullableCopy(Object obj) {
-    if (obj instanceof Collection) {
-      List<Object> list = new ArrayList<>(((Collection<?>) obj).size());
-      for (Object element : (Collection<?>) obj) {
-        list.add(recursiveUnmodifiableNullableCopy(element));
-      }
-      return Collections.unmodifiableList(list);
-    }
-    if (obj instanceof Map) {
-      Map<Object, Object> map = Maps.newHashMapWithExpectedSize(((Map<?, ?>) obj).size());
-      for (Map.Entry<?, ?> entry : ((Map<?, ?>) obj).entrySet()) {
-        String key = Preconditions.checkNotNull((String) entry.getKey());
-        map.put(key, recursiveUnmodifiableNullableCopy(entry.getValue()));
-      }
-      return Collections.unmodifiableMap(map);
-    }
-    if (obj != null && !(obj instanceof String || obj instanceof Number || obj instanceof Boolean)) {
       // TODO: Throw an exception if a non-JSON-compatible, possibly mutable type is detected?
     }
     return obj;
@@ -131,22 +104,59 @@ public abstract class RepoMetadata {
     return Optional.fromNullable((String) raw.get("userMetadata"));
   }
 
+  // Store to avoid redundant parsing. Null means uninitialized; absent means this has no userMetadata.
+  private transient Optional<Object> jsonUserMetadata = null;
+
   public Optional<Object> getJsonUserMetadata() {
+    if (jsonUserMetadata != null) return jsonUserMetadata;
     Optional<String> raw = getRawUserMetadata();
     if (!raw.isPresent()) return Optional.absent();
 
-    Object parsed;
+    final Gson gson = new Gson();
+    JsonElement parsed;
     try {
-      parsed = new Gson().fromJson(raw.get(), Object.class);
+      parsed = gson.fromJson(raw.get(), JsonElement.class);
     } catch (JsonSyntaxException e) {
       return Optional.absent(); // TODO: Exception more appropriate instead?
     }
-    
-    if (parsed == null) {
-      // Possible if the user submitted the string "null" as the JSON value
-      return Optional.absent();
+
+    Object converted = convertJsonToImmutable(parsed);
+    return jsonUserMetadata = Optional.fromNullable(converted);
+  }
+
+  private static Object convertJsonToImmutable(JsonElement element) {
+    if (element.isJsonNull()) {
+      return null;
     }
-    return Optional.of(recursiveUnmodifiableNullableCopy(parsed));
+    if (element.isJsonPrimitive()) {
+      JsonPrimitive primitive = element.getAsJsonPrimitive();
+      if (primitive.isString()) return primitive.getAsString();
+      if (primitive.isNumber()) return primitive.getAsNumber();
+      if (primitive.isBoolean()) return primitive.getAsBoolean();
+      throw new RuntimeException("JsonPrimitive is not one of the expected primitive types");
+    }
+    if (element.isJsonArray()) {
+      JsonArray array = element.getAsJsonArray();
+      if (array.size() == 0) return Collections.emptyList();
+      List<Object> convertedList = new ArrayList<>(array.size());
+      for (JsonElement arrayElement : array) {
+        Object convertedElement = convertJsonToImmutable(arrayElement);
+        convertedList.add(convertedElement);
+      }
+      return Collections.unmodifiableList(convertedList);
+    }
+    if (element.isJsonObject()) {
+      Set<Map.Entry<String, JsonElement>> entries = element.getAsJsonObject().entrySet();
+      if (entries.size() == 0) return Collections.emptyMap();
+      Map<String, Object> convertedMap = Maps.newHashMapWithExpectedSize(entries.size());
+      for (Map.Entry<String, JsonElement> entry : entries) {
+        String key = Preconditions.checkNotNull(entry.getKey());
+        Object value = convertJsonToImmutable(entry.getValue());
+        convertedMap.put(key, value);
+      }
+      return Collections.unmodifiableMap(convertedMap);
+    }
+    throw new RuntimeException("JsonElement is not one of the expected subtypes");
   }
 
   @Override
