@@ -1,7 +1,7 @@
 package org.plos.crepo.util;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,8 +32,9 @@ public class HttpResponseUtil {
       throw new RuntimeException(e);
     }
     Gson gson = new Gson();
-    JsonObject jsonObject = gson.fromJson(responseMessage, JsonObject.class);
-    return jsonObject.get("message").getAsString();
+    JsonElement responseElement = gson.fromJson(responseMessage, JsonElement.class);
+    JsonElement message = responseElement.getAsJsonObject().get("message");
+    return (message == null) ? "No error message" : message.getAsString();
   }
 
 }
