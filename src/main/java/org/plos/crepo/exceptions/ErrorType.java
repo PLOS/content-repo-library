@@ -36,6 +36,7 @@ public enum ErrorType {
   ErrorFetchingCollection(303, "Error fetching collection information"),
   ErrorFetchingCollections(304, "Error fetching collections from bucket"),
   ErrorFetchingCollectionVersions(305, "Error fectching collection versions"),
+  ErrorAutoCreatingCollection(306, "Error auto-creating collection"),
   ;
 
   private final int value;

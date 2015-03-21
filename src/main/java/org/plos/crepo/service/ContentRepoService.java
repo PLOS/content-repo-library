@@ -222,6 +222,15 @@ public interface ContentRepoService {
   RepoCollectionMetadata versionCollection(RepoCollection repoCollection);
 
   /**
+   * Creates or versions a repo collection using the the <code>repoCollection</code> data regardless of whether it
+   * exists.
+   *
+   * @param repoCollection a RepoCollection object containing the data of the collection
+   * @return a map with the data of the collection
+   */
+  RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection);
+
+  /**
    * Deletes a repo collection using the key <code>key</code> and the version checksum <code>versionChecksum</code>
    *
    * @param version the version checksum of the repo collection
