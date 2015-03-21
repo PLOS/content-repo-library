@@ -98,8 +98,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public boolean hasXReproxy() {
     try (CloseableHttpResponse response = configDao.hasReProxy()) {
-      String resString = HttpResponseUtil.getResponseAsString(response);
-      return Boolean.parseBoolean(resString);
+      return readJsonResponse(response, Boolean.class);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when fetching the reproxy information. RepoMessage: ");
     }
@@ -442,13 +441,13 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   // ------------------------ Collections ------------------------
 
-  private RepoCollectionMetadata buildRepoCollectionMetadata(HttpResponse response) {
-    Map<String, Object> raw = gson.fromJson(HttpResponseUtil.getResponseAsString(response), MAP_TOKEN);
+  private RepoCollectionMetadata buildRepoCollectionMetadata(CloseableHttpResponse response) throws IOException {
+    Map<String, Object> raw = readJsonResponse(response, MAP_TOKEN);
     return new RepoCollectionMetadata(raw);
   }
 
-  private List<RepoCollectionMetadata> buildRepoCollectionMetadataList(HttpResponse response) {
-    List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
+  private List<RepoCollectionMetadata> buildRepoCollectionMetadataList(CloseableHttpResponse response) throws IOException {
+    List<Map<String, Object>> rawList = readJsonResponse(response, LIST_OF_MAPS_TOKENS);
     List<RepoCollectionMetadata> list = new ArrayList<>(rawList.size());
     for (Map<String, Object> rawObj : rawList) {
       list.add(new RepoCollectionMetadata(rawObj));
@@ -456,11 +455,19 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     return list;
   }
 
+  // TODO: Delete when no longer needed as a workaround to DPRO-914
+  private RepoCollectionMetadata getNewlyCreatedMetadata(CloseableHttpResponse response) throws IOException {
+    Map<String, Object> raw = readJsonResponse(response, MAP_TOKEN);
+    RepoVersion version = RepoVersion.create((String) raw.get("key"), (String) raw.get("uuid"));
+    return getCollection(version);
+  }
+
   @Override
   public RepoCollectionMetadata createCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.createCollection(accessConfig.getBucketName(), repoCollection)) {
-      return buildRepoCollectionMetadata(response);
+//      return buildRepoCollectionMetadata(response);
+      return getNewlyCreatedMetadata(response); // Workaround to DPRO-914. TODO: Remove
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -470,7 +477,8 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoCollectionMetadata versionCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.versionCollection(accessConfig.getBucketName(), repoCollection)) {
-      return buildRepoCollectionMetadata(response);
+//      return buildRepoCollectionMetadata(response);
+      return getNewlyCreatedMetadata(response); // Workaround to DPRO-914. TODO: Remove
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -481,7 +489,8 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.autoCreateCollection(accessConfig.getBucketName(), repoCollection)) {
-      return buildRepoCollectionMetadata(response);
+//      return buildRepoCollectionMetadata(response);
+      return getNewlyCreatedMetadata(response); // Workaround to DPRO-914. TODO: Remove
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
