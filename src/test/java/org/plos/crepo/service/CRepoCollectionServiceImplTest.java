@@ -53,6 +53,8 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
       .put("objects", ImmutableList.of(
           ImmutableMap.of("testObjField", "testObjValue")
       ))
+      .put("key", KEY)
+      .put("uuid", VERSION_UUID)
       .build();
   private static final ImmutableList<Map<String, Object>> TEST_COLL_METADATA_LIST = ImmutableList.<Map<String, Object>>of(TEST_COLL_METADATA);
 
@@ -80,8 +82,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getKey()).thenReturn("key");
+    when(repoCollection.getKey()).thenReturn(KEY);
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
@@ -101,7 +104,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getKey()).thenReturn("key");
+    when(repoCollection.getKey()).thenReturn(KEY);
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
@@ -129,8 +132,9 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getKey()).thenReturn("key");
+    when(repoCollection.getKey()).thenReturn(KEY);
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    when(contentRepoCollectionDao.getCollectionUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
@@ -150,7 +154,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getKey()).thenReturn("key");
+    when(repoCollection.getKey()).thenReturn(KEY);
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();

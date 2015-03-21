@@ -14,15 +14,6 @@ import java.io.IOException;
  */
 public class HttpResponseUtil {
 
-  public static String getResponseAsString(HttpResponse response) {
-    HttpEntity entity = response.getEntity();
-    try {
-      return EntityUtils.toString(entity, CharEncoding.UTF_8);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   public static String getErrorMessage(HttpResponse response) {
     HttpEntity entity = response.getEntity();
     String responseMessage;
