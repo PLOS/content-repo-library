@@ -14,6 +14,7 @@ import com.google.gson.JsonSyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,6 +158,17 @@ public abstract class RepoMetadata {
       return Collections.unmodifiableMap(convertedMap);
     }
     throw new RuntimeException("JsonElement is not one of the expected subtypes");
+  }
+
+  public Map<String, Object> inlineJsonUserMetadata() {
+    Map<String, Object> thisMetadata = new LinkedHashMap<>(raw);
+    Optional<Object> userMetadata = getJsonUserMetadata();
+    if (userMetadata.isPresent()) {
+      thisMetadata.put("userMetadata", userMetadata.get());
+    } else {
+      thisMetadata.remove("userMetadata");
+    }
+    return thisMetadata;
   }
 
   @Override
