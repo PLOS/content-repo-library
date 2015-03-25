@@ -52,20 +52,20 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
   }
 
   @Override
-  public CloseableHttpResponse deleteCollectionUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpDelete request = new HttpDelete(CollectionUrlGenerator.getCollectionVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+  public CloseableHttpResponse deleteCollectionUsingUuid(String bucketName, String key, String uuid) {
+    HttpDelete request = new HttpDelete(CollectionUrlGenerator.getCollectionUuidUrl(getRepoServer(), bucketName, key, uuid));
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
   @Override
-  public CloseableHttpResponse deleteCollectionUsingVersionNumb(String bucketName, String key, int versionNumber) {
+  public CloseableHttpResponse deleteCollectionUsingVersionNumber(String bucketName, String key, int versionNumber) {
     HttpDelete request = new HttpDelete(CollectionUrlGenerator.getCollectionVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
   @Override
-  public CloseableHttpResponse getCollectionUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpGet request = new HttpGet(CollectionUrlGenerator.getCollectionVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+  public CloseableHttpResponse getCollectionUsingUuid(String bucketName, String key, String uuid) {
+    HttpGet request = new HttpGet(CollectionUrlGenerator.getCollectionUuidUrl(getRepoServer(), bucketName, key, uuid));
     return executeRequest(request, ErrorType.ErrorFetchingCollection);
   }
 

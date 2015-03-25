@@ -44,9 +44,8 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({HttpResponseUtil.class, Gson.class, RepoObjectValidator.class})
 public class CRepoObjectServiceImplTest extends BaseServiceTest {
 
-  private static final String VERSION_CHECKSUM = "EWQW432423FSDF235CFDSW";
-  private static final RepoVersion DUMMY_VERSION = createDummyVersion(KEY, VERSION_CHECKSUM);
-  private static final String VERSION_HEX = DUMMY_VERSION.getHexVersionChecksum();
+  private static final String VERSION_UUID = "31a6f1cd-ef28-49fa-b811-f881ac4811f5";
+  private static final RepoVersion DUMMY_VERSION = RepoVersion.create(KEY, VERSION_UUID);
   private static final String BUCKET_NAME = "bucketName";
   private static final int VERSION_NUMBER = 0;
   private static final String TAG = "tag";
@@ -126,12 +125,12 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void getRepoObjRedirectURLCksTest() throws IOException {
     Map<String, Object> expectedResponse = ImmutableMap.<String, Object>of("reproxyURL", URLS);
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     List<URL> urls = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getReproxyUrls();
 
-    verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -144,7 +143,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   @Test
   public void getRepoObjRedirectURLCksThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
 
     IOException expectedException = mock(TestExpectedException.class);
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
@@ -157,7 +156,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -205,15 +204,15 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   }
 
   @Test
-  public void getObjectMetaUsingVersionCksTest() throws IOException {
+  public void getObjectMetaUsingUuidTest() throws IOException {
     Map<String, Object> expectedResponse = TEST_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.getRepoObjectMetadata(DUMMY_VERSION).getMapView();
 
-    verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -222,9 +221,9 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   }
 
   @Test
-  public void getObjectMetaUsingVersionCksThrowsTest() throws IOException {
+  public void getObjectMetaUsingUuidThrowsTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
@@ -236,7 +235,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(contentRepoObjectDao).getRepoObjMetaUsingVersionChecksum(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).getRepoObjMetaUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -472,22 +471,22 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   }
 
   @Test
-  public void deleteRepoObjUsingVersionCksTest() throws IOException {
+  public void deleteRepoObjUsingUuidTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.deleteRepoObjUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     boolean deleted = cRepoObjectServiceImpl.deleteRepoObject(DUMMY_VERSION);
 
-    verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).deleteRepoObjUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     assertTrue(deleted);
   }
 
   @Test
-  public void deleteRepoObjUsingVersionCksThrowsExcTest() throws IOException {
+  public void deleteRepoObjUsingUuidThrowsExcTest() throws IOException {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
-    when(contentRepoObjectDao.deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX)).thenReturn(httpResponse);
+    when(contentRepoObjectDao.deleteRepoObjUsingUuid(BUCKET_NAME, KEY, VERSION_UUID)).thenReturn(httpResponse);
 
     IOException expectedException = mock(TestExpectedException.class);
     Mockito.doThrow(expectedException).when(httpResponse).close();
@@ -500,7 +499,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
       assertEquals(expectedException, exception.getCause());
     }
 
-    verify(contentRepoObjectDao).deleteRepoObjUsingVersionCks(BUCKET_NAME, KEY, VERSION_HEX);
+    verify(contentRepoObjectDao).deleteRepoObjUsingUuid(BUCKET_NAME, KEY, VERSION_UUID);
     verify(httpResponse, atLeastOnce()).close();
     assertFalse(deleted);
   }

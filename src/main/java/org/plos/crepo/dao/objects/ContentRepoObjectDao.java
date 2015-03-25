@@ -8,13 +8,13 @@ public interface ContentRepoObjectDao {
 
   CloseableHttpResponse getLatestRepoObj(String bucketName, String key);
 
-  CloseableHttpResponse getRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse getRepoObjUsingUuid(String bucketName, String key, String uuid);
 
   CloseableHttpResponse getRepoObjUsingVersionNum(String bucketName, String key, int versionNumber);
 
   CloseableHttpResponse getRepoObjMetaLatestVersion(String bucketName, String key);
 
-  CloseableHttpResponse getRepoObjMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse getRepoObjMetaUsingUuid(String bucketName, String key, String uuid);
 
   CloseableHttpResponse getRepoObjMetaUsingVersionNumber(String bucketName, String key, int versionNumber);
 
@@ -22,7 +22,7 @@ public interface ContentRepoObjectDao {
 
   CloseableHttpResponse getRepoObjMetaUsingTag(String bucketName, String key, String tag);
 
-  CloseableHttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse deleteRepoObjUsingUuid(String bucketName, String key, String uuid);
 
   CloseableHttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber);
 

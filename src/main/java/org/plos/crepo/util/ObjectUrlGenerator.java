@@ -12,10 +12,10 @@ public class ObjectUrlGenerator {
   private static final String CREATE_OBJECT_URL = "${repoServer}/objects";
   private static final String LATEST_OBJECT_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}";
   private static final String OBJECT_USING_VERSION_NUM_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}&version=${versionNumber}";
-  private static final String OBJECT_USING_VERSION_CKS_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String OBJECT_USING_VERSION_UUID_URL = "${repoServer}/objects/${bucketName}?key=${objectKey}&uuid=${uuid}";
   private static final String GET_LATEST_OBJECT_META_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}";
   private static final String GET_OBJECT_META_USING_VERSION_NUM_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&version=${versionNumber}";
-  private static final String GET_OBJECT_META_USING_VERSIONS_CKS = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&versionChecksum=${versionChecksum}";
+  private static final String GET_OBJECT_META_USING_VERSIONS_CKS = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&uuid=${uuid}";
   private static final String GET_OBJECT_META_USING_TAG_URL = "${repoServer}/objects/meta/${bucketName}?key=${objectKey}&tag=${tag}";
   private static final String GET_OBJECT_VERSIONS_URL = "${repoServer}/objects/versions/${bucketName}?key=${objectKey}";
   private static final String GET_OBJECTS_URL = "${repoServer}/objects?bucketName=${bucketName}&offset=${offset}&limit=${limit}&includeDeleted=${includeDeleted}";
@@ -33,12 +33,12 @@ public class ObjectUrlGenerator {
     return replaceUrl(OBJECT_USING_VERSION_NUM_URL, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
   }*/
 
-  public static String getObjectUsingVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(OBJECT_USING_VERSION_CKS_URL, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+  public static String getObjectUsingUuidUrl(String repoServer, String bucketName, String repoObjKey, String uuid) {
+    return replaceUrl(OBJECT_USING_VERSION_UUID_URL, getObjectMapWithUuid(repoServer, bucketName, repoObjKey, uuid));
   }
 
-/*  public static String getDeleteObjectVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(OBJECT_USING_VERSION_CKS_URL, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+/*  public static String getDeleteObjectUuidUrl(String repoServer, String bucketName, String repoObjKey, String uuid) {
+    return replaceUrl(OBJECT_USING_VERSION_UUID_URL, getObjectMapWithUuid(repoServer, bucketName, repoObjKey, uuid));
   }*/
 
   public static String getLatestObjectMetaUrl(String repoServer, String bucketName, String repoObjKey) {
@@ -49,8 +49,8 @@ public class ObjectUrlGenerator {
     return replaceUrl(GET_OBJECT_META_USING_VERSION_NUM_URL, getObjectMapWithVersionNum(repoServer, bucketName, repoObjKey, versionNumber));
   }
 
-  public static String getObjectMetaUsingVersionCksUrl(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
-    return replaceUrl(GET_OBJECT_META_USING_VERSIONS_CKS, getObjectMapWithVersionCks(repoServer, bucketName, repoObjKey, versionChecksum));
+  public static String getObjectMetaUsingUuidUrl(String repoServer, String bucketName, String repoObjKey, String uuid) {
+    return replaceUrl(GET_OBJECT_META_USING_VERSIONS_CKS, getObjectMapWithUuid(repoServer, bucketName, repoObjKey, uuid));
   }
 
   public static String getObjectVersionsUrl(String repoServer, String bucketName, String repoObjKey) {
@@ -79,9 +79,9 @@ public class ObjectUrlGenerator {
     return values;
   }
 
-  private static Map<String, String> getObjectMapWithVersionCks(String repoServer, String bucketName, String repoObjKey, String versionChecksum) {
+  private static Map<String, String> getObjectMapWithUuid(String repoServer, String bucketName, String repoObjKey, String uuid) {
     Map<String, String> values = getObjectBasicMap(repoServer, bucketName, repoObjKey);
-    values.put("versionChecksum", versionChecksum);
+    values.put("uuid", uuid);
     return values;
   }
 

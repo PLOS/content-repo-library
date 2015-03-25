@@ -191,13 +191,13 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public InputStream getRepoObject(RepoVersion version) {
     String key = version.getKey();
-    String versionChecksum = version.getHexVersionChecksum();
-    CloseableHttpResponse response = objectDao.getRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum);
+    String uuid = version.getUuid().toString();
+    CloseableHttpResponse response = objectDao.getRepoObjUsingUuid(accessConfig.getBucketName(), key, uuid);
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
       log.error("Error getting the repoObj content from the response, when using the version checksum." +
-          "  key " + key + " versionNumber: " + versionChecksum, e);
+          "  key " + key + " versionNumber: " + uuid, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
           .key(key)
@@ -255,15 +255,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata getRepoObjectMetadata(RepoVersion version) {
     String key = version.getKey();
-    String versionChecksum = version.getHexVersionChecksum();
-    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionChecksum(accessConfig.getBucketName(), key, versionChecksum)) {
+    String uuid = version.getUuid().toString();
+    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingUuid(accessConfig.getBucketName(), key, uuid)) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the version checksum. Key: ")
           .append(key)
-          .append(" versionChecksum: ")
-          .append(versionChecksum)
+          .append(" uuid: ")
+          .append(uuid)
           .append("RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
     }
@@ -325,8 +325,8 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public boolean deleteLatestRepoObject(String key) {
     RepoVersion.validateKey(key);
     RepoObjectMetadata repoObj = this.getLatestRepoObjectMetadata(key);
-    String versionChecksum = repoObj.getVersion().getHexVersionChecksum();
-    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
+    String uuid = repoObj.getVersion().getUuid().toString();
+    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingUuid(accessConfig.getBucketName(), key, uuid)) {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
@@ -341,15 +341,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public boolean deleteRepoObject(RepoVersion version) {
     String key = version.getKey();
-    String versionChecksum = version.getHexVersionChecksum();
-    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
+    String uuid = version.getUuid().toString();
+    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingUuid(accessConfig.getBucketName(), key, uuid)) {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when deleting an object using the version checksum. Key: ")
           .append(key)
-          .append(" versionChecksum: ")
-          .append(versionChecksum)
+          .append(" uuid: ")
+          .append(uuid)
           .append("RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
     }
@@ -480,15 +480,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public boolean deleteCollection(RepoVersion version) {
     String key = version.getKey();
-    String versionChecksum = version.getHexVersionChecksum();
-    try (CloseableHttpResponse response = collectionDao.deleteCollectionUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
+    String uuid = version.getUuid().toString();
+    try (CloseableHttpResponse response = collectionDao.deleteCollectionUsingUuid(accessConfig.getBucketName(), key, uuid)) {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when deleting a collection using the version checksum. Key: ")
           .append(key)
-          .append(", versionChecksum: ")
-          .append(versionChecksum)
+          .append(", uuid: ")
+          .append(uuid)
           .append(" RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
     }
@@ -499,7 +499,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public boolean deleteCollection(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
-    try (CloseableHttpResponse response = collectionDao.deleteCollectionUsingVersionNumb(accessConfig.getBucketName(), key, versionNumber)) {
+    try (CloseableHttpResponse response = collectionDao.deleteCollectionUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
@@ -515,15 +515,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoCollectionMetadata getCollection(RepoVersion version) {
     String key = version.getKey();
-    String versionChecksum = version.getHexVersionChecksum();
-    try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionCks(accessConfig.getBucketName(), key, versionChecksum)) {
+    String uuid = version.getUuid().toString();
+    try (CloseableHttpResponse response = collectionDao.getCollectionUsingUuid(accessConfig.getBucketName(), key, uuid)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version checksum. Key: ")
           .append(key)
-          .append(", versionChecksum: ")
-          .append(versionChecksum)
+          .append(", uuid: ")
+          .append(uuid)
           .append(" RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
     }

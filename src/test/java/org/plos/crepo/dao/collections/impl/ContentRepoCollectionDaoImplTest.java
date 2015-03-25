@@ -44,7 +44,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   private static final String COLLECTION_KEY = "collectionKey";
   private static final String STRING_TIMESTAMP = "2014-09-23 11:47:15";
   private static final String TAG = "test tag";
-  private static final String VERSION_CHECKSUM = "2312kbijdasnjdq733";
+  private static final String VERSION_UUID = "a90cdd64-0536-40c2-b07d-03f7f2ed6ee6";
   private static final int VERSION_NUMBER = 0;
 
   @Mock
@@ -79,13 +79,13 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   public void versionCollectionThrownExcTest() throws IOException { postCollectionsWithExc("VERSION", ErrorType.ErrorVersioningCollection); }
 
   @Test
-  public void deleteCollectionUsingVersionCksTest() throws IOException {
+  public void deleteCollectionUsingUuidTest() throws IOException {
 
-    when(CollectionUrlGenerator.getCollectionVersionCksUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(CollectionUrlGenerator.getCollectionUuidUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_UUID)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
-    HttpResponse response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionCks(BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM);
+    HttpResponse response = contentRepoCollectionDaoImpl.deleteCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
 
     verifyCommonCalls(repoAccessConfig,httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
@@ -96,16 +96,16 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   }
 
   @Test
-  public void deleteCollectionUsingVersionCksThrowsExcTest() throws IOException {
+  public void deleteCollectionUsingUuidThrowsExcTest() throws IOException {
 
-    when(CollectionUrlGenerator.getCollectionVersionCksUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(CollectionUrlGenerator.getCollectionUuidUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_UUID)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
     try{
-      response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionCks(BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM);
+      response = contentRepoCollectionDaoImpl.deleteCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException ex){
       verifyException(ex, response, ErrorType.ErrorDeletingCollection);
@@ -123,7 +123,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     ArgumentCaptor<HttpDelete> httpGettArgument = ArgumentCaptor.forClass(HttpDelete.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
-    HttpResponse response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionNumb(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
+    HttpResponse response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionNumber(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
 
     verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
@@ -143,7 +143,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
     HttpResponse response = null;
     try{
-      response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionNumb(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
+      response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionNumber(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException ex){
       verifyException(ex, response, ErrorType.ErrorDeletingCollection);
@@ -155,13 +155,13 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   }
 
   @Test
-  public void getCollectionUsingVersionCksTest() throws IOException {
+  public void getCollectionUsingUuidTest() throws IOException {
 
-    when(CollectionUrlGenerator.getCollectionVersionCksUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(CollectionUrlGenerator.getCollectionUuidUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_UUID)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_OK);
 
-    HttpResponse response = contentRepoCollectionDaoImpl.getCollectionUsingVersionCks(BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM);
+    HttpResponse response = contentRepoCollectionDaoImpl.getCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
 
     verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
 
@@ -175,14 +175,14 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   @Test
   public void getCollectionUsingVersionNumThrowsExcTest() throws IOException {
 
-    when(CollectionUrlGenerator.getCollectionVersionCksUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM)).thenReturn(SOME_URL);
+    when(CollectionUrlGenerator.getCollectionUuidUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_UUID)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
     try{
-      response = contentRepoCollectionDaoImpl.getCollectionUsingVersionCks(BUCKET_NAME, COLLECTION_KEY, VERSION_CHECKSUM);
+      response = contentRepoCollectionDaoImpl.getCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException ex){
       verifyException(ex, response, ErrorType.ErrorFetchingCollection);
@@ -252,7 +252,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   }
 
   @Test
-  public void getCollectionUsingVersionCksThrowsExcTest() throws IOException {
+  public void getCollectionUsingUuidThrowsExcTest() throws IOException {
 
     when(CollectionUrlGenerator.getCollectionVersionNumUrl(REPO_SERVER, BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER)).thenReturn(SOME_URL);
     ArgumentCaptor<HttpGet> httpGettArgument = ArgumentCaptor.forClass(HttpGet.class);
