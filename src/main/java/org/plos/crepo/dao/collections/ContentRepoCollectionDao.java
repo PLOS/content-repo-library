@@ -12,6 +12,8 @@ public interface ContentRepoCollectionDao {
 
   CloseableHttpResponse deleteCollectionUsingUuid(String bucketName, String key, String uuid);
 
+  CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollection repoCollection);
+
   CloseableHttpResponse deleteCollectionUsingVersionNumber(String bucketName, String key, int versionNumber);
 
   CloseableHttpResponse getCollectionUsingUuid(String bucketName, String key, String uuid);
