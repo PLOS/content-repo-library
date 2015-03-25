@@ -1,5 +1,6 @@
 package org.plos.crepo.model;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -125,14 +126,15 @@ public abstract class RepoMetadata {
     return jsonUserMetadata = Optional.fromNullable(converted);
   }
 
-  private static Object convertJsonToImmutable(JsonElement element) {
+  @VisibleForTesting
+  static Object convertJsonToImmutable(JsonElement element) {
     if (element.isJsonNull()) {
       return null;
     }
     if (element.isJsonPrimitive()) {
       JsonPrimitive primitive = element.getAsJsonPrimitive();
       if (primitive.isString()) return primitive.getAsString();
-      if (primitive.isNumber()) return primitive.getAsNumber();
+      if (primitive.isNumber()) return asNumber(primitive);
       if (primitive.isBoolean()) return primitive.getAsBoolean();
       throw new RuntimeException("JsonPrimitive is not one of the expected primitive types");
     }
@@ -158,6 +160,34 @@ public abstract class RepoMetadata {
       return Collections.unmodifiableMap(convertedMap);
     }
     throw new RuntimeException("JsonElement is not one of the expected subtypes");
+  }
+
+  /**
+   * Special case for parsing numbers from JSON.
+   * <p/>
+   * This is used instead of {@link JsonPrimitive#getAsNumber}, which may return a {@link
+   * com.google.gson.internal.LazilyParsedNumber}. The problem with LazilyParsedNumber is that it doesn't belong to one
+   * of the familiar Number subtypes (e.g., Integer, Double, Long), so its {@link Object#equals} and {@link
+   * Object#hashCode} don't behave intuitively.
+   * <p/>
+   * Our imperfect solution is to use {@link Number#doubleValue()}, to be consistent with how Gson produces numbers
+   * nested in arrays and objects. That is:
+   * <pre>
+   *   new Gson().fromJson("[0]", List.class).get(0).getClass() // is Double
+   * </pre>
+   * Compare to:
+   * <pre>
+   *   new Gson().fromJson("0", Number.class).getClass() // is LazilyParsedNumber
+   * </pre>
+   * This ensures that numbers parsed from JSON can be compared consistently with {@link Object#equals}, whether they
+   * were formatted as integers or decimals. The client should treat such objects as abstract Numbers and, if they
+   * require a particular subtype (such as Integer), call the appropriate method (such as {@link Number#intValue}).
+   *
+   * @param jsonPrimitive a primitive JSON number
+   * @return a Java-native Number object of equivalent value
+   */
+  private static Number asNumber(JsonPrimitive jsonPrimitive) {
+    return jsonPrimitive.getAsNumber().doubleValue();
   }
 
   public Map<String, Object> inlineJsonUserMetadata() {
