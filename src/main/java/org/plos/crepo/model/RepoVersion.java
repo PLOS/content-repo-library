@@ -37,6 +37,9 @@ public class RepoVersion {
    * @throws IllegalArgumentException if {@code uuid} is not a valid UUID
    */
   public static RepoVersion create(String key, String uuid) {
+    if (StringUtils.isEmpty(uuid)) {
+      throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyUuid).build();
+    }
     return create(key, UUID.fromString(uuid));
   }
 
