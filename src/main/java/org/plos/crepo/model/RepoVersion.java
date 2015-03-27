@@ -8,7 +8,7 @@ import org.plos.crepo.exceptions.ErrorType;
 import java.util.UUID;
 
 /**
- * The native identifier for a version of a repo object or collection. Uses a checksum.
+ * The native identifier for a version of a repo object or collection. Uses a key and UUID.
  */
 public class RepoVersion {
 
