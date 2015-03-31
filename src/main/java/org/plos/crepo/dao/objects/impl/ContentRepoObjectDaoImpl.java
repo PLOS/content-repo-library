@@ -138,6 +138,9 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
     if (repoObject.getTag() != null) {
       multipartEntityBuilder.addTextBody("tag", repoObject.getTag());
     }
+    if (repoObject.getUserMetadata() != null) {
+      multipartEntityBuilder.addTextBody("userMetadata", repoObject.getUserMetadata());
+    }
 
     return multipartEntityBuilder.build();
 
