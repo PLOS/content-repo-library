@@ -16,19 +16,6 @@ public class HttpResponseUtil {
 
   private static final Logger log = LoggerFactory.getLogger(HttpResponseUtil.class);
 
-  public static String getResponseAsString(HttpResponse response) {
-
-    try {
-
-      HttpEntity entity = response.getEntity();
-      return EntityUtils.toString(entity, CharEncoding.UTF_8);
-
-    } catch (Exception e) {
-      log.error("error streaming to string", e);
-      return null;
-    }
-  }
-
   public static String getErrorMessage(HttpResponse response) {
 
     try {

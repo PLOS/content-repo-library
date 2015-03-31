@@ -57,6 +57,13 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
+  public CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollection repoCollection) {
+    HttpPost request = new HttpPost(CollectionUrlGenerator.getCreateCollUrl(getRepoServer()));
+    request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.AUTO));
+    request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+    return executeRequest(request, ErrorType.ErrorAutoCreatingCollection);
+  }
+
   @Override
   public CloseableHttpResponse deleteCollectionUsingVersionNumber(String bucketName, String key, int versionNumber) {
     HttpDelete request = new HttpDelete(CollectionUrlGenerator.getCollectionVersionNumUrl(getRepoServer(), bucketName, key, versionNumber));
