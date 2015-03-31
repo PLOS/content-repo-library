@@ -52,11 +52,6 @@ public class BaseServiceTest {
     return httpResponse;
   }
 
-  protected static RepoVersion createDummyVersion(String key, String dummyChecksum) {
-    byte[] bytes = Hashing.sha1().hashString(dummyChecksum, Charsets.UTF_8).asBytes();
-    return RepoVersion.create(key, bytes);
-  }
-
   public static List<Map<String, Object>> asRawList(List<? extends RepoMetadata> metadataList) {
     return Lists.transform(metadataList,
         new Function<RepoMetadata, Map<String, Object>>() {

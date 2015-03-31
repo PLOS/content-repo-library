@@ -10,11 +10,11 @@ public interface ContentRepoCollectionDao {
 
   CloseableHttpResponse versionCollection(String bucketName, RepoCollection repoCollection);
 
-  CloseableHttpResponse deleteCollectionUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse deleteCollectionUsingUuid(String bucketName, String key, String uuid);
 
-  CloseableHttpResponse deleteCollectionUsingVersionNumb(String bucketName, String key, int versionNumber);
+  CloseableHttpResponse deleteCollectionUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  CloseableHttpResponse getCollectionUsingVersionCks(String bucketName, String key, String versionChecksum);
+  CloseableHttpResponse getCollectionUsingUuid(String bucketName, String key, String uuid);
 
   CloseableHttpResponse getCollectionUsingVersionNumber(String bucketName, String key, int versionNumber);
 

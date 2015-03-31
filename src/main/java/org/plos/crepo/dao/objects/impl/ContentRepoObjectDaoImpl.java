@@ -34,9 +34,9 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public CloseableHttpResponse getRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum) {
+  public CloseableHttpResponse getRepoObjUsingUuid(String bucketName, String key, String uuid) {
 
-    HttpGet request = new HttpGet(ObjectUrlGenerator.getObjectUsingVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+    HttpGet request = new HttpGet(ObjectUrlGenerator.getObjectUsingUuidUrl(getRepoServer(), bucketName, key, uuid));
     return executeRequest(request, ErrorType.ErrorFetchingObject);
 
   }
@@ -56,8 +56,8 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public CloseableHttpResponse getRepoObjMetaUsingVersionChecksum(String bucketName, String key, String versionChecksum) {
-    HttpGet request = new HttpGet(ObjectUrlGenerator.getObjectMetaUsingVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+  public CloseableHttpResponse getRepoObjMetaUsingUuid(String bucketName, String key, String uuid) {
+    HttpGet request = new HttpGet(ObjectUrlGenerator.getObjectMetaUsingUuidUrl(getRepoServer(), bucketName, key, uuid));
     return executeRequest(request, ErrorType.ErrorFetchingObjectMeta);
   }
 
@@ -80,8 +80,8 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public CloseableHttpResponse deleteRepoObjUsingVersionCks(String bucketName, String key, String versionChecksum) {
-    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getObjectUsingVersionCksUrl(getRepoServer(), bucketName, key, versionChecksum));
+  public CloseableHttpResponse deleteRepoObjUsingUuid(String bucketName, String key, String uuid) {
+    HttpDelete request = new HttpDelete(ObjectUrlGenerator.getObjectUsingUuidUrl(getRepoServer(), bucketName, key, uuid));
     return executeRequest(request, ErrorType.ErrorDeletingObject);
   }
 

@@ -74,8 +74,8 @@ public abstract class RepoMetadata {
 
   public RepoVersion getVersion() {
     String key = (String) raw.get("key");
-    String versionChecksum = (String) raw.get("versionChecksum");
-    return RepoVersion.createFromHex(key, versionChecksum);
+    String uuid = (String) raw.get("uuid");
+    return RepoVersion.create(key, uuid);
   }
 
   public RepoVersionNumber getVersionNumber() {
