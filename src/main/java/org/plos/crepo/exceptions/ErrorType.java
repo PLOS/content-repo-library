@@ -7,7 +7,7 @@ public enum ErrorType {
 
   ServerError(0, "Server error"), // this message is not used
   EmptyKey(1, "Empty repo object or collection key"),
-  EmptyCks(2, "Empty repo object or collection version checksum"),
+  EmptyUuid(2, "Empty repo object or collection UUID"),
   EmptyTag(3, "Empty repo object or collection tag"),
   EmptyBucketKey(7, "Empty bucket key"),
 

@@ -195,7 +195,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     try {
       return response.getEntity().getContent();
     } catch (IOException e) {
-      log.error("Error getting the repoObj content from the response, when using the version checksum." +
+      log.error("Error getting the repoObj content from the response, when using the UUID." +
           "  key " + key + " versionNumber: " + uuid, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorFetchingObject)
           .baseException(e)
@@ -259,7 +259,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
-          .append("Error handling the response when fetching a the object meta data using the version checksum. Key: ")
+          .append("Error handling the response when fetching a the object meta data using the UUID. Key: ")
           .append(key)
           .append(" uuid: ")
           .append(uuid)
@@ -345,7 +345,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
-          .append("Error handling the response when deleting an object using the version checksum. Key: ")
+          .append("Error handling the response when deleting an object using the UUID. Key: ")
           .append(key)
           .append(" uuid: ")
           .append(uuid)
@@ -504,7 +504,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
-          .append("Error handling the response when deleting a collection using the version checksum. Key: ")
+          .append("Error handling the response when deleting a collection using the UUID. Key: ")
           .append(key)
           .append(", uuid: ")
           .append(uuid)
@@ -539,7 +539,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
-          .append("Error handling the response when getting a collection using the version checksum. Key: ")
+          .append("Error handling the response when getting a collection using the UUID. Key: ")
           .append(key)
           .append(", uuid: ")
           .append(uuid)
