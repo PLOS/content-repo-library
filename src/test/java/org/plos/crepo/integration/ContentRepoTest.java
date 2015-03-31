@@ -416,7 +416,7 @@ public class ContentRepoTest {
     assertEquals(fileUuid, versions.get(0).get("uuid"));
     assertEquals(fileUuid2, versions.get(1).get("uuid"));
 
-    // get object 1 by version checksum
+    // get object 1 by version UUID
     Map<String, Object> repoObj3 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, fileUuid)).getMapView();
     // get object 1 by version number
     Map<String, Object> repoObj4 = contentRepoService.getRepoObjectMetadata(new RepoVersionNumber(repoObjKey1, versionNumber.intValue())).getMapView();
@@ -431,12 +431,12 @@ public class ContentRepoTest {
     assertNotNull(repoObj5);
     assertEquals(repoObj2, repoObj5);
 
-    // delete using version checksum ---> object 1
+    // delete using version UUID ---> object 1
     contentRepoService.deleteRepoObject(RepoVersion.create(repoObjKey1, fileUuid));
 
     Map<String, Object> repoObj6 = null;
     try{
-      // get object 1 by version checksum ----> must be null
+      // get object 1 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -449,7 +449,7 @@ public class ContentRepoTest {
     contentRepoService.deleteRepoObject(new RepoVersionNumber(repoObjKey1, versionNumber2.intValue()));
 
     try{
-      // get object 2 by version checksum ----> must be null
+      // get object 2 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, fileUuid2)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -505,12 +505,12 @@ public class ContentRepoTest {
     assertEquals(fileUuid, versions.get(0).get("uuid"));
     assertEquals(fileUuid2, versions.get(1).get("uuid"));
 
-    // delete using version checksum ---> object 1
+    // delete using version UUID ---> object 1
     contentRepoService.deleteRepoObject(RepoVersion.create(repoObjKey10, fileUuid));
 
     Map<String, Object> repoObj6 = null;
     try{
-      // get object 1 by version checksum ----> must be null
+      // get object 1 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey10, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -523,7 +523,7 @@ public class ContentRepoTest {
     contentRepoService.deleteRepoObject(new RepoVersionNumber(repoObjKey10, versionNumber2.intValue()));
 
     try{
-      // get object 2 by version checksum ----> must be null
+      // get object 2 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey10, fileUuid2)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -557,7 +557,7 @@ public class ContentRepoTest {
 
     Map<String, Object> repoObj2 = null;
     try{
-      // get object 1 by version checksum ----> must be null
+      // get object 1 by version UUID ----> must be null
       repoObj2 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey2, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -743,7 +743,7 @@ public class ContentRepoTest {
 
     Map<String, Object> collection5 = null;
     try{
-      // get object 2 by version checksum ----> must be null
+      // get object 2 by version UUID ----> must be null
       collection5 = contentRepoService.getCollection(new RepoVersionNumber(collectionKey1, collVersionNumber2.intValue())).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){
@@ -757,7 +757,7 @@ public class ContentRepoTest {
 
     Map<String, Object> collection6 = null;
     try{
-      // get object 2 by version checksum ----> must be null
+      // get object 2 by version UUID ----> must be null
       collection6 = contentRepoService.getCollection(RepoVersion.create(collectionKey1, collUuid1)).getMapView();
       fail(EXCEPTION_EXPECTED);
     } catch(ContentRepoException fe){

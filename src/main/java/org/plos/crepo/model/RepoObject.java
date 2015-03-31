@@ -16,6 +16,7 @@ public class RepoObject {
   private final String tag;
   private final Timestamp creationDate;
   private final Timestamp timestamp;   // last modification time
+  private final String userMetadata;
   private final File fileContent;
   private final byte[] byteContent;
 
@@ -26,6 +27,7 @@ public class RepoObject {
     this.tag = builder.tag;
     this.creationDate = builder.creationDate;
     this.timestamp = builder.timestamp;
+    this.userMetadata = builder.userMetadata;
     this.fileContent = builder.fileContent;
     this.byteContent = builder.byteContent;
   }
@@ -54,6 +56,10 @@ public class RepoObject {
     return timestamp;
   }
 
+  public String getUserMetadata() {
+    return userMetadata;
+  }
+
   public File getFileContent() {
     return fileContent;
   }
@@ -70,6 +76,7 @@ public class RepoObject {
     private String tag;
     private Timestamp creationDate;
     private Timestamp timestamp;   // last modification time
+    private String userMetadata;
     private File fileContent;
     private byte[] byteContent;
 
@@ -99,6 +106,11 @@ public class RepoObject {
 
     public RepoObjectBuilder timestamp(Timestamp timestamp){
       this.timestamp = timestamp;
+      return this;
+    }
+
+    public RepoObjectBuilder userMetadata(String userMetadata) {
+      this.userMetadata = userMetadata;
       return this;
     }
 
@@ -133,6 +145,7 @@ public class RepoObject {
     if (key != null ? !key.equals(that.key) : that.key != null) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
     if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+    if (userMetadata != null ? !userMetadata.equals(that.userMetadata) : that.userMetadata != null) return false;
 
     return true;
   }
@@ -145,6 +158,7 @@ public class RepoObject {
     result = 31 * result + (tag != null ? tag.hashCode() : 0);
     result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
     result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+    result = 31 * result + (userMetadata != null ? userMetadata.hashCode() : 0);
     result = 31 * result + (fileContent != null ? fileContent.hashCode() : 0);
     result = 31 * result + (byteContent != null ? Arrays.hashCode(byteContent) : 0);
     return result;

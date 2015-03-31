@@ -79,9 +79,9 @@ public interface ContentRepoService {
   InputStream getLatestRepoObject(String key);
 
   /**
-   * Returns the content of the repo object specified by <code>key</code> & the <code>versionChecksum</code>
+   * Returns the content of the a repo object version, specified by key and UUID
    *
-   * @param version the version checksum of the repo object
+   * @param version the version of the repo object
    * @return an InputStream representing the repo object content.
    */
   InputStream getRepoObject(RepoVersion version);
@@ -106,9 +106,9 @@ public interface ContentRepoService {
   RepoObjectMetadata getLatestRepoObjectMetadata(String key);
 
   /**
-   * Returns the meta data of the repo object specified by <code>key</code> & <code>versionChecksum</code>
+   * Returns the meta data of the repo object version, specified by key and UUID
    *
-   * @param version the version checksum of the repo object
+   * @param version the version of the repo object
    * @return a map with the repo object meta data.
    */
   RepoObjectMetadata getRepoObjectMetadata(RepoVersion version);
@@ -149,17 +149,15 @@ public interface ContentRepoService {
   boolean deleteLatestRepoObject(String key);
 
   /**
-   * Deletes the specific version of a repo object using the key <code>key</code> & the version checksum
-   * <code>versionChecksum</code>
+   * Deletes the specific version of a repo object using the key and UUID
    *
-   * @param version the version checksum of the repo object
+   * @param version the version of the repo object
    * @return true if the object was successfully deleted.
    */
   boolean deleteRepoObject(RepoVersion version);
 
   /**
-   * Deletes the specific version of a repo object using the key <code>key</code> & the version checksum
-   * <code>versionNumber</code>
+   * Deletes the specific version of a repo object using the key and UUID
    *
    * @param number the version number of the repo object
    * @return true if the object was successfully deleted.
@@ -231,9 +229,9 @@ public interface ContentRepoService {
   RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection);
 
   /**
-   * Deletes a repo collection using the key <code>key</code> and the version checksum <code>versionChecksum</code>
+   * Deletes a repo collection version, specified by key and UUID
    *
-   * @param version the version checksum of the repo collection
+   * @param version the version of the repo collection
    * @return a map with the data of the collection
    */
   boolean deleteCollection(RepoVersion version);
@@ -247,10 +245,9 @@ public interface ContentRepoService {
   boolean deleteCollection(RepoVersionNumber number);
 
   /**
-   * Returns a repo collection object using the given key <code>key</code> and version checksum
-   * <code>versionChecksum</code>
+   * Returns a repo collection version, specified by key and UUID
    *
-   * @param version the version checksum of the repo collection
+   * @param version the version of the repo collection
    * @return a map with the data of the collection
    */
   RepoCollectionMetadata getCollection(RepoVersion version);

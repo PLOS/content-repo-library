@@ -15,11 +15,13 @@ public class RepoCollection {
   private final ImmutableCollection<RepoVersion> objects;
   private final String timestamp;   // created time
   private final String tag;
+  private final String userMetadata;
   private final String creationDateTime;   // created time
 
   private RepoCollection(Builder builder) {
     this.key = Preconditions.checkNotNull(builder.key);
     this.objects = ImmutableList.copyOf(builder.objects);
+    this.userMetadata = builder.userMetadata;
 
     this.timestamp = builder.timestamp;
     this.tag = builder.tag;
@@ -49,6 +51,10 @@ public class RepoCollection {
     return objects;
   }
 
+  public String getUserMetadata() {
+    return userMetadata;
+  }
+
   public String getCreationDateTime() {
     return creationDateTime;
   }
@@ -63,6 +69,7 @@ public class RepoCollection {
     private String timestamp;
     private String tag;
     private Collection<RepoVersion> objects;
+    private String userMetadata;
     private String creationDateTime;
 
     private Builder() {
@@ -108,6 +115,15 @@ public class RepoCollection {
       return this;
     }
 
+    public String getUserMetadata() {
+      return userMetadata;
+    }
+
+    public Builder setUserMetadata(String userMetadata) {
+      this.userMetadata = userMetadata;
+      return this;
+    }
+
     public String getCreationDateTime() {
       return creationDateTime;
     }
@@ -131,6 +147,7 @@ public class RepoCollection {
     if (!objects.equals(that.objects)) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
     if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+    if (userMetadata != null ? !userMetadata.equals(that.userMetadata) : that.userMetadata != null) return false;
 
     return true;
   }
@@ -141,6 +158,7 @@ public class RepoCollection {
     result = 31 * result + objects.hashCode();
     result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
     result = 31 * result + (tag != null ? tag.hashCode() : 0);
+    result = 31 * result + (userMetadata != null ? userMetadata.hashCode() : 0);
     result = 31 * result + (creationDateTime != null ? creationDateTime.hashCode() : 0);
     return result;
   }
