@@ -33,6 +33,7 @@ public class RepoObjectMetadata extends RepoMetadata {
 
   public List<URL> getReproxyUrls() {
     List<String> rawUrls = (List<String>) raw.get("reproxyURL");
+    if (rawUrls == null) return new ArrayList<>(0);
     List<URL> urls = new ArrayList<>(rawUrls.size());
     for (String rawUrl : rawUrls) {
       try {
