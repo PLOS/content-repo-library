@@ -478,6 +478,16 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
+  public RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection) {
+    RepoVersion.validateKey(repoCollection.getKey());
+    try (CloseableHttpResponse response = collectionDao.autoCreateCollection(accessConfig.getBucketName(), repoCollection)) {
+      return buildRepoCollectionMetadata(response);
+    } catch (IOException e) {
+      throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
+    }
+  }
+
+  @Override
   public boolean deleteCollection(RepoVersion version) {
     String key = version.getKey();
     String uuid = version.getUuid().toString();
