@@ -574,6 +574,16 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
+  public RepoCollectionMetadata getLatestCollection(String key) {
+    try (CloseableHttpResponse response = collectionDao.getLatestCollection(accessConfig.getBucketName(), key)) {
+      return buildRepoCollectionMetadata(response);
+    } catch (IOException e) {
+      throw serviceServerException(e,
+          "Error handling the response when getting the latest collection using the key. Key: " + key + " RepoMessage: ");
+    }
+  }
+
+  @Override
   public List<RepoCollectionMetadata> getCollectionVersions(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = collectionDao.getCollectionVersions(accessConfig.getBucketName(), key)) {

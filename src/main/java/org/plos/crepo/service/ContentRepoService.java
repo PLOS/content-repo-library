@@ -271,6 +271,14 @@ public interface ContentRepoService {
   RepoCollectionMetadata getCollection(RepoVersionTag tagObj);
 
   /**
+   * Returns the metadata of the latest version of a collection using the most recent creation date time.
+   *
+   * @param key the collection's key
+   * @return the collection metadata.
+   */
+  RepoCollectionMetadata getLatestCollection(String key);
+
+  /**
    * Returns all the versions of a repo collection using the given key <code>key</code>
    *
    * @param key a single string representing the key of the repo collection.

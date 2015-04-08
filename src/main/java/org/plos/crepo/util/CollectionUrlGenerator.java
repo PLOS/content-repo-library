@@ -39,6 +39,10 @@ public class CollectionUrlGenerator {
     return replaceUrl(COLLECTIONS_USING_TAG_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDeleted, tag));
   }
 
+  public static String getLatestCollectionUrl(String repoServer, String bucketName, String key) {
+    return replaceUrl(COLLECTIONS_URL, getCollectionBasicMap(repoServer, bucketName, key));
+  }
+
   public static String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDelete) {
     return replaceUrl(COLLECTIONS_URL, getContentInBucketMap(repoServer, bucketName, offset, limit, includeDelete));
   }
