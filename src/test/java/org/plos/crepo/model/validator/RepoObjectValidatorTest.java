@@ -6,6 +6,10 @@ import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -13,6 +17,13 @@ public class RepoObjectValidatorTest {
 
   private RepoObjectValidator repoObjectValidator;
   private static String KEY = "testKey";
+
+  private static final RepoObject.ContentAccessor CONTENT_ACCESSOR = new RepoObject.ContentAccessor() {
+    @Override
+    public InputStream open() throws IOException {
+      return new ByteArrayInputStream(new byte[1]);
+    }
+  };
 
   @Before
   public void setUp(){
@@ -25,15 +36,13 @@ public class RepoObjectValidatorTest {
     RepoObject repoObject = mock(RepoObject.class);
 
     when(repoObject.getKey()).thenReturn("validaKey");
-    when(repoObject.getFileContent()).thenReturn(null);
-    when(repoObject.getByteContent()).thenReturn(new byte[1]);
+    when(repoObject.getContentAccessor()).thenReturn(CONTENT_ACCESSOR);
     when(repoObject.getContentType()).thenReturn("text/plain");
 
     repoObjectValidator.validate(repoObject);
 
     verify(repoObject).getKey();
-    verify(repoObject).getFileContent();
-    verify(repoObject, times(2)).getByteContent();
+    verify(repoObject, atLeastOnce()).getContentAccessor();
     verify(repoObject).getContentType();
 
   }
@@ -58,8 +67,7 @@ public class RepoObjectValidatorTest {
     RepoObject repoObject = mock(RepoObject.class);
 
     when(repoObject.getKey()).thenReturn("validaKey");
-    when(repoObject.getFileContent()).thenReturn(null);
-    when(repoObject.getByteContent()).thenReturn(null);
+    when(repoObject.getContentAccessor()).thenReturn(null);
 
     try{
       repoObjectValidator.validate(repoObject);
@@ -67,8 +75,7 @@ public class RepoObjectValidatorTest {
     } catch(ContentRepoException e){
       assertEquals(ErrorType.EmptyContent, e.getErrorType());
       verify(repoObject, times(2)).getKey();
-      verify(repoObject).getFileContent();
-      verify(repoObject).getByteContent();
+      verify(repoObject).getContentAccessor();
     }
 
   }
@@ -79,8 +86,7 @@ public class RepoObjectValidatorTest {
     RepoObject repoObject = mock(RepoObject.class);
 
     when(repoObject.getKey()).thenReturn("validaKey");
-    when(repoObject.getFileContent()).thenReturn(null);
-    when(repoObject.getByteContent()).thenReturn(new byte[1]);
+    when(repoObject.getContentAccessor()).thenReturn(CONTENT_ACCESSOR);
     when(repoObject.getContentType()).thenReturn(null);
     when(repoObject.getKey()).thenReturn(KEY);
 
@@ -91,8 +97,7 @@ public class RepoObjectValidatorTest {
       assertEquals(ErrorType.EmptyContentType, e.getErrorType());
       assertTrue(e.getMessage().contains(KEY));
       verify(repoObject, times(2)).getKey();
-      verify(repoObject).getFileContent();
-      verify(repoObject, times(2)).getByteContent();
+      verify(repoObject, atLeastOnce()).getContentAccessor();
     }
 
   }

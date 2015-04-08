@@ -17,6 +17,9 @@ import org.plos.crepo.util.ObjectUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements ContentRepoObjectDao {
 
   private static final Logger log = LoggerFactory.getLogger(ContentRepoObjectDaoImpl.class);
@@ -93,26 +96,31 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
 
   @Override
   public CloseableHttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType) {
-    HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
-    request.setEntity(getObjectEntity(bucketName, repoObject, CreationMethod.NEW, contentType));
-    return executeRequest(request, ErrorType.ErrorCreatingObject);
+    return executePost(bucketName, repoObject, contentType, CreationMethod.NEW, ErrorType.ErrorCreatingObject);
   }
 
   @Override
   public CloseableHttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType) {
-    HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
-    request.setEntity(getObjectEntity(bucketName, repoObject, CreationMethod.VERSION, contentType));
-    return executeRequest(request, ErrorType.ErrorVersioningObject);
+    return executePost(bucketName, repoObject, contentType, CreationMethod.VERSION, ErrorType.ErrorVersioningObject);
   }
 
   @Override
-  public CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType){
-    HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
-    request.setEntity(getObjectEntity(bucketName, repoObject, CreationMethod.AUTO, contentType));
-    return executeRequest(request, ErrorType.ErrorAutoCreatingObject);
+  public CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType) {
+    return executePost(bucketName, repoObject, contentType, CreationMethod.AUTO, ErrorType.ErrorAutoCreatingObject);
   }
 
-  private HttpEntity getObjectEntity(String bucketName, RepoObject repoObject, CreationMethod creationType, String contentType) {
+  private CloseableHttpResponse executePost(String bucketName, RepoObject repoObject, String contentType,
+                                            CreationMethod creationMethod, ErrorType errorType) {
+    HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
+    try (InputStream stream = repoObject.getContentAccessor().open()) {
+      request.setEntity(getObjectEntity(bucketName, repoObject, stream, creationMethod, contentType));
+      return executeRequest(request, errorType);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private HttpEntity getObjectEntity(String bucketName, RepoObject repoObject, InputStream stream, CreationMethod creationType, String contentType) {
     MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
     multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
@@ -120,11 +128,7 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
     multipartEntityBuilder.addTextBody("bucketName", bucketName);
     multipartEntityBuilder.addTextBody("create", creationType.toString());
     multipartEntityBuilder.addTextBody("contentType", contentType);
-    if (repoObject.getByteContent() != null) {
-      multipartEntityBuilder.addBinaryBody("file", repoObject.getByteContent());
-    } else {
-      multipartEntityBuilder.addBinaryBody("file", repoObject.getFileContent());
-    }
+    multipartEntityBuilder.addBinaryBody("file", stream);
 
     if (repoObject.getDownloadName() != null) {
       multipartEntityBuilder.addTextBody("downloadName", repoObject.getDownloadName());
