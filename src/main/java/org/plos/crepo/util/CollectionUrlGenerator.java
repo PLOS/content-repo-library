@@ -40,7 +40,7 @@ public class CollectionUrlGenerator {
   }
 
   public static String getLatestCollectionUrl(String repoServer, String bucketName, String key) {
-    return replaceUrl(COLLECTIONS_URL, getCollectionBasicMap(repoServer, bucketName, key));
+    return replaceUrl(COLLECTION_URL, getCollectionBasicMap(repoServer, bucketName, key));
   }
 
   public static String getGetCollectionsUrl(String repoServer, String bucketName, int offset, int limit, boolean includeDelete) {
