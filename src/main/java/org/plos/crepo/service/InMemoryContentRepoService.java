@@ -1,6 +1,5 @@
 package org.plos.crepo.service;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedListMultimap;
@@ -363,12 +362,12 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   @Override
   public List<RepoObjectMetadata> getRepoObjectVersions(String key) {
-    return Lists.transform(defaultBucket.objects.get(key), new Function<FakeObject, RepoObjectMetadata>() {
-      @Override
-      public RepoObjectMetadata apply(FakeObject input) {
-        return input.getMetadata();
-      }
-    });
+    List<FakeObject> objects = defaultBucket.objects.get(key);
+    List<RepoObjectMetadata> metadata = new ArrayList<>(objects.size());
+    for (FakeObject object : objects) {
+      metadata.add(object.getMetadata());
+    }
+    return metadata;
   }
 
   private boolean delete(FakeEntity entity) {
@@ -412,7 +411,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
   private static int getNextVersionNumber(List<? extends FakeEntity> entities) {
     int versionNumber;
     if (entities.isEmpty()) {
-      versionNumber = 1;
+      versionNumber = 0;
     } else {
       FakeEntity lastExisting = entities.get(entities.size() - 1);
       versionNumber = lastExisting.number + 1;
@@ -528,12 +527,12 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   @Override
   public List<RepoCollectionMetadata> getCollectionVersions(String key) {
-    return Lists.transform(defaultBucket.collections.get(key), new Function<FakeCollection, RepoCollectionMetadata>() {
-      @Override
-      public RepoCollectionMetadata apply(FakeCollection input) {
-        return input.getMetadata();
-      }
-    });
+    List<FakeCollection> collections = defaultBucket.collections.get(key);
+    List<RepoCollectionMetadata> metadata = new ArrayList<>(collections.size());
+    for (FakeCollection collection : collections) {
+      metadata.add(collection.getMetadata());
+    }
+    return metadata;
   }
 
   @Override
