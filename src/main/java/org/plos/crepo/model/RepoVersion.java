@@ -1,6 +1,7 @@
 package org.plos.crepo.model;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
@@ -82,4 +83,8 @@ public class RepoVersion {
     return result;
   }
 
+  @Override
+  public String toString() {
+    return String.format("%s(\"%s\", \"%s\")", getClass().getSimpleName(), StringEscapeUtils.escapeJava(key), uuid);
+  }
 }

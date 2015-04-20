@@ -22,7 +22,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 
 import static org.junit.Assert.*;
@@ -39,9 +41,14 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private static final String TAG = "test tag";
   private static final String VERSION_UUID = "65dee6e6-2e5c-47bd-adad-85060fa45a1f";
   private static final int VERSION_NUMBER = 0;
-  private static final byte[] CONTENT = new byte[2];
   private static final String DOWNLOAD_NAME = "objKeyDownloadName";
   private static final String CONTENT_TYPE = "text/plain";
+  private static final RepoObject.ContentAccessor CONTENT = new RepoObject.ContentAccessor() {
+    @Override
+    public InputStream open() throws IOException {
+      return new ByteArrayInputStream(new byte[2]);
+    }
+  };
 
   @Mock
   private ContentRepoAccessConfig repoAccessConfig;
@@ -545,7 +552,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private void mockRepoObjectCalls(RepoObject repoObject) {
 
     when(repoObject.getKey()).thenReturn(OBJECT_KEY);
-    when(repoObject.getByteContent()).thenReturn(CONTENT);
+    when(repoObject.getContentAccessor()).thenReturn(CONTENT);
     when(repoObject.getTimestamp()).thenReturn(TIMESTAMP);
     when(repoObject.getDownloadName()).thenReturn(DOWNLOAD_NAME);
     when(repoObject.getCreationDate()).thenReturn(TIMESTAMP);
@@ -556,7 +563,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private void verifyRepoObjectCalls(RepoObject repoObject) {
 
     verify(repoObject).getKey();
-    verify(repoObject, times(2)).getByteContent();
+    verify(repoObject, atLeastOnce()).getContentAccessor();
     verify(repoObject, times(2)).getTimestamp();
     verify(repoObject, times(2)).getDownloadName();
     verify(repoObject, times(2)).getCreationDate();
@@ -569,7 +576,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     assertEquals(SOME_URL, httpPost.getURI().toString());
     HttpEntity entity = httpPost.getEntity();
 
-    java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream((int)entity.getContentLength());
+    java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
     entity.writeTo(out);
     String entityContentAsString = new String(out.toByteArray());
     assertTrue(entityContentAsString.contains("bucketName"));

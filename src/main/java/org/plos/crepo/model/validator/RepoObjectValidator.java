@@ -14,13 +14,13 @@ public class RepoObjectValidator {
           .build();
     }
 
-    if (repoObject.getFileContent() == null && repoObject.getByteContent() == null) {
+    if (repoObject.getContentAccessor() == null) {
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyContent)
           .key(repoObject.getKey())
           .build();
     }
 
-    if (repoObject.getByteContent() != null) {
+    if (!repoObject.canGetContentType()) {
       if (StringUtils.isEmpty(repoObject.getContentType())) {
         throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.EmptyContentType)
             .key(repoObject.getKey())

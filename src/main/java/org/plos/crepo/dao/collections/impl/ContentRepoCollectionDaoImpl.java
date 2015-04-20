@@ -89,6 +89,12 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
   }
 
   @Override
+  public CloseableHttpResponse getLatestCollection(String bucketName, String key) {
+    HttpGet request = new HttpGet(CollectionUrlGenerator.getLatestCollectionUrl(getRepoServer(), bucketName, key));
+    return executeRequest(request, ErrorType.ErrorFetchingCollection);
+  }
+
+  @Override
   public CloseableHttpResponse getCollectionVersions(String bucketName, String key) {
     HttpGet request = new HttpGet(CollectionUrlGenerator.getCollectionVersionsUrl(getRepoServer(), bucketName, key));
     return executeRequest(request, ErrorType.ErrorFetchingCollectionVersions);

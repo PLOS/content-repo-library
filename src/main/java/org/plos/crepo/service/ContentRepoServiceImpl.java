@@ -30,13 +30,11 @@ import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -378,7 +376,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoObjectMetadata createRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
     try (CloseableHttpResponse response =
-             objectDao.createRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
+             objectDao.createRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating an object. RepoMessage: ");
@@ -388,7 +386,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata versionRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
-    try (CloseableHttpResponse response = objectDao.versionRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
+    try (CloseableHttpResponse response = objectDao.versionRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when versioning an object. RepoMessage: ");
@@ -398,7 +396,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
-    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(accessConfig.getBucketName(), repoObject, getFileContentType(repoObject, repoObject.getFileContent()))) {
+    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when trying to auto create an object. RepoMessage: ");
@@ -420,23 +418,6 @@ public class ContentRepoServiceImpl implements ContentRepoService {
       return objectDao.getObjects(accessConfig.getBucketName(), offset, limit, includeDeleted);
     }
     return objectDao.getObjectsUsingTag(accessConfig.getBucketName(), offset, limit, includeDeleted, tag);
-  }
-
-  private String getFileContentType(RepoObject repoObject, File file) {
-    String contentType = repoObject.getContentType();
-    if (StringUtils.isEmpty(contentType)) {
-      try {
-        contentType = Files.probeContentType(file.toPath());
-      } catch (IOException e) {
-        e.printStackTrace();
-        log.error("Error getting the content type from file. Key: " + repoObject.getKey(), e);
-        throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorAccessingFile)
-            .baseException(e)
-            .key(repoObject.getKey())
-            .build();
-      }
-    }
-    return contentType;
   }
 
 
@@ -570,6 +551,16 @@ public class ContentRepoServiceImpl implements ContentRepoService {
           .append(tag)
           .append(" RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
+    }
+  }
+
+  @Override
+  public RepoCollectionMetadata getLatestCollection(String key) {
+    try (CloseableHttpResponse response = collectionDao.getLatestCollection(accessConfig.getBucketName(), key)) {
+      return buildRepoCollectionMetadata(response);
+    } catch (IOException e) {
+      throw serviceServerException(e,
+          "Error handling the response when getting the latest collection using the key. Key: " + key + " RepoMessage: ");
     }
   }
 
