@@ -2,6 +2,7 @@ package org.plos.crepo.service;
 
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoCollectionMetadata;
+import org.plos.crepo.model.RepoCollectionObjectsMetadata;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.model.RepoObjectMetadata;
 import org.plos.crepo.model.RepoVersion;
@@ -288,6 +289,6 @@ public interface ContentRepoService {
    *                       will be ignore.
    * @return a map List with the data of every collection
    */
-  List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag);
+  List<RepoCollectionObjectsMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag);
 
 }

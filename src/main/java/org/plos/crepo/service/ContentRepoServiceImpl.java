@@ -20,6 +20,7 @@ import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
 import org.plos.crepo.model.RepoCollectionMetadata;
+import org.plos.crepo.model.RepoCollectionObjectsMetadata;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.model.RepoObjectMetadata;
 import org.plos.crepo.model.RepoVersion;
@@ -456,6 +457,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     return list;
   }
 
+  private List<RepoCollectionObjectsMetadata> buildRepoCollectionObjectsMetadataList(HttpResponse response) {
+    List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
+    List<RepoCollectionObjectsMetadata> list = new ArrayList<>(rawList.size());
+    for (Map<String, Object> rawObj : rawList) {
+      list.add(new RepoCollectionObjectsMetadata(rawObj));
+    }
+    return list;
+  }
+
   @Override
   public RepoCollectionMetadata createCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
@@ -588,9 +598,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
+  public List<RepoCollectionObjectsMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getCollectionsCloseableResp(offset, limit, includeDeleted, tag)) {
-      return buildRepoCollectionMetadataList(response);
+      return buildRepoCollectionObjectsMetadataList(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when getting all the collections. RepoMessage: ");
     }
