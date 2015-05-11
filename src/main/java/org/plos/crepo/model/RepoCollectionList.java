@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Represents output to the client, describing a collection.
  */
-public class RepoCollectionList extends RepoMetadata {
+public class RepoCollectionList extends RepoCollectionMetadata {
 
   private final ImmutableList<RepoObjectMetadata> objects;
 
