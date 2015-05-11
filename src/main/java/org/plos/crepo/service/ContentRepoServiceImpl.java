@@ -19,6 +19,7 @@ import org.plos.crepo.dao.objects.impl.ContentRepoObjectDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.RepoCollectionList;
 import org.plos.crepo.model.RepoCollectionMetadata;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.model.RepoObjectMetadata;
@@ -442,12 +443,21 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   // ------------------------ Collections ------------------------
 
-  private RepoCollectionMetadata buildRepoCollectionMetadata(HttpResponse response) {
+  private RepoCollectionList buildRepoCollectionMetadata(HttpResponse response) {
     Map<String, Object> raw = gson.fromJson(HttpResponseUtil.getResponseAsString(response), MAP_TOKEN);
-    return new RepoCollectionMetadata(raw);
+    return new RepoCollectionList(raw);
   }
 
-  private List<RepoCollectionMetadata> buildRepoCollectionMetadataList(HttpResponse response) {
+  private List<RepoCollectionList> buildRepoCollectionMetadataList(HttpResponse response) {
+    List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
+    List<RepoCollectionList> list = new ArrayList<>(rawList.size());
+    for (Map<String, Object> rawObj : rawList) {
+      list.add(new RepoCollectionList(rawObj));
+    }
+    return list;
+  }
+
+  private List<RepoCollectionMetadata> buildRepoCollectionObjectsMetadataList(HttpResponse response) {
     List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
     List<RepoCollectionMetadata> list = new ArrayList<>(rawList.size());
     for (Map<String, Object> rawObj : rawList) {
@@ -457,7 +467,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata createCollection(RepoCollection repoCollection) {
+  public RepoCollectionList createCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.createCollection(accessConfig.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
@@ -467,7 +477,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata versionCollection(RepoCollection repoCollection) {
+  public RepoCollectionList versionCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.versionCollection(accessConfig.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
@@ -478,7 +488,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection) {
+  public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
     RepoVersion.validateKey(repoCollection.getKey());
     try (CloseableHttpResponse response = collectionDao.autoCreateCollection(accessConfig.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
@@ -523,7 +533,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersion version) {
+  public RepoCollectionList getCollection(RepoVersion version) {
     String key = version.getKey();
     String uuid = version.getUuid().toString();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingUuid(accessConfig.getBucketName(), key, uuid)) {
@@ -540,7 +550,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersionNumber number) {
+  public RepoCollectionList getCollection(RepoVersionNumber number) {
     String key = number.getKey();
     int versionNumber = number.getNumber();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionNumber(accessConfig.getBucketName(), key, versionNumber)) {
@@ -557,7 +567,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersionTag tagObj) {
+  public RepoCollectionList getCollection(RepoVersionTag tagObj) {
     String key = tagObj.getKey();
     String tag = tagObj.getTag();
     try (CloseableHttpResponse response = collectionDao.getCollectionUsingTag(accessConfig.getBucketName(), key, tag)) {
@@ -574,7 +584,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   @Override
-  public List<RepoCollectionMetadata> getCollectionVersions(String key) {
+  public List<RepoCollectionList> getCollectionVersions(String key) {
     RepoVersion.validateKey(key);
     try (CloseableHttpResponse response = collectionDao.getCollectionVersions(accessConfig.getBucketName(), key)) {
       return buildRepoCollectionMetadataList(response);
@@ -590,7 +600,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getCollectionsCloseableResp(offset, limit, includeDeleted, tag)) {
-      return buildRepoCollectionMetadataList(response);
+      return buildRepoCollectionObjectsMetadataList(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when getting all the collections. RepoMessage: ");
     }

@@ -1,6 +1,7 @@
 package org.plos.crepo.service;
 
 import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.RepoCollectionList;
 import org.plos.crepo.model.RepoCollectionMetadata;
 import org.plos.crepo.model.RepoObject;
 import org.plos.crepo.model.RepoObjectMetadata;
@@ -209,7 +210,7 @@ public interface ContentRepoService {
    * @param repoCollection a RepoCollection object containing the data of the new collection
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata createCollection(RepoCollection repoCollection);
+  RepoCollectionList createCollection(RepoCollection repoCollection);
 
   /**
    * Versions an existent repo collection using the <code>repoCollection</code> data.
@@ -217,7 +218,7 @@ public interface ContentRepoService {
    * @param repoCollection a RepoCollection object containing the data of the new collection
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata versionCollection(RepoCollection repoCollection);
+  RepoCollectionList versionCollection(RepoCollection repoCollection);
 
   /**
    * Creates or versions a repo collection using the the <code>repoCollection</code> data regardless of whether it
@@ -226,7 +227,7 @@ public interface ContentRepoService {
    * @param repoCollection a RepoCollection object containing the data of the collection
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection);
+  RepoCollectionList autoCreateCollection(RepoCollection repoCollection);
 
   /**
    * Deletes a repo collection version, specified by key and UUID
@@ -250,7 +251,7 @@ public interface ContentRepoService {
    * @param version the version of the repo collection
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata getCollection(RepoVersion version);
+  RepoCollectionList getCollection(RepoVersion version);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and version number
@@ -259,7 +260,7 @@ public interface ContentRepoService {
    * @param number the version number of the repo collection
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata getCollection(RepoVersionNumber number);
+  RepoCollectionList getCollection(RepoVersionNumber number);
 
   /**
    * Returns a repo collection object using the given key <code>key</code> and tag <code>tag</code> If there are more
@@ -268,7 +269,7 @@ public interface ContentRepoService {
    * @param tagObj the tag of the repo collection.
    * @return a map with the data of the collection
    */
-  RepoCollectionMetadata getCollection(RepoVersionTag tagObj);
+  RepoCollectionList getCollection(RepoVersionTag tagObj);
 
   /**
    * Returns all the versions of a repo collection using the given key <code>key</code>
@@ -276,7 +277,7 @@ public interface ContentRepoService {
    * @param key a single string representing the key of the repo collection.
    * @return a List with the data of every collection
    */
-  List<RepoCollectionMetadata> getCollectionVersions(String key);
+  List<RepoCollectionList> getCollectionVersions(String key);
 
   /**
    * Returns all the collections in the configured bucket. It uses the offset and limit to paginate the response.
