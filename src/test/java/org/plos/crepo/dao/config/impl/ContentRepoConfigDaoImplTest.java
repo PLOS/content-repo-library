@@ -71,7 +71,7 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingReproxyData);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -108,7 +108,7 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingConfig);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -145,7 +145,7 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingStatus);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGetArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
