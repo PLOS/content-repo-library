@@ -10,6 +10,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.RepoCollectionList;
 import org.plos.crepo.model.RepoCollectionMetadata;
 import org.plos.crepo.model.RepoMetadata;
 import org.plos.crepo.model.RepoObject;
@@ -38,7 +39,7 @@ import java.util.UUID;
  * An implementation of the client-side service interface with a local, in-memory implementation behind it. Intended for
  * unit tests. The service implementation is rudimentary, is not performant, and does not guarantee a perfect simulation
  * of an actual Content Repo server in edge cases or error conditions.
- * <p/>
+ * <p>
  * Not thread-safe.
  */
 public class InMemoryContentRepoService implements ContentRepoService {
@@ -150,7 +151,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
     }
   }
 
-  private class FakeCollection extends FakeEntity<RepoCollectionMetadata> {
+  private class FakeCollection extends FakeEntity<RepoCollectionList> {
     private final Collection<RepoVersion> objectIds = new LinkedHashSet<>();
 
     private FakeCollection(String key, int number, String tag) {
@@ -158,13 +159,13 @@ public class InMemoryContentRepoService implements ContentRepoService {
     }
 
     @Override
-    public RepoCollectionMetadata getMetadata() {
+    public RepoCollectionList getMetadata() {
       List<Map<String, Object>> rawObjectMetadata = new ArrayList<>(objectIds.size());
       for (RepoVersion objectId : objectIds) {
         FakeObject fakeObject = getFrom(defaultBucket.objects, objectId);
         rawObjectMetadata.add(fakeObject.getMetadata().getMapView());
       }
-      return new RepoCollectionMetadata(buildMetadata()
+      return new RepoCollectionList(buildMetadata()
           .put("objects", rawObjectMetadata)
           .build());
     }
@@ -177,11 +178,11 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   /**
    * Makes test-friendly UUIDs that must <em>not</em> be used for real purposes.
-   * <p/>
+   * <p>
    * The first eight digits of each generated value increment from {@code 00000001}. This is a convenience for human
    * inspection during debugging. Tests should not rely on these numbers for validation (they are unstable if the system
    * under test does things in a different order).
-   * <p/>
+   * <p>
    * The remaining digits are produced by {@link java.util.Random}, which avoids the overhead of {@link
    * java.security.SecureRandom} but does not adequately prevent collisions. (Of course, tampering with the first eight
    * digits also increases the risk of collisions, so if this is a concern something is wrong.)
@@ -441,15 +442,14 @@ public class InMemoryContentRepoService implements ContentRepoService {
     return created.getMetadata();
   }
 
-  private static <M extends RepoMetadata> List<M> getEntitySlice(Iterable<? extends FakeEntity<M>> entities,
-                                                                 int offset, int limit,
-                                                                 boolean includeDeleted, String tag) {
+  private static <M extends RepoMetadata, E extends FakeEntity<? extends M>>
+  List<M> getEntitySlice(Iterable<? extends E> entities, int offset, int limit, boolean includeDeleted, String tag) {
     Preconditions.checkArgument(offset >= 0);
     Preconditions.checkArgument(limit >= 0);
 
     List<M> result = new ArrayList<>(limit);
     // This fake implementation is O(offset + limit), though a production implementation is supposed to be O(limit).
-    for (FakeEntity<M> entity : entities) {
+    for (FakeEntity<? extends M> entity : entities) {
       if (result.size() >= limit) break;
       if ((includeDeleted || entity.status == Status.USED) &&
           (tag == null || tag.equals(entity.tag))) {
@@ -467,19 +467,19 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata createCollection(RepoCollection repoCollection) {
+  public RepoCollectionList createCollection(RepoCollection repoCollection) {
     if (defaultBucket.objects.containsKey(repoCollection.getKey())) throw new InMemoryContentRepoServiceException();
     return autoCreateCollection(repoCollection);
   }
 
   @Override
-  public RepoCollectionMetadata versionCollection(RepoCollection repoCollection) {
+  public RepoCollectionList versionCollection(RepoCollection repoCollection) {
     if (!defaultBucket.objects.containsKey(repoCollection.getKey())) throw new InMemoryContentRepoServiceException();
     return autoCreateCollection(repoCollection);
   }
 
   @Override
-  public RepoCollectionMetadata autoCreateCollection(RepoCollection repoCollection) {
+  public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
     String key = repoCollection.getKey();
     List<FakeCollection> existing = defaultBucket.collections.get(key);
     int versionNumber = getNextVersionNumber(existing);
@@ -506,17 +506,17 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersion version) {
+  public RepoCollectionList getCollection(RepoVersion version) {
     return getFrom(defaultBucket.collections, version).getMetadata();
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersionNumber number) {
+  public RepoCollectionList getCollection(RepoVersionNumber number) {
     return getFrom(defaultBucket.collections, number).getMetadata();
   }
 
   @Override
-  public RepoCollectionMetadata getCollection(RepoVersionTag tagObj) {
+  public RepoCollectionList getCollection(RepoVersionTag tagObj) {
     return getFrom(defaultBucket.collections, tagObj).getMetadata();
   }
 
@@ -526,9 +526,9 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public List<RepoCollectionMetadata> getCollectionVersions(String key) {
+  public List<RepoCollectionList> getCollectionVersions(String key) {
     List<FakeCollection> collections = defaultBucket.collections.get(key);
-    List<RepoCollectionMetadata> metadata = new ArrayList<>(collections.size());
+    List<RepoCollectionList> metadata = new ArrayList<>(collections.size());
     for (FakeCollection collection : collections) {
       metadata.add(collection.getMetadata());
     }
@@ -537,7 +537,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   @Override
   public List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag) {
-    return getEntitySlice(defaultBucket.collections.values(), offset, limit, includeDeleted, tag);
+    return InMemoryContentRepoService.<RepoCollectionMetadata, FakeCollection>getEntitySlice(
+        defaultBucket.collections.values(), offset, limit, includeDeleted, tag);
   }
 
 }
