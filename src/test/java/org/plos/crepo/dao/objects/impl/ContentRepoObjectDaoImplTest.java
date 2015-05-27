@@ -97,7 +97,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -141,7 +141,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
 
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -181,7 +181,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -221,7 +221,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -261,7 +261,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -301,7 +301,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -341,7 +341,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -381,7 +381,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectVersions);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -419,7 +419,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -457,7 +457,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -511,7 +511,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     }
 
     verifyRepoObjectCalls(repoObject);
-    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
 
     assertNotNull(response);
     assertEquals(mockResponse, response);
@@ -544,7 +544,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     }
 
     verifyRepoObjectCalls(repoObject);
-    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }

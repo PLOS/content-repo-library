@@ -75,8 +75,8 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
     }
 
     verify(repoAccessConfig).open(httpRequest);
-    verify(mockResponse, times(2)).getStatusLine();
-    verify(statusLine, times(2)).getStatusCode();
+    verify(mockResponse, times(1)).getStatusLine();
+    verify(statusLine, times(1)).getStatusCode();
     verify(httpRequest, times(2)).getURI();
 
     assertNull(response);

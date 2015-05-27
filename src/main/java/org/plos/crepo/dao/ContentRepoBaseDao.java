@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
+import org.plos.crepo.exceptions.NotFoundException;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
 
@@ -38,8 +39,13 @@ public abstract class ContentRepoBaseDao {
     }
 
     try {
-      if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK && response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
-        String cause = HttpResponseUtil.getErrorMessage(response);
+      final int statusCode = response.getStatusLine().getStatusCode();
+
+      if( statusCode == HttpStatus.SC_NOT_FOUND) {
+        throw new NotFoundException(HttpResponseUtil.getErrorMessage(response));
+      } else if ( statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED) {
+        final String cause = HttpResponseUtil.getErrorMessage(response);
+
         getLog().error("uri: " + request.getURI().toString() + " repoMessage: " + cause);
         throw new ContentRepoException.ContentRepoExceptionBuilder(errorType)
             .url(request.getURI().toString())
@@ -48,6 +54,7 @@ public abstract class ContentRepoBaseDao {
       }
 
       return response;
+
     } catch (RuntimeException e) {
       IOUtils.closeQuietly(response);
       request.releaseConnection();
