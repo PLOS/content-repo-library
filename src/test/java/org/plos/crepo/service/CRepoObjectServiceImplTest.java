@@ -513,12 +513,12 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
+    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
 
-    verify(repoObject).getContentType();
+    verify(repoObject).probeContentType();
     verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -535,7 +535,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
+    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
@@ -548,7 +548,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoObject).getContentType();
+    verify(repoObject).probeContentType();
     verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -565,12 +565,12 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
+    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Map<String, Object> objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
 
-    verify(repoObject).getContentType();
+    verify(repoObject).probeContentType();
     verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -587,7 +587,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     RepoObject repoObject = mock(RepoObject.class);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.getContentType()).thenReturn(CONTENT_TYPE);
+    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
     when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
@@ -600,7 +600,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoObject).getContentType();
+    verify(repoObject).probeContentType();
     verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();

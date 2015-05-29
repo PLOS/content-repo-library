@@ -1,6 +1,7 @@
 package org.plos.crepo.model;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
@@ -46,5 +47,11 @@ public class RepoVersionTag {
   @Override
   public int hashCode() {
     return 31 * key.hashCode() + tag.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s(\"%s\", \"%s\")", getClass().getSimpleName(),
+        StringEscapeUtils.escapeJava(key), StringEscapeUtils.escapeJava(tag));
   }
 }

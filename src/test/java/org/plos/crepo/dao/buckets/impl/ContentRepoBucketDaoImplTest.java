@@ -52,7 +52,7 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
 
     HttpResponse response = contentRepoBucketDaoImpl.createBucket(BUCKET_NAME);
 
-    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
     assertNotNull(response);
@@ -78,7 +78,7 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorCreatingBucket);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
     HttpPost httpPost = httpPostArgument.getValue();
@@ -120,7 +120,7 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
@@ -159,7 +159,7 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
-    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 2, 2);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }

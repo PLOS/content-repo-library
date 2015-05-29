@@ -22,6 +22,8 @@ public interface ContentRepoCollectionDao {
 
   CloseableHttpResponse getCollectionUsingTag(String bucketName, String key, String tag);
 
+  CloseableHttpResponse getLatestCollection(String bucketName, String key);
+
   CloseableHttpResponse getCollectionVersions(String bucketName, String key);
 
   CloseableHttpResponse getCollections(String bucketName, int offset, int limit, boolean includeDeleted);

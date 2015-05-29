@@ -1,6 +1,7 @@
 package org.plos.crepo.model;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * An identifier for a version of a repo object or collection, using the version number.
@@ -36,5 +37,10 @@ public class RepoVersionNumber {
   @Override
   public int hashCode() {
     return 31 * key.hashCode() + number;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s(\"%s\", %d)", getClass().getSimpleName(), StringEscapeUtils.escapeJava(key), number);
   }
 }
