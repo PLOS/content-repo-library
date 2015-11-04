@@ -18,12 +18,7 @@ public class RepoObjectValidatorTest {
   private RepoObjectValidator repoObjectValidator;
   private static String KEY = "testKey";
 
-  private static final RepoObject.ContentAccessor CONTENT_ACCESSOR = new RepoObject.ContentAccessor() {
-    @Override
-    public InputStream open() throws IOException {
-      return new ByteArrayInputStream(new byte[1]);
-    }
-  };
+  private static final RepoObject.ContentAccessor CONTENT_ACCESSOR = () -> new ByteArrayInputStream(new byte[1]);
 
   @Before
   public void setUp(){

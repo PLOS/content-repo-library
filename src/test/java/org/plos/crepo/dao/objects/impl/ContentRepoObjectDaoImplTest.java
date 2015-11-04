@@ -43,12 +43,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private static final int VERSION_NUMBER = 0;
   private static final String DOWNLOAD_NAME = "objKeyDownloadName";
   private static final String CONTENT_TYPE = "text/plain";
-  private static final RepoObject.ContentAccessor CONTENT = new RepoObject.ContentAccessor() {
-    @Override
-    public InputStream open() throws IOException {
-      return new ByteArrayInputStream(new byte[2]);
-    }
-  };
+  private static final RepoObject.ContentAccessor CONTENT = () -> new ByteArrayInputStream(new byte[2]);
 
   @Mock
   private ContentRepoAccessConfig repoAccessConfig;

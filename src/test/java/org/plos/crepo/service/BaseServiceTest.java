@@ -42,12 +42,9 @@ public class BaseServiceTest {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
     HttpEntity mockEntity = mock(HttpEntity.class);
     when(httpResponse.getEntity()).thenReturn(mockEntity);
-    when(mockEntity.getContent()).thenAnswer(new Answer<InputStream>() {
-      @Override
-      public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
-        String json = gson.toJson(responseBody);
-        return new ByteArrayInputStream(json.getBytes(Charsets.UTF_8));
-      }
+    when(mockEntity.getContent()).thenAnswer(invocationOnMock -> {
+      String json = gson.toJson(responseBody);
+      return new ByteArrayInputStream(json.getBytes(Charsets.UTF_8));
     });
     return httpResponse;
   }
