@@ -1,6 +1,7 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.input;
 
 import com.google.common.collect.ImmutableCollection;
+import org.plos.crepo.model.identity.RepoVersion;
 
 public class RepoCollectionEntity {
 

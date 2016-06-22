@@ -1,8 +1,9 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.input;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import org.plos.crepo.model.identity.RepoVersion;
 
 import java.util.Collection;
 

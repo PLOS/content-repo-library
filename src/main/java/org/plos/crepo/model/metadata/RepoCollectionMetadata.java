@@ -1,9 +1,5 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -1,4 +1,4 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.identity;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringEscapeUtils;

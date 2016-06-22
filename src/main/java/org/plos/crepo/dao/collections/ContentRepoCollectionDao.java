@@ -2,7 +2,7 @@ package org.plos.crepo.dao.collections;
 
 
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.input.RepoCollection;
 
 public interface ContentRepoCollectionDao {
 

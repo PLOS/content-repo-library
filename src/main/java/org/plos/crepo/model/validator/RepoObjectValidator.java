@@ -3,7 +3,7 @@ package org.plos.crepo.model.validator;
 import org.apache.commons.lang3.StringUtils;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObject;
 
 public class RepoObjectValidator {
 

@@ -12,7 +12,7 @@ import org.plos.crepo.dao.ContentRepoBaseDao;
 import org.plos.crepo.dao.objects.ContentRepoObjectDao;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.CreationMethod;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObject;
 import org.plos.crepo.util.ObjectUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

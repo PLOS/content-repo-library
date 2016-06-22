@@ -15,7 +15,7 @@ import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObject;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.plos.crepo.util.ObjectUrlGenerator;
 import org.powermock.api.mockito.PowerMockito;
@@ -24,7 +24,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 
 import static org.junit.Assert.*;

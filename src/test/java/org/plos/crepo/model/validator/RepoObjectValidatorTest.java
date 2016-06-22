@@ -4,11 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

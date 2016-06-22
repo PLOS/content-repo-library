@@ -5,22 +5,13 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.plos.crepo.model.RepoMetadata;
-import org.plos.crepo.model.RepoVersion;
-import org.plos.crepo.util.HttpResponseUtil;
-import org.powermock.api.mockito.PowerMockito;
+import org.plos.crepo.model.metadata.RepoMetadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 

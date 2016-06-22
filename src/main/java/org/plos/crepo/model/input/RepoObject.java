@@ -1,4 +1,4 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.input;
 
 import com.google.common.base.Preconditions;
 import org.plos.crepo.exceptions.ContentRepoException;

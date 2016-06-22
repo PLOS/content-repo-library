@@ -1,4 +1,4 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
 import com.google.common.base.Optional;
 import org.plos.crepo.exceptions.ContentRepoException;

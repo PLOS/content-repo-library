@@ -1,4 +1,4 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -11,6 +11,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
+import org.plos.crepo.model.Status;
+import org.plos.crepo.model.identity.RepoVersion;
+import org.plos.crepo.model.identity.RepoVersionNumber;
+import org.plos.crepo.model.identity.RepoVersionTag;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

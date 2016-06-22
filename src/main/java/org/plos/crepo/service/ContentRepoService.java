@@ -1,13 +1,13 @@
 package org.plos.crepo.service;
 
-import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoCollectionList;
-import org.plos.crepo.model.RepoCollectionMetadata;
-import org.plos.crepo.model.RepoObject;
-import org.plos.crepo.model.RepoObjectMetadata;
-import org.plos.crepo.model.RepoVersion;
-import org.plos.crepo.model.RepoVersionNumber;
-import org.plos.crepo.model.RepoVersionTag;
+import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.metadata.RepoCollectionList;
+import org.plos.crepo.model.metadata.RepoCollectionMetadata;
+import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.metadata.RepoObjectMetadata;
+import org.plos.crepo.model.identity.RepoVersion;
+import org.plos.crepo.model.identity.RepoVersionNumber;
+import org.plos.crepo.model.identity.RepoVersionTag;
 
 import java.io.InputStream;
 import java.util.List;
@@ -73,8 +73,8 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return an InputStream of the content
-   * @deprecated use {@link #getRepoObject(org.plos.crepo.model.RepoVersion)} or {@link
-   * #getRepoObject(org.plos.crepo.model.RepoVersionNumber)} instead.
+   * @deprecated use {@link #getRepoObject(RepoVersion)} or {@link
+   * #getRepoObject(RepoVersionNumber)} instead.
    */
   @Deprecated
   InputStream getLatestRepoObject(String key);
@@ -100,8 +100,8 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return a map with the repo object meta data.
-   * @deprecated use {@link #getRepoObjectMetadata(org.plos.crepo.model.RepoVersion)} or {@link
-   * #getRepoObjectMetadata(org.plos.crepo.model.RepoVersionNumber)} instead.
+   * @deprecated use {@link #getRepoObjectMetadata(RepoVersion)} or {@link
+   * #getRepoObjectMetadata(RepoVersionNumber)} instead.
    */
   @Deprecated
   RepoObjectMetadata getLatestRepoObjectMetadata(String key);
@@ -143,8 +143,8 @@ public interface ContentRepoService {
    *
    * @param key a single string representing the key of the repo object
    * @return true if the object was successfully deleted.
-   * @deprecated use {@link #deleteRepoObject(org.plos.crepo.model.RepoVersion)} or {@link
-   * #deleteRepoObject(org.plos.crepo.model.RepoVersionNumber)} instead.
+   * @deprecated use {@link #deleteRepoObject(RepoVersion)} or {@link
+   * #deleteRepoObject(RepoVersionNumber)} instead.
    */
   @Deprecated
   boolean deleteLatestRepoObject(String key);
