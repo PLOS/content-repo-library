@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.plos.crepo.config.ContentRepoAccessConfig;
+import org.plos.crepo.config.HttpClientFunction;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
@@ -18,14 +19,14 @@ import org.plos.crepo.dao.objects.ContentRepoObjectDao;
 import org.plos.crepo.dao.objects.impl.ContentRepoObjectDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.metadata.RepoCollectionList;
-import org.plos.crepo.model.metadata.RepoCollectionMetadata;
-import org.plos.crepo.model.input.RepoObject;
-import org.plos.crepo.model.metadata.RepoObjectMetadata;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
+import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.metadata.RepoCollectionList;
+import org.plos.crepo.model.metadata.RepoCollectionMetadata;
+import org.plos.crepo.model.metadata.RepoObjectMetadata;
 import org.plos.crepo.model.validator.RepoObjectValidator;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.slf4j.Logger;
@@ -56,8 +57,8 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   private final ContentRepoObjectDao objectDao;
   private final ContentRepoCollectionDao collectionDao;
 
-  public ContentRepoServiceImpl(ContentRepoAccessConfig accessConfig) {
-    this.accessConfig = Preconditions.checkNotNull(accessConfig);
+  public ContentRepoServiceImpl(String repoServer, HttpClientFunction client) {
+    this.accessConfig = new ContentRepoAccessConfig(repoServer, client);
     gson = new Gson();
 
     configDao = new ContentRepoConfigDaoImpl(accessConfig);

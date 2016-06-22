@@ -6,16 +6,16 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.plos.crepo.config.BasicContentRepoAccessConfig;
+import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.buckets.ContentRepoBucketsDao;
 import org.plos.crepo.dao.buckets.impl.ContentRepoBucketDaoImpl;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.input.RepoObject;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
+import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.input.RepoObject;
 import org.plos.crepo.service.ContentRepoServiceImpl;
 
 import java.io.BufferedWriter;
@@ -78,11 +78,10 @@ public class ContentRepoTest {
 
   @BeforeClass
   public static void initialSetUp() {
-    BasicContentRepoAccessConfig.Builder configBuilder = BasicContentRepoAccessConfig.builder();
-    configBuilder.setRepoServer(REPO_SERVER_URL);
-    configBuilder.setBucketName(BUCKET_NAME);
-
-    BasicContentRepoAccessConfig config = configBuilder.build();
+    ContentRepoAccessConfig config = new ContentRepoAccessConfig(REPO_SERVER_URL, request -> {
+      fail("All calls to HttpClientFunction.open in tests should be mocked");
+      throw new AssertionError();
+    });
     contentRepoService = new ContentRepoServiceImpl(config);
 
     ContentRepoBucketsDao contentRepoDao = new ContentRepoBucketDaoImpl(config);
