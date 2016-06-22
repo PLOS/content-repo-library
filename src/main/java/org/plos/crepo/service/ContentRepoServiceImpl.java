@@ -375,7 +375,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoObjectMetadata createRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
     try (CloseableHttpResponse response =
-             objectDao.createRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
+             objectDao.createRepoObj(repoObject.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating an object. RepoMessage: ");
@@ -385,7 +385,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata versionRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
-    try (CloseableHttpResponse response = objectDao.versionRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
+    try (CloseableHttpResponse response = objectDao.versionRepoObj(repoObject.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when versioning an object. RepoMessage: ");
@@ -395,7 +395,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject) {
     RepoObjectValidator.validate(repoObject);
-    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(accessConfig.getBucketName(), repoObject, repoObject.probeContentType())) {
+    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(repoObject.getBucketName(), repoObject, repoObject.probeContentType())) {
       return buildRepoObjectMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when trying to auto create an object. RepoMessage: ");
@@ -447,7 +447,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList createCollection(RepoCollection repoCollection) {
-    try (CloseableHttpResponse response = collectionDao.createCollection(accessConfig.getBucketName(), repoCollection)) {
+    try (CloseableHttpResponse response = collectionDao.createCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
@@ -456,7 +456,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList versionCollection(RepoCollection repoCollection) {
-    try (CloseableHttpResponse response = collectionDao.versionCollection(accessConfig.getBucketName(), repoCollection)) {
+    try (CloseableHttpResponse response = collectionDao.versionCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
@@ -466,7 +466,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
-    try (CloseableHttpResponse response = collectionDao.autoCreateCollection(accessConfig.getBucketName(), repoCollection)) {
+    try (CloseableHttpResponse response = collectionDao.autoCreateCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");

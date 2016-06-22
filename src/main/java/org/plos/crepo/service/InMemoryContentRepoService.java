@@ -418,13 +418,17 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   @Override
   public RepoObjectMetadata createRepoObject(RepoObject repoObject) {
-    if (defaultBucket.objects.containsKey(repoObject.getKey())) throw new InMemoryContentRepoServiceException();
+    if (get(repoObject.getBucketName()).objects.containsKey(repoObject.getKey())) {
+      throw new InMemoryContentRepoServiceException();
+    }
     return autoCreateRepoObject(repoObject);
   }
 
   @Override
   public RepoObjectMetadata versionRepoObject(RepoObject repoObject) {
-    if (!defaultBucket.objects.containsKey(repoObject.getKey())) throw new InMemoryContentRepoServiceException();
+    if (!get(repoObject.getBucketName()).objects.containsKey(repoObject.getKey())) {
+      throw new InMemoryContentRepoServiceException();
+    }
     return autoCreateRepoObject(repoObject);
   }
 
@@ -442,7 +446,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
   @Override
   public RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject) {
     String key = repoObject.getKey();
-    List<FakeObject> existing = defaultBucket.objects.get(key);
+    List<FakeObject> existing = get(repoObject.getBucketName()).objects.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
     byte[] content;
@@ -487,20 +491,24 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   @Override
   public RepoCollectionList createCollection(RepoCollection repoCollection) {
-    if (defaultBucket.objects.containsKey(repoCollection.getKey())) throw new InMemoryContentRepoServiceException();
+    if (get(repoCollection.getBucketName()).collections.containsKey(repoCollection.getKey())) {
+      throw new InMemoryContentRepoServiceException();
+    }
     return autoCreateCollection(repoCollection);
   }
 
   @Override
   public RepoCollectionList versionCollection(RepoCollection repoCollection) {
-    if (!defaultBucket.objects.containsKey(repoCollection.getKey())) throw new InMemoryContentRepoServiceException();
+    if (!get(repoCollection.getBucketName()).collections.containsKey(repoCollection.getKey())) {
+      throw new InMemoryContentRepoServiceException();
+    }
     return autoCreateCollection(repoCollection);
   }
 
   @Override
   public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
     String key = repoCollection.getKey();
-    List<FakeCollection> existing = defaultBucket.collections.get(key);
+    List<FakeCollection> existing = get(repoCollection.getBucketName()).collections.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
     FakeCollection created = new FakeCollection(key, versionNumber, repoCollection.getTag());

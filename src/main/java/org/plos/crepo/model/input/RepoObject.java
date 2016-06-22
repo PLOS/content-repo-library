@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 public class RepoObject {
 
@@ -46,6 +47,7 @@ public class RepoObject {
   }
 
 
+  private final String bucketName;
   private final String key; // what the user specifies
   private final String downloadName;
   private final String contentType;
@@ -56,6 +58,7 @@ public class RepoObject {
   private final ContentAccessor contentAccessor;
 
   private RepoObject(RepoObjectBuilder builder) {
+    this.bucketName = builder.bucketName;
     this.key = builder.key;
     this.downloadName = builder.downloadName;
     this.contentType = builder.contentType;
@@ -64,6 +67,10 @@ public class RepoObject {
     this.timestamp = builder.timestamp;
     this.userMetadata = builder.userMetadata;
     this.contentAccessor = builder.contentAccessor;
+  }
+
+  public String getBucketName() {
+    return bucketName;
   }
 
   public String getKey() {
@@ -124,7 +131,8 @@ public class RepoObject {
 
   public static class RepoObjectBuilder {
 
-    private String key; // what the user specifies
+    private final String bucketName;
+    private final String key; // what the user specifies
     private String downloadName;
     private String contentType;
     private String tag;
@@ -133,8 +141,9 @@ public class RepoObject {
     private String userMetadata;
     private ContentAccessor contentAccessor;
 
-    public RepoObjectBuilder(String key) {
-      this.key = key;
+    public RepoObjectBuilder(String bucketName, String key) {
+      this.bucketName = Objects.requireNonNull(bucketName);
+      this.key = Objects.requireNonNull(key);
     }
 
     public RepoObjectBuilder downloadName(String downloadName) {
@@ -195,23 +204,22 @@ public class RepoObject {
 
     RepoObject that = (RepoObject) o;
 
-    if (contentAccessor != null ? !contentAccessor.equals(that.contentAccessor) : that.contentAccessor != null) {
-      return false;
-    }
-    if (contentType != null ? !contentType.equals(that.contentType) : that.contentType != null) return false;
-    if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
-    if (downloadName != null ? !downloadName.equals(that.downloadName) : that.downloadName != null) return false;
+    if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
     if (key != null ? !key.equals(that.key) : that.key != null) return false;
+    if (downloadName != null ? !downloadName.equals(that.downloadName) : that.downloadName != null) return false;
+    if (contentType != null ? !contentType.equals(that.contentType) : that.contentType != null) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+    if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
     if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
     if (userMetadata != null ? !userMetadata.equals(that.userMetadata) : that.userMetadata != null) return false;
+    return contentAccessor != null ? contentAccessor.equals(that.contentAccessor) : that.contentAccessor == null;
 
-    return true;
   }
 
   @Override
   public int hashCode() {
-    int result = key != null ? key.hashCode() : 0;
+    int result = bucketName != null ? bucketName.hashCode() : 0;
+    result = 31 * result + (key != null ? key.hashCode() : 0);
     result = 31 * result + (downloadName != null ? downloadName.hashCode() : 0);
     result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
     result = 31 * result + (tag != null ? tag.hashCode() : 0);

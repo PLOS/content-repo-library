@@ -1,17 +1,18 @@
 package org.plos.crepo.model.input;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import org.plos.crepo.model.identity.RepoVersion;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents input from the client, describing a collection to create or modify.
  */
 public class RepoCollection {
 
+  private final String bucketName;
   private final String key; // what the user specifies
   private final ImmutableCollection<RepoVersion> objects;
   private final String timestamp;   // created time
@@ -20,7 +21,8 @@ public class RepoCollection {
   private final String creationDateTime;   // created time
 
   private RepoCollection(Builder builder) {
-    this.key = Preconditions.checkNotNull(builder.key);
+    this.bucketName = Objects.requireNonNull(builder.bucketName);
+    this.key = Objects.requireNonNull(builder.key);
     this.objects = ImmutableList.copyOf(builder.objects);
     this.userMetadata = builder.userMetadata;
 
@@ -34,6 +36,10 @@ public class RepoCollection {
         .setKey(key)
         .setObjects(objects)
         .build();
+  }
+
+  public String getBucketName() {
+    return bucketName;
   }
 
   public String getKey() {
@@ -66,6 +72,7 @@ public class RepoCollection {
   }
 
   public static class Builder {
+    private String bucketName;
     private String key;
     private String timestamp;
     private String tag;
@@ -78,6 +85,15 @@ public class RepoCollection {
 
     public RepoCollection build() {
       return new RepoCollection(this);
+    }
+
+    public String getBucketName() {
+      return bucketName;
+    }
+
+    public Builder setBucketName(String bucketName) {
+      this.bucketName = bucketName;
+      return this;
     }
 
     public String getKey() {
@@ -142,22 +158,21 @@ public class RepoCollection {
 
     RepoCollection that = (RepoCollection) o;
 
-    if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null) {
-      return false;
-    }
-    if (!key.equals(that.key)) return false;
-    if (!objects.equals(that.objects)) return false;
-    if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+    if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
+    if (key != null ? !key.equals(that.key) : that.key != null) return false;
+    if (objects != null ? !objects.equals(that.objects) : that.objects != null) return false;
     if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+    if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
     if (userMetadata != null ? !userMetadata.equals(that.userMetadata) : that.userMetadata != null) return false;
+    return creationDateTime != null ? creationDateTime.equals(that.creationDateTime) : that.creationDateTime == null;
 
-    return true;
   }
 
   @Override
   public int hashCode() {
-    int result = key.hashCode();
-    result = 31 * result + objects.hashCode();
+    int result = bucketName != null ? bucketName.hashCode() : 0;
+    result = 31 * result + (key != null ? key.hashCode() : 0);
+    result = 31 * result + (objects != null ? objects.hashCode() : 0);
     result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
     result = 31 * result + (tag != null ? tag.hashCode() : 0);
     result = 31 * result + (userMetadata != null ? userMetadata.hashCode() : 0);
