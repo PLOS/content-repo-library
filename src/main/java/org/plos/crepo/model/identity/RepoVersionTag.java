@@ -1,28 +1,37 @@
 package org.plos.crepo.model.identity;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 
+import java.util.Objects;
+
 /**
  * An identifier for a version of a repo object or collection, using a user-defined tag.
  */
-public class RepoVersionTag {
+public final class RepoVersionTag {
 
-  private final String key;
+  private final RepoId id;
   private final String tag;
 
-  public RepoVersionTag(String key, String tag) {
-    RepoVersion.validateKey(key);
-    validateObjectTag(tag);
-    this.key = Preconditions.checkNotNull(key);
-    this.tag = Preconditions.checkNotNull(tag);
+  private RepoVersionTag(RepoId id, String tag) {
+    this.id = Objects.requireNonNull(id);
+    this.tag = Objects.requireNonNull(tag);
+    validateObjectTag(this.tag);
   }
 
-  public String getKey() {
-    return key;
+  public static RepoVersionTag create(RepoId id, String tag) {
+    return new RepoVersionTag(id, tag);
+  }
+
+  public static RepoVersionTag create(String bucketName, String key, String tag) {
+    return create(RepoId.create(bucketName, key), tag);
+  }
+
+
+  public RepoId getId() {
+    return id;
   }
 
   public String getTag() {
@@ -41,17 +50,18 @@ public class RepoVersionTag {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     RepoVersionTag that = (RepoVersionTag) o;
-    return key.equals(that.key) && tag.equals(that.tag);
+    return id.equals(that.id) && tag.equals(that.tag);
   }
 
   @Override
   public int hashCode() {
-    return 31 * key.hashCode() + tag.hashCode();
+    return 31 * id.hashCode() + tag.hashCode();
   }
 
   @Override
   public String toString() {
-    return String.format("%s(\"%s\", \"%s\")", getClass().getSimpleName(),
-        StringEscapeUtils.escapeJava(key), StringEscapeUtils.escapeJava(tag));
+    return String.format("%s(\"%s\", \"%s\", \"%s\")", getClass().getSimpleName(),
+        StringEscapeUtils.escapeJava(id.getBucketName()), StringEscapeUtils.escapeJava(id.getKey()),
+        StringEscapeUtils.escapeJava(tag));
   }
 }

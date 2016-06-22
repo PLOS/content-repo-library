@@ -3,23 +3,24 @@ package org.plos.crepo.model.identity;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import java.util.Objects;
+
 /**
  * An identifier for a version of a repo object or collection, using the version number.
  */
-public class RepoVersionNumber {
+public final class RepoVersionNumber {
 
-  private final String key;
+  private final RepoId id;
   private final int number;
 
-  public RepoVersionNumber(String key, int number) {
-    RepoVersion.validateKey(key);
-    this.key = Preconditions.checkNotNull(key);
+  private RepoVersionNumber(RepoId id, int number) {
+    this.id = Objects.requireNonNull(id);
     this.number = number;
     Preconditions.checkArgument(this.number >= 0);
   }
 
-  public String getKey() {
-    return key;
+  public RepoId getId() {
+    return id;
   }
 
   public int getNumber() {
@@ -31,16 +32,17 @@ public class RepoVersionNumber {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     RepoVersionNumber that = (RepoVersionNumber) o;
-    return number == that.number && key.equals(that.key);
+    return number == that.number && id.equals(that.id);
   }
 
   @Override
   public int hashCode() {
-    return 31 * key.hashCode() + number;
+    return 31 * id.hashCode() + number;
   }
 
   @Override
   public String toString() {
-    return String.format("%s(\"%s\", %d)", getClass().getSimpleName(), StringEscapeUtils.escapeJava(key), number);
+    return String.format("%s(\"%s\", \"%s\", \"%s\")", getClass().getSimpleName(),
+        StringEscapeUtils.escapeJava(id.getBucketName()), StringEscapeUtils.escapeJava(id.getKey()), number);
   }
 }

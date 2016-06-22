@@ -1,13 +1,14 @@
 package org.plos.crepo.service;
 
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.metadata.RepoCollectionList;
-import org.plos.crepo.model.metadata.RepoCollectionMetadata;
-import org.plos.crepo.model.input.RepoObject;
-import org.plos.crepo.model.metadata.RepoObjectMetadata;
+import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
+import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.metadata.RepoCollectionList;
+import org.plos.crepo.model.metadata.RepoCollectionMetadata;
+import org.plos.crepo.model.metadata.RepoObjectMetadata;
 
 import java.io.InputStream;
 import java.util.List;
@@ -71,13 +72,12 @@ public interface ContentRepoService {
   /**
    * Returns the content of the latest version of an object using the most recent creation date time
    *
-   * @param key a single string representing the key of the repo object
+   * @param id the bucket name and key of the repo object
    * @return an InputStream of the content
-   * @deprecated use {@link #getRepoObject(RepoVersion)} or {@link
-   * #getRepoObject(RepoVersionNumber)} instead.
+   * @deprecated use {@link #getRepoObject(RepoVersion)} or {@link #getRepoObject(RepoVersionNumber)} instead.
    */
   @Deprecated
-  InputStream getLatestRepoObject(String key);
+  InputStream getLatestRepoObject(RepoId id);
 
   /**
    * Returns the content of the a repo object version, specified by key and UUID
@@ -98,13 +98,13 @@ public interface ContentRepoService {
   /**
    * Returns the meta data of the latest version of an object using the most recent creation date time.
    *
-   * @param key a single string representing the key of the repo object
+   * @param id the bucket name and key of the repo object
    * @return a map with the repo object meta data.
-   * @deprecated use {@link #getRepoObjectMetadata(RepoVersion)} or {@link
-   * #getRepoObjectMetadata(RepoVersionNumber)} instead.
+   * @deprecated use {@link #getRepoObjectMetadata(RepoVersion)} or {@link #getRepoObjectMetadata(RepoVersionNumber)}
+   * instead.
    */
   @Deprecated
-  RepoObjectMetadata getLatestRepoObjectMetadata(String key);
+  RepoObjectMetadata getLatestRepoObjectMetadata(RepoId id);
 
   /**
    * Returns the meta data of the repo object version, specified by key and UUID
@@ -133,21 +133,20 @@ public interface ContentRepoService {
   /**
    * Returns the meta data of all the versions for the given repo object, using the repo object key <code>key</code>
    *
-   * @param key a single string representing the key of the repo object
+   * @param id the bucket name and key of the repo object
    * @return a list of the repo object versions
    */
-  List<RepoObjectMetadata> getRepoObjectVersions(String key);
+  List<RepoObjectMetadata> getRepoObjectVersions(RepoId id);
 
   /**
    * Deletes the latest version of the repo object using object key <code>key</code>
    *
-   * @param key a single string representing the key of the repo object
+   * @param id the bucket name and key of the repo object
    * @return true if the object was successfully deleted.
-   * @deprecated use {@link #deleteRepoObject(RepoVersion)} or {@link
-   * #deleteRepoObject(RepoVersionNumber)} instead.
+   * @deprecated use {@link #deleteRepoObject(RepoVersion)} or {@link #deleteRepoObject(RepoVersionNumber)} instead.
    */
   @Deprecated
-  boolean deleteLatestRepoObject(String key);
+  boolean deleteLatestRepoObject(RepoId id);
 
   /**
    * Deletes the specific version of a repo object using the key and UUID
@@ -199,7 +198,7 @@ public interface ContentRepoService {
    *                       will be ignore.
    * @return a map List with the data of every collection
    */
-  List<RepoObjectMetadata> getRepoObjects(int offset, int limit, boolean includeDeleted, String tag);
+  List<RepoObjectMetadata> getRepoObjects(String bucketName, int offset, int limit, boolean includeDeleted, String tag);
 
 
   // ------------------------ Collections ------------------------
@@ -274,18 +273,18 @@ public interface ContentRepoService {
   /**
    * Returns the metadata of the latest version of a collection using the most recent creation date time.
    *
-   * @param key the collection's key
+   * @param id the collection's ID
    * @return the collection metadata.
    */
-  RepoCollectionMetadata getLatestCollection(String key);
+  RepoCollectionMetadata getLatestCollection(RepoId id);
 
   /**
    * Returns all the versions of a repo collection using the given key <code>key</code>
    *
-   * @param key a single string representing the key of the repo collection.
+   * @param id the bucket name and key of the repo collection.
    * @return a List with the data of every collection
    */
-  List<RepoCollectionList> getCollectionVersions(String key);
+  List<RepoCollectionList> getCollectionVersions(RepoId id);
 
   /**
    * Returns all the collections in the configured bucket. It uses the offset and limit to paginate the response.
@@ -297,6 +296,6 @@ public interface ContentRepoService {
    *                       will be ignore.
    * @return a map List with the data of every collection
    */
-  List<RepoCollectionMetadata> getCollections(int offset, int limit, boolean includeDeleted, String tag);
+  List<RepoCollectionMetadata> getCollections(String bucketName, int offset, int limit, boolean includeDeleted, String tag);
 
 }
