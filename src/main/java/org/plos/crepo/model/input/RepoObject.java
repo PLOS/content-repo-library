@@ -55,7 +55,7 @@ public class RepoObject {
   private final String userMetadata;
   private final ContentAccessor contentAccessor;
 
-  private RepoObject(RepoObjectBuilder builder){
+  private RepoObject(RepoObjectBuilder builder) {
     this.key = builder.key;
     this.downloadName = builder.downloadName;
     this.contentType = builder.contentType;
@@ -133,31 +133,31 @@ public class RepoObject {
     private String userMetadata;
     private ContentAccessor contentAccessor;
 
-    public RepoObjectBuilder(String key){
+    public RepoObjectBuilder(String key) {
       this.key = key;
     }
 
-    public RepoObjectBuilder downloadName(String downloadName){
+    public RepoObjectBuilder downloadName(String downloadName) {
       this.downloadName = downloadName;
       return this;
     }
 
-    public RepoObjectBuilder contentType(String contentType){
+    public RepoObjectBuilder contentType(String contentType) {
       this.contentType = contentType;
       return this;
     }
 
-    public RepoObjectBuilder tag(String tag){
+    public RepoObjectBuilder tag(String tag) {
       this.tag = tag;
       return this;
     }
 
-    public RepoObjectBuilder creationDate(Timestamp creationDate){
+    public RepoObjectBuilder creationDate(Timestamp creationDate) {
       this.creationDate = creationDate;
       return this;
     }
 
-    public RepoObjectBuilder timestamp(Timestamp timestamp){
+    public RepoObjectBuilder timestamp(Timestamp timestamp) {
       this.timestamp = timestamp;
       return this;
     }
@@ -167,12 +167,12 @@ public class RepoObject {
       return this;
     }
 
-    public RepoObjectBuilder fileContent(File fileContent){
+    public RepoObjectBuilder fileContent(File fileContent) {
       this.contentAccessor = new FileAccessor(fileContent);
       return this;
     }
 
-    public RepoObjectBuilder byteContent(byte[] byteContent){
+    public RepoObjectBuilder byteContent(byte[] byteContent) {
       this.contentAccessor = new ByteArrayAccessor(byteContent);
       return this;
     }
@@ -182,7 +182,7 @@ public class RepoObject {
       return this;
     }
 
-    public RepoObject build(){
+    public RepoObject build() {
       return new RepoObject(this);
     }
 

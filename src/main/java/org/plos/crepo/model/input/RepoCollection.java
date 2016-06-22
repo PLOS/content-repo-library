@@ -142,8 +142,9 @@ public class RepoCollection {
 
     RepoCollection that = (RepoCollection) o;
 
-    if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null)
+    if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null) {
       return false;
+    }
     if (!key.equals(that.key)) return false;
     if (!objects.equals(that.objects)) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
