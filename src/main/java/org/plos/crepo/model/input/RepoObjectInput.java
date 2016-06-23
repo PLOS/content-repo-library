@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class RepoObject {
+public class RepoObjectInput {
 
   public static interface ContentAccessor {
     InputStream open() throws IOException;
@@ -57,7 +57,7 @@ public class RepoObject {
   private final String userMetadata;
   private final ContentAccessor contentAccessor;
 
-  private RepoObject(Builder builder) {
+  private RepoObjectInput(Builder builder) {
     this.bucketName = builder.bucketName;
     this.key = builder.key;
     this.downloadName = builder.downloadName;
@@ -194,8 +194,8 @@ public class RepoObject {
       return this;
     }
 
-    public RepoObject build() {
-      return new RepoObject(this);
+    public RepoObjectInput build() {
+      return new RepoObjectInput(this);
     }
   }
 
@@ -204,7 +204,7 @@ public class RepoObject {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    RepoObject that = (RepoObject) o;
+    RepoObjectInput that = (RepoObjectInput) o;
 
     if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
     if (key != null ? !key.equals(that.key) : that.key != null) return false;

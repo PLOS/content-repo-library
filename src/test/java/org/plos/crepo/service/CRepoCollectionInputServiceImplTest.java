@@ -18,7 +18,7 @@ import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
-import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.input.RepoCollectionInput;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, Gson.class})
-public class CRepoCollectionServiceImplTest extends BaseServiceTest {
+public class CRepoCollectionInputServiceImplTest extends BaseServiceTest {
 
   private static final String BUCKET_NAME = "bucketName";
   private static final String VERSION_UUID = "d8562db9-6974-499f-a522-9e7a945d48bb";
@@ -79,16 +79,16 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
-    RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
-    when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
+    when(repoCollectionInput.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoCollectionInput.getKey()).thenReturn("key");
+    when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollectionInput)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollectionInput).getMapView();
 
-    verify(repoCollection, atLeastOnce()).getKey();
-    verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
+    verify(repoCollectionInput, atLeastOnce()).getKey();
+    verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollectionInput);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -101,23 +101,23 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
-    RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
-    when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
+    when(repoCollectionInput.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoCollectionInput.getKey()).thenReturn("key");
+    when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollectionInput)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
+      collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollectionInput).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoCollection, atLeastOnce()).getKey();
-    verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
+    verify(repoCollectionInput, atLeastOnce()).getKey();
+    verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollectionInput);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -130,16 +130,16 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
-    RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
-    when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
+    when(repoCollectionInput.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoCollectionInput.getKey()).thenReturn("key");
+    when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollectionInput)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollectionInput).getMapView();
 
-    verify(repoCollection, atLeastOnce()).getKey();
-    verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
+    verify(repoCollectionInput, atLeastOnce()).getKey();
+    verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollectionInput);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -152,23 +152,23 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     Map<String, Object> expectedResponse = TEST_COLL_METADATA;
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
-    RepoCollection repoCollection = mock(RepoCollection.class);
-    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
-    when(repoCollection.getKey()).thenReturn("key");
-    when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
+    when(repoCollectionInput.getBucketName()).thenReturn(BUCKET_NAME);
+    when(repoCollectionInput.getKey()).thenReturn("key");
+    when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollectionInput)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
+      collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollectionInput).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoCollection, atLeastOnce()).getKey();
-    verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
+    verify(repoCollectionInput, atLeastOnce()).getKey();
+    verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollectionInput);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 

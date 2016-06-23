@@ -12,7 +12,7 @@ import org.plos.crepo.dao.ContentRepoBaseDao;
 import org.plos.crepo.dao.objects.ContentRepoObjectDao;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.CreationMethod;
-import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.util.ObjectUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,55 +95,55 @@ public class ContentRepoObjectDaoImpl extends ContentRepoBaseDao implements Cont
   }
 
   @Override
-  public CloseableHttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType) {
-    return executePost(bucketName, repoObject, contentType, CreationMethod.NEW, ErrorType.ErrorCreatingObject);
+  public CloseableHttpResponse createRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType) {
+    return executePost(bucketName, repoObjectInput, contentType, CreationMethod.NEW, ErrorType.ErrorCreatingObject);
   }
 
   @Override
-  public CloseableHttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType) {
-    return executePost(bucketName, repoObject, contentType, CreationMethod.VERSION, ErrorType.ErrorVersioningObject);
+  public CloseableHttpResponse versionRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType) {
+    return executePost(bucketName, repoObjectInput, contentType, CreationMethod.VERSION, ErrorType.ErrorVersioningObject);
   }
 
   @Override
-  public CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType) {
-    return executePost(bucketName, repoObject, contentType, CreationMethod.AUTO, ErrorType.ErrorAutoCreatingObject);
+  public CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType) {
+    return executePost(bucketName, repoObjectInput, contentType, CreationMethod.AUTO, ErrorType.ErrorAutoCreatingObject);
   }
 
-  private CloseableHttpResponse executePost(String bucketName, RepoObject repoObject, String contentType,
+  private CloseableHttpResponse executePost(String bucketName, RepoObjectInput repoObjectInput, String contentType,
                                             CreationMethod creationMethod, ErrorType errorType) {
     HttpPost request = new HttpPost(ObjectUrlGenerator.getCreateObjectUrl(getRepoServer()));
-    try (InputStream stream = repoObject.getContentAccessor().open()) {
-      request.setEntity(getObjectEntity(bucketName, repoObject, stream, creationMethod, contentType));
+    try (InputStream stream = repoObjectInput.getContentAccessor().open()) {
+      request.setEntity(getObjectEntity(bucketName, repoObjectInput, stream, creationMethod, contentType));
       return executeRequest(request, errorType);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private HttpEntity getObjectEntity(String bucketName, RepoObject repoObject, InputStream stream, CreationMethod creationType, String contentType) {
+  private HttpEntity getObjectEntity(String bucketName, RepoObjectInput repoObjectInput, InputStream stream, CreationMethod creationType, String contentType) {
     MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
     multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-    multipartEntityBuilder.addTextBody("key", repoObject.getKey());
+    multipartEntityBuilder.addTextBody("key", repoObjectInput.getKey());
     multipartEntityBuilder.addTextBody("bucketName", bucketName);
     multipartEntityBuilder.addTextBody("create", creationType.toString());
     multipartEntityBuilder.addTextBody("contentType", contentType);
     multipartEntityBuilder.addBinaryBody("file", stream);
 
-    if (repoObject.getDownloadName() != null) {
-      multipartEntityBuilder.addTextBody("downloadName", repoObject.getDownloadName());
+    if (repoObjectInput.getDownloadName() != null) {
+      multipartEntityBuilder.addTextBody("downloadName", repoObjectInput.getDownloadName());
     }
-    if (repoObject.getTimestamp() != null) {
-      multipartEntityBuilder.addTextBody("timestamp", repoObject.getTimestamp().toString());
+    if (repoObjectInput.getTimestamp() != null) {
+      multipartEntityBuilder.addTextBody("timestamp", repoObjectInput.getTimestamp().toString());
     }
-    if (repoObject.getCreationDate() != null) {
-      multipartEntityBuilder.addTextBody("creationDateTime", repoObject.getCreationDate().toString());
+    if (repoObjectInput.getCreationDate() != null) {
+      multipartEntityBuilder.addTextBody("creationDateTime", repoObjectInput.getCreationDate().toString());
     }
-    if (repoObject.getTag() != null) {
-      multipartEntityBuilder.addTextBody("tag", repoObject.getTag());
+    if (repoObjectInput.getTag() != null) {
+      multipartEntityBuilder.addTextBody("tag", repoObjectInput.getTag());
     }
-    if (repoObject.getUserMetadata() != null) {
-      multipartEntityBuilder.addTextBody("userMetadata", repoObject.getUserMetadata());
+    if (repoObjectInput.getUserMetadata() != null) {
+      multipartEntityBuilder.addTextBody("userMetadata", repoObjectInput.getUserMetadata());
     }
 
     return multipartEntityBuilder.build();

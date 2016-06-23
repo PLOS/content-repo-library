@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Represents input from the client, describing a collection to create or modify.
  */
-public class RepoCollection {
+public class RepoCollectionInput {
 
   private final String bucketName;
   private final String key; // what the user specifies
@@ -20,7 +20,7 @@ public class RepoCollection {
   private final String userMetadata;
   private final String creationDateTime;   // created time
 
-  private RepoCollection(Builder builder) {
+  private RepoCollectionInput(Builder builder) {
     this.bucketName = Objects.requireNonNull(builder.bucketName);
     this.key = Objects.requireNonNull(builder.key);
     this.objects = ImmutableList.copyOf(builder.objects);
@@ -31,7 +31,7 @@ public class RepoCollection {
     this.creationDateTime = builder.creationDateTime;
   }
 
-  public static RepoCollection create(String bucketName, String key, Collection<RepoVersion> objects) {
+  public static RepoCollectionInput create(String bucketName, String key, Collection<RepoVersion> objects) {
     return builder(bucketName, key)
         .setObjects(objects)
         .build();
@@ -84,8 +84,8 @@ public class RepoCollection {
       this.key = Objects.requireNonNull(key);
     }
 
-    public RepoCollection build() {
-      return new RepoCollection(this);
+    public RepoCollectionInput build() {
+      return new RepoCollectionInput(this);
     }
 
     public Builder setTimestamp(String timestamp) {
@@ -119,7 +119,7 @@ public class RepoCollection {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    RepoCollection that = (RepoCollection) o;
+    RepoCollectionInput that = (RepoCollectionInput) o;
 
     if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
     if (key != null ? !key.equals(that.key) : that.key != null) return false;

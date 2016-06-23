@@ -16,7 +16,7 @@ public class RepoCollectionEntity {
   private final String create;   // created time
 
 
-  public RepoCollectionEntity(RepoCollection collection, String bucketName, String create) {
+  public RepoCollectionEntity(RepoCollectionInput collection, String bucketName, String create) {
     this.bucketName = bucketName;
     this.create = create;
 

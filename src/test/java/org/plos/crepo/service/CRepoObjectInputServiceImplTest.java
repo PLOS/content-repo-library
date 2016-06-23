@@ -18,7 +18,7 @@ import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
-import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.model.validator.RepoObjectValidator;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, Gson.class, RepoObjectValidator.class})
-public class CRepoObjectServiceImplTest extends BaseServiceTest {
+public class CRepoObjectInputServiceImplTest extends BaseServiceTest {
 
   private static final String BUCKET_NAME = "bucketName";
   private static final String VERSION_UUID = "31a6f1cd-ef28-49fa-b811-f881ac4811f5";
@@ -509,17 +509,17 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    RepoObject repoObject = mock(RepoObject.class);
-    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    when(repoObjectInput.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
-    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
-    when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
+    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObjectInput);
+    when(repoObjectInput.probeContentType()).thenReturn(CONTENT_TYPE);
+    when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE)).thenReturn(httpResponse);
 
-    Map<String, Object> objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
+    Map<String, Object> objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObjectInput).getMapView();
 
-    verify(repoObject).probeContentType();
-    verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    verify(repoObjectInput).probeContentType();
+    verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -532,25 +532,25 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void createRepoObjectThrowsExcTest() throws Exception {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
 
-    RepoObject repoObject = mock(RepoObject.class);
-    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    when(repoObjectInput.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
-    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
-    when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
+    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObjectInput);
+    when(repoObjectInput.probeContentType()).thenReturn(CONTENT_TYPE);
+    when(contentRepoObjectDao.createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
-      objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObject).getMapView();
+      objectResponse = cRepoObjectServiceImpl.createRepoObject(repoObjectInput).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoObject).probeContentType();
-    verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    verify(repoObjectInput).probeContentType();
+    verify(contentRepoObjectDao).createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -563,17 +563,17 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    RepoObject repoObject = mock(RepoObject.class);
-    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    when(repoObjectInput.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
-    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
-    when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
+    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObjectInput);
+    when(repoObjectInput.probeContentType()).thenReturn(CONTENT_TYPE);
+    when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE)).thenReturn(httpResponse);
 
-    Map<String, Object> objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
+    Map<String, Object> objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObjectInput).getMapView();
 
-    verify(repoObject).probeContentType();
-    verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    verify(repoObjectInput).probeContentType();
+    verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 
@@ -586,25 +586,25 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
   public void versionRepoObjectThrowsExcTest() throws Exception {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
 
-    RepoObject repoObject = mock(RepoObject.class);
-    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    when(repoObjectInput.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
-    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
-    when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
-    when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE)).thenReturn(httpResponse);
+    PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObjectInput);
+    when(repoObjectInput.probeContentType()).thenReturn(CONTENT_TYPE);
+    when(contentRepoObjectDao.versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE)).thenReturn(httpResponse);
 
     Mockito.doThrow(TestExpectedException.class).when(httpResponse).close();
 
     Map<String, Object> objectResponse = null;
     try {
-      objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObject).getMapView();
+      objectResponse = cRepoObjectServiceImpl.versionRepoObject(repoObjectInput).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoObject).probeContentType();
-    verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    verify(repoObjectInput).probeContentType();
+    verify(contentRepoObjectDao).versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
 

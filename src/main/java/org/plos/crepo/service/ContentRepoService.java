@@ -4,8 +4,8 @@ import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.input.RepoCollectionInput;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.model.metadata.RepoCollectionList;
 import org.plos.crepo.model.metadata.RepoCollectionMetadata;
 import org.plos.crepo.model.metadata.RepoObjectMetadata;
@@ -167,26 +167,26 @@ public interface ContentRepoService {
   /**
    * Creates a repo object using <code>repoObject</code>
    *
-   * @param repoObject a RepoObject containing the meta data & content of the new repo object
+   * @param repoObjectInput a RepoObject containing the meta data & content of the new repo object
    * @return a map with the repo object metadata
    */
-  RepoObjectMetadata createRepoObject(RepoObject repoObject);
+  RepoObjectMetadata createRepoObject(RepoObjectInput repoObjectInput);
 
   /**
    * Versions a repo object using <code>repoObject</code>
    *
-   * @param repoObject a RepoObject containing the meta data & content of the new repo object
+   * @param repoObjectInput a RepoObject containing the meta data & content of the new repo object
    * @return a map with the repo object metadata
    */
-  RepoObjectMetadata versionRepoObject(RepoObject repoObject);
+  RepoObjectMetadata versionRepoObject(RepoObjectInput repoObjectInput);
 
   /**
    * Create/version a repo object using <code>repoObject</code> depending if the object already exists or not
    *
-   * @param repoObject a RepoObject containing the meta data & content of the new repo object
+   * @param repoObjectInput a RepoObject containing the meta data & content of the new repo object
    * @return a map with the repo object metadata
    */
-  RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject);
+  RepoObjectMetadata autoCreateRepoObject(RepoObjectInput repoObjectInput);
 
   /**
    * Returns all the object in the configured bucket. It uses the offset and limit to paginate the response.
@@ -206,27 +206,27 @@ public interface ContentRepoService {
   /**
    * Creates a new repo collection using the the <code>repoCollection</code> data.
    *
-   * @param repoCollection a RepoCollection object containing the data of the new collection
+   * @param repoCollectionInput a RepoCollection object containing the data of the new collection
    * @return a map with the data of the collection
    */
-  RepoCollectionList createCollection(RepoCollection repoCollection);
+  RepoCollectionList createCollection(RepoCollectionInput repoCollectionInput);
 
   /**
    * Versions an existent repo collection using the <code>repoCollection</code> data.
    *
-   * @param repoCollection a RepoCollection object containing the data of the new collection
+   * @param repoCollectionInput a RepoCollection object containing the data of the new collection
    * @return a map with the data of the collection
    */
-  RepoCollectionList versionCollection(RepoCollection repoCollection);
+  RepoCollectionList versionCollection(RepoCollectionInput repoCollectionInput);
 
   /**
    * Creates or versions a repo collection using the the <code>repoCollection</code> data regardless of whether it
    * exists.
    *
-   * @param repoCollection a RepoCollection object containing the data of the collection
+   * @param repoCollectionInput a RepoCollection object containing the data of the collection
    * @return a map with the data of the collection
    */
-  RepoCollectionList autoCreateCollection(RepoCollection repoCollection);
+  RepoCollectionList autoCreateCollection(RepoCollectionInput repoCollectionInput);
 
   /**
    * Deletes a repo collection version, specified by key and UUID

@@ -16,8 +16,8 @@ import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.input.RepoCollectionInput;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.service.ContentRepoServiceImpl;
 
 import java.io.BufferedWriter;
@@ -211,49 +211,49 @@ public class ContentRepoTest {
     }
 
     try {
-      contentRepoService.createRepoObject(RepoObject.builder(BUCKET_NAME, "").build());
+      contentRepoService.createRepoObject(RepoObjectInput.builder(BUCKET_NAME, "").build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
-      contentRepoService.createRepoObject(RepoObject.builder(BUCKET_NAME, "dsad").build());
+      contentRepoService.createRepoObject(RepoObjectInput.builder(BUCKET_NAME, "dsad").build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
     }
 
     try {
-      contentRepoService.createRepoObject(RepoObject.builder(BUCKET_NAME, "dsad").setByteContent(new byte[]{}).build());
+      contentRepoService.createRepoObject(RepoObjectInput.builder(BUCKET_NAME, "dsad").setByteContent(new byte[]{}).build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
     }
 
     try {
-      contentRepoService.versionRepoObject(RepoObject.builder(BUCKET_NAME, "").build());
+      contentRepoService.versionRepoObject(RepoObjectInput.builder(BUCKET_NAME, "").build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
-      contentRepoService.versionRepoObject(RepoObject.builder(BUCKET_NAME, "dsad").build());
+      contentRepoService.versionRepoObject(RepoObjectInput.builder(BUCKET_NAME, "dsad").build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
     }
 
     try {
-      contentRepoService.versionRepoObject(RepoObject.builder(BUCKET_NAME, "dsad").setByteContent(new byte[]{}).build());
+      contentRepoService.versionRepoObject(RepoObjectInput.builder(BUCKET_NAME, "dsad").setByteContent(new byte[]{}).build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
     }
 
     try {
-      contentRepoService.versionRepoObject(RepoObject.builder(BUCKET_NAME, repoObjKey1).setByteContent(new byte[]{}).setContentType("text/plain").build());
+      contentRepoService.versionRepoObject(RepoObjectInput.builder(BUCKET_NAME, repoObjKey1).setByteContent(new byte[]{}).setContentType("text/plain").build());
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningObject);
@@ -266,28 +266,28 @@ public class ContentRepoTest {
   public void collectionErrorTest() {
 
     try {
-      contentRepoService.createCollection(RepoCollection.create(BUCKET_NAME, "", null));
+      contentRepoService.createCollection(RepoCollectionInput.create(BUCKET_NAME, "", null));
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
-      contentRepoService.createCollection(RepoCollection.create(BUCKET_NAME, "dsakjds", null));
+      contentRepoService.createCollection(RepoCollectionInput.create(BUCKET_NAME, "dsakjds", null));
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingCollection);
     }
 
     try {
-      contentRepoService.versionCollection(RepoCollection.create(BUCKET_NAME, "", null));
+      contentRepoService.versionCollection(RepoCollectionInput.create(BUCKET_NAME, "", null));
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
-      contentRepoService.versionCollection(RepoCollection.create(BUCKET_NAME, "dsakjds", null));
+      contentRepoService.versionCollection(RepoCollectionInput.create(BUCKET_NAME, "dsakjds", null));
       fail(EXCEPTION_EXPECTED);
     } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningCollection);
@@ -389,24 +389,24 @@ public class ContentRepoTest {
     }
 
     // create object 1
-    RepoObject repoObject = RepoObject.builder(BUCKET_NAME, repoObjKey1)
+    RepoObjectInput repoObjectInput = RepoObjectInput.builder(BUCKET_NAME, repoObjKey1)
         .setCreationDate(creationDateTime)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest1")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput).getMapView();
     assertNotNull(repoObj1);
     String fileUuid = (String) repoObj1.get("uuid");
     Double versionNumber = (Double) repoObj1.get("versionNumber");
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey1)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey1)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest2")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
     Double versionNumber2 = (Double) repoObj2.get("versionNumber");
@@ -476,24 +476,24 @@ public class ContentRepoTest {
     }
 
     // auto - create object 1
-    RepoObject repoObject = RepoObject.builder(BUCKET_NAME, repoObjKey10)
+    RepoObjectInput repoObjectInput = RepoObjectInput.builder(BUCKET_NAME, repoObjKey10)
         .setCreationDate(creationDateTime)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest1")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.autoCreateRepoObject(repoObject).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.autoCreateRepoObject(repoObjectInput).getMapView();
     assertNotNull(repoObj1);
     String fileUuid = (String) repoObj1.get("uuid");
     Double versionNumber = (Double) repoObj1.get("versionNumber");
 
     // auto create object 1, creates new version
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey10)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey10)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest2")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.autoCreateRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.autoCreateRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
     Double versionNumber2 = (Double) repoObj2.get("versionNumber");
@@ -543,14 +543,14 @@ public class ContentRepoTest {
 
     byte[] content = testData1.getBytes();
     // create object 1
-    RepoObject repoObject = RepoObject.builder(BUCKET_NAME, repoObjKey2)
+    RepoObjectInput repoObjectInput = RepoObjectInput.builder(BUCKET_NAME, repoObjKey2)
         .setByteContent(content)
         .setCreationDate(creationDateTime)
         .setDownloadName("dowloadNameTest2")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput).getMapView();
     assertNotNull(repoObj1);
     String fileUuid = (String) repoObj1.get("uuid");
 
@@ -568,25 +568,25 @@ public class ContentRepoTest {
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    repoObject = RepoObject.builder(BUCKET_NAME, repoObjKey2)
+    repoObjectInput = RepoObjectInput.builder(BUCKET_NAME, repoObjKey2)
         .setByteContent(content)
         .setCreationDate(new Timestamp(new Date().getTime()))
         .setDownloadName("dowloadNameTest3")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObject).getMapView();
+    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObjectInput).getMapView();
     assertNotNull(repoObj3);
     String fileUuid3 = (String) repoObj3.get("uuid");
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey2)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey2)
         .setByteContent(content)
         .setDownloadName("dowloadNameTest4")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj4 = contentRepoService.versionRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj4 = contentRepoService.versionRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj4);
     String fileUuid4 = (String) repoObj4.get("uuid");
 
@@ -614,13 +614,13 @@ public class ContentRepoTest {
     }
 
     // create object 1
-    RepoObject repoObject = RepoObject.builder(BUCKET_NAME, repoObjKey3)
+    RepoObjectInput repoObjectInput = RepoObjectInput.builder(BUCKET_NAME, repoObjKey3)
         .setCreationDate(creationDateTime)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest5")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput).getMapView();
     assertNotNull(repoObj1);
     String fileUuid = (String) repoObj1.get("uuid");
     Double versionNumber = (Double) repoObj1.get("versionNumber");
@@ -629,12 +629,12 @@ public class ContentRepoTest {
     assertNotNull(content1);
 
     // version object 1 ---> object 2
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey3)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey3)
         .setFileContent(file)
         .setDownloadName("dowloadNameTest6")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
     Double versionNumber2 = (Double) repoObj2.get("versionNumber");
@@ -681,26 +681,26 @@ public class ContentRepoTest {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
-    RepoObject repoObject1 = RepoObject.builder(BUCKET_NAME, repoObjKey4)
+    RepoObjectInput repoObjectInput1 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey4)
         .setByteContent(content1)
         .setDownloadName("dowloadNameTest")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput1).getMapView();
     assertNotNull(repoObj1);
     String fileUuid1 = (String) repoObj1.get("uuid");
 
 
     byte[] content2 = testData2.getBytes();
     // create object 1
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey5)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey5)
         .setByteContent(content2)
         .setDownloadName("dowloadNameTest7")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
 
@@ -710,7 +710,7 @@ public class ContentRepoTest {
     RepoVersion rpa2 = RepoVersion.create(BUCKET_NAME, repoObjKey5, fileUuid2);
     repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = RepoCollection.builder(BUCKET_NAME, collectionKey1)
+    RepoCollectionInput repoCollMeta1 = RepoCollectionInput.builder(BUCKET_NAME, collectionKey1)
         .setObjects(repoObjs)
         .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
         .build();
@@ -794,26 +794,26 @@ public class ContentRepoTest {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
-    RepoObject repoObject1 = RepoObject.builder(BUCKET_NAME, repoObjKey6)
+    RepoObjectInput repoObjectInput1 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey6)
         .setByteContent(content1)
         .setDownloadName("dowloadNameTest")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput1).getMapView();
     assertNotNull(repoObj1);
     String fileUuid1 = (String) repoObj1.get("uuid");
 
 
     byte[] content2 = testData2.getBytes();
     // create object 1
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey7)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey7)
         .setByteContent(content2)
         .setDownloadName("dowloadNameTest7")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.createRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
 
@@ -823,7 +823,7 @@ public class ContentRepoTest {
     RepoVersion rpa2 = RepoVersion.create(BUCKET_NAME, repoObjKey7, fileUuid2);
     repoObjs.add(rpa2);
 
-    RepoCollection repoCollMeta1 = RepoCollection.builder(BUCKET_NAME, collectionKey2)
+    RepoCollectionInput repoCollMeta1 = RepoCollectionInput.builder(BUCKET_NAME, collectionKey2)
         .setObjects(repoObjs)
         .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
         .setTag(TAG)
@@ -833,7 +833,7 @@ public class ContentRepoTest {
     String collUuid1 = (String) collection1.get("uuid");
 
     repoObjs.remove(1);
-    repoCollMeta1 = RepoCollection.builder(BUCKET_NAME, collectionKey2)
+    repoCollMeta1 = RepoCollectionInput.builder(BUCKET_NAME, collectionKey2)
         .setObjects(repoObjs)
         .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
         .setTag("")
@@ -846,7 +846,7 @@ public class ContentRepoTest {
     assertNotNull(collection3);
     assertEquals(collUuid1, collection3.get("uuid"));
 
-    repoCollMeta1 = RepoCollection.builder(BUCKET_NAME, collectionKey2)
+    repoCollMeta1 = RepoCollectionInput.builder(BUCKET_NAME, collectionKey2)
         .setObjects(repoObjs)
         .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
         .setTag(TAG)
@@ -855,7 +855,7 @@ public class ContentRepoTest {
     assertNotNull(collection4);
     String collUuid4 = (String) collection4.get("uuid");
 
-    RepoCollection repoCollMeta2 = RepoCollection.builder(BUCKET_NAME, collectionKey3)
+    RepoCollectionInput repoCollMeta2 = RepoCollectionInput.builder(BUCKET_NAME, collectionKey3)
         .setObjects(repoObjs)
         .setCreationDateTime(new Timestamp(new Date().getTime()).toString())
         .setTag(TAG)
@@ -886,37 +886,37 @@ public class ContentRepoTest {
   public void repoObjectsTagTest() {
 
     byte[] content1 = testData1.getBytes();
-    RepoObject repoObject1 = RepoObject.builder(BUCKET_NAME, repoObjKey8)
+    RepoObjectInput repoObjectInput1 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey8)
         .setByteContent(content1)
         .setTag(TAG)
         .setDownloadName("dowloadNameTest")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObject1).getMapView();
+    Map<String, Object> repoObj1 = contentRepoService.createRepoObject(repoObjectInput1).getMapView();
     assertNotNull(repoObj1);
     String fileUuid1 = (String) repoObj1.get("uuid");
 
-    RepoObject repoObject2 = RepoObject.builder(BUCKET_NAME, repoObjKey8)
+    RepoObjectInput repoObjectInput2 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey8)
         .setByteContent(content1)
         .setDownloadName("dowloadNameTest1")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObject2).getMapView();
+    Map<String, Object> repoObj2 = contentRepoService.versionRepoObject(repoObjectInput2).getMapView();
     assertNotNull(repoObj2);
     String fileUuid2 = (String) repoObj2.get("uuid");
 
     byte[] content2 = testData2.getBytes();
     // create object
-    RepoObject repoObject3 = RepoObject.builder(BUCKET_NAME, repoObjKey9)
+    RepoObjectInput repoObjectInput3 = RepoObjectInput.builder(BUCKET_NAME, repoObjKey9)
         .setByteContent(content2)
         .setTag(TAG)
         .setDownloadName("dowloadNameTest3")
         .setContentType("test/plain")
         .build();
 
-    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObject3).getMapView();
+    Map<String, Object> repoObj3 = contentRepoService.createRepoObject(repoObjectInput3).getMapView();
     assertNotNull(repoObj3);
     String fileUuid3 = (String) repoObj3.get("uuid");
 

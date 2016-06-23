@@ -14,8 +14,8 @@ import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
-import org.plos.crepo.model.input.RepoCollection;
-import org.plos.crepo.model.input.RepoObject;
+import org.plos.crepo.model.input.RepoCollectionInput;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.model.metadata.RepoCollectionList;
 import org.plos.crepo.model.metadata.RepoCollectionMetadata;
 import org.plos.crepo.model.metadata.RepoMetadata;
@@ -417,19 +417,19 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public RepoObjectMetadata createRepoObject(RepoObject repoObject) {
-    if (get(repoObject.getBucketName()).objects.containsKey(repoObject.getKey())) {
+  public RepoObjectMetadata createRepoObject(RepoObjectInput repoObjectInput) {
+    if (get(repoObjectInput.getBucketName()).objects.containsKey(repoObjectInput.getKey())) {
       throw new InMemoryContentRepoServiceException();
     }
-    return autoCreateRepoObject(repoObject);
+    return autoCreateRepoObject(repoObjectInput);
   }
 
   @Override
-  public RepoObjectMetadata versionRepoObject(RepoObject repoObject) {
-    if (!get(repoObject.getBucketName()).objects.containsKey(repoObject.getKey())) {
+  public RepoObjectMetadata versionRepoObject(RepoObjectInput repoObjectInput) {
+    if (!get(repoObjectInput.getBucketName()).objects.containsKey(repoObjectInput.getKey())) {
       throw new InMemoryContentRepoServiceException();
     }
-    return autoCreateRepoObject(repoObject);
+    return autoCreateRepoObject(repoObjectInput);
   }
 
   private static int getNextVersionNumber(List<? extends FakeEntity> entities) {
@@ -444,22 +444,22 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public RepoObjectMetadata autoCreateRepoObject(RepoObject repoObject) {
-    String key = repoObject.getKey();
-    List<FakeObject> existing = get(repoObject.getBucketName()).objects.get(key);
+  public RepoObjectMetadata autoCreateRepoObject(RepoObjectInput repoObjectInput) {
+    String key = repoObjectInput.getKey();
+    List<FakeObject> existing = get(repoObjectInput.getBucketName()).objects.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
     byte[] content;
-    try (InputStream stream = repoObject.getContentAccessor().open()) {
+    try (InputStream stream = repoObjectInput.getContentAccessor().open()) {
       content = ByteStreams.toByteArray(stream);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    FakeObject created = new FakeObject(key, versionNumber, repoObject.getTag(), content);
-    created.userMetadata = repoObject.getUserMetadata();
-    created.downloadName = repoObject.getDownloadName();
-    created.contentType = repoObject.getContentType();
+    FakeObject created = new FakeObject(key, versionNumber, repoObjectInput.getTag(), content);
+    created.userMetadata = repoObjectInput.getUserMetadata();
+    created.downloadName = repoObjectInput.getDownloadName();
+    created.contentType = repoObjectInput.getContentType();
 
     existing.add(created);
     return created.getMetadata();
@@ -490,33 +490,33 @@ public class InMemoryContentRepoService implements ContentRepoService {
   }
 
   @Override
-  public RepoCollectionList createCollection(RepoCollection repoCollection) {
-    if (get(repoCollection.getBucketName()).collections.containsKey(repoCollection.getKey())) {
+  public RepoCollectionList createCollection(RepoCollectionInput repoCollectionInput) {
+    if (get(repoCollectionInput.getBucketName()).collections.containsKey(repoCollectionInput.getKey())) {
       throw new InMemoryContentRepoServiceException();
     }
-    return autoCreateCollection(repoCollection);
+    return autoCreateCollection(repoCollectionInput);
   }
 
   @Override
-  public RepoCollectionList versionCollection(RepoCollection repoCollection) {
-    if (!get(repoCollection.getBucketName()).collections.containsKey(repoCollection.getKey())) {
+  public RepoCollectionList versionCollection(RepoCollectionInput repoCollectionInput) {
+    if (!get(repoCollectionInput.getBucketName()).collections.containsKey(repoCollectionInput.getKey())) {
       throw new InMemoryContentRepoServiceException();
     }
-    return autoCreateCollection(repoCollection);
+    return autoCreateCollection(repoCollectionInput);
   }
 
   @Override
-  public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
-    String key = repoCollection.getKey();
-    List<FakeCollection> existing = get(repoCollection.getBucketName()).collections.get(key);
+  public RepoCollectionList autoCreateCollection(RepoCollectionInput repoCollectionInput) {
+    String key = repoCollectionInput.getKey();
+    List<FakeCollection> existing = get(repoCollectionInput.getBucketName()).collections.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
-    FakeCollection created = new FakeCollection(key, versionNumber, repoCollection.getTag());
-    for (RepoVersion objectVersion : repoCollection.getObjects()) {
+    FakeCollection created = new FakeCollection(key, versionNumber, repoCollectionInput.getTag());
+    for (RepoVersion objectVersion : repoCollectionInput.getObjects()) {
       if (getRepoObjectMetadata(objectVersion) == null) throw new InMemoryContentRepoServiceException();
       created.objectIds.add(objectVersion);
     }
-    created.userMetadata = repoCollection.getUserMetadata();
+    created.userMetadata = repoCollectionInput.getUserMetadata();
 
     existing.add(created);
     return created.getMetadata();

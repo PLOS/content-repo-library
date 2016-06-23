@@ -20,7 +20,7 @@ import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.identity.RepoVersion;
-import org.plos.crepo.model.input.RepoCollection;
+import org.plos.crepo.model.input.RepoCollectionInput;
 import org.plos.crepo.util.CollectionUrlGenerator;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, CollectionUrlGenerator.class})
-public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
+public class ContentRepoCollectionInputDaoImplTest extends BaseDaoTest {
 
   private static final String COLLECTION_KEY = "collectionKey";
   private static final String STRING_TIMESTAMP = "2014-09-23 11:47:15";
@@ -395,19 +395,19 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_CREATED);
 
-    RepoCollection repoCollection = mock(RepoCollection.class);
-    mockRepoCollectionCalls(repoCollection);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
+    mockRepoCollectionCalls(repoCollectionInput);
 
     HttpResponse response = null;
 
     if ("NEW".equals(create)) {
-      response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollection);
+      response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollectionInput);
     } else {
-      response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollection);
+      response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollectionInput);
     }
 
-    verify(repoCollection).getKey();
-    verify(repoCollection).getObjects();
+    verify(repoCollectionInput).getKey();
+    verify(repoCollectionInput).getObjects();
     verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
@@ -427,15 +427,15 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
-    RepoCollection repoCollection = mock(RepoCollection.class);
+    RepoCollectionInput repoCollectionInput = mock(RepoCollectionInput.class);
 
     HttpResponse response = null;
 
     try {
       if ("NEW".equals(create)) {
-        response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollection);
+        response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollectionInput);
       } else {
-        response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollection);
+        response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollectionInput);
       }
     } catch (ContentRepoException ex) {
       verifyException(ex, response, errorType);
@@ -446,12 +446,12 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
   }
 
-  private void mockRepoCollectionCalls(RepoCollection repoCollection) {
-    when(repoCollection.getKey()).thenReturn(COLLECTION_KEY);
-    when(repoCollection.getObjects()).thenReturn(ImmutableList.<RepoVersion>of());
-    when(repoCollection.getTimestamp()).thenReturn(STRING_TIMESTAMP);
-    when(repoCollection.getTag()).thenReturn(TAG);
-    when(repoCollection.getCreationDateTime()).thenReturn(STRING_TIMESTAMP);
+  private void mockRepoCollectionCalls(RepoCollectionInput repoCollectionInput) {
+    when(repoCollectionInput.getKey()).thenReturn(COLLECTION_KEY);
+    when(repoCollectionInput.getObjects()).thenReturn(ImmutableList.<RepoVersion>of());
+    when(repoCollectionInput.getTimestamp()).thenReturn(STRING_TIMESTAMP);
+    when(repoCollectionInput.getTag()).thenReturn(TAG);
+    when(repoCollectionInput.getCreationDateTime()).thenReturn(STRING_TIMESTAMP);
   }
 
   private void verifyHttpPost(HttpPost httpPost, String creationMethod) throws IOException {
