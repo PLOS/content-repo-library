@@ -7,8 +7,8 @@ import java.util.Map;
  */
 public class RepoCollectionMetadata extends RepoMetadata {
 
-  public RepoCollectionMetadata(Map<String, Object> raw) {
-    super(raw);
+  public RepoCollectionMetadata(String bucketName, Map<String, Object> raw) {
+    super(bucketName, raw);
   }
 
 }

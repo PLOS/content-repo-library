@@ -223,24 +223,25 @@ public class ContentRepoServiceImpl implements ContentRepoService {
     }
   }
 
-  private RepoObjectMetadata buildRepoObjectMetadata(CloseableHttpResponse response) throws IOException {
+  private RepoObjectMetadata buildRepoObjectMetadata(String bucketName, CloseableHttpResponse response) throws IOException {
     Map<String, Object> raw = readJsonResponse(response, MAP_TOKEN);
-    return new RepoObjectMetadata(raw);
+    return new RepoObjectMetadata(bucketName, raw);
   }
 
-  private List<RepoObjectMetadata> buildRepoObjectMetadataList(CloseableHttpResponse response) throws IOException {
+  private List<RepoObjectMetadata> buildRepoObjectMetadataList(String bucketName, CloseableHttpResponse response) throws IOException {
     List<Map<String, Object>> rawList = readJsonResponse(response, LIST_OF_MAPS_TOKENS);
     List<RepoObjectMetadata> list = new ArrayList<>(rawList.size());
     for (Map<String, Object> rawObj : rawList) {
-      list.add(new RepoObjectMetadata(rawObj));
+      list.add(new RepoObjectMetadata(bucketName, rawObj));
     }
     return list;
   }
 
   @Override
   public RepoObjectMetadata getLatestRepoObjectMetadata(RepoId id) {
-    try (CloseableHttpResponse response = objectDao.getRepoObjMetaLatestVersion(id.getBucketName(), id.getKey())) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = id.getBucketName();
+    try (CloseableHttpResponse response = objectDao.getRepoObjMetaLatestVersion(bucketName, id.getKey())) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data. Key: ")
@@ -255,8 +256,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoObjectMetadata getRepoObjectMetadata(RepoVersion version) {
     String key = version.getId().getKey();
     String uuid = version.getUuid().toString();
-    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingUuid(version.getId().getBucketName(), key, uuid)) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = version.getId().getBucketName();
+    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingUuid(bucketName, key, uuid)) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the UUID. Key: ")
@@ -272,8 +274,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoObjectMetadata getRepoObjectMetadata(RepoVersionNumber number) {
     String key = number.getId().getKey();
     int versionNumber = number.getNumber();
-    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionNumber(number.getId().getBucketName(), key, versionNumber)) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = number.getId().getBucketName();
+    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingVersionNumber(bucketName, key, versionNumber)) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the version number. Key: ")
@@ -290,8 +293,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoObjectMetadata getRepoObjectMetadata(RepoVersionTag tagObj) {
     String key = tagObj.getId().getKey();
     String tag = tagObj.getTag();
-    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingTag(tagObj.getId().getBucketName(), key, tag)) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = tagObj.getId().getBucketName();
+    try (CloseableHttpResponse response = objectDao.getRepoObjMetaUsingTag(bucketName, key, tag)) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the object meta data using the tag. Key: ")
@@ -306,8 +310,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public List<RepoObjectMetadata> getRepoObjectVersions(RepoId id) {
-    try (CloseableHttpResponse response = objectDao.getRepoObjVersionsMeta(id.getBucketName(), id.getKey())) {
-      return buildRepoObjectMetadataList(response);
+    String bucketName = id.getBucketName();
+    try (CloseableHttpResponse response = objectDao.getRepoObjVersionsMeta(bucketName, id.getKey())) {
+      return buildRepoObjectMetadataList(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when fetching a the versions of an object. Key: ")
@@ -374,9 +379,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata createRepoObject(RepoObjectInput repoObjectInput) {
     RepoObjectValidator.validate(repoObjectInput);
+    String bucketName = repoObjectInput.getBucketName();
     try (CloseableHttpResponse response =
-             objectDao.createRepoObj(repoObjectInput.getBucketName(), repoObjectInput, repoObjectInput.probeContentType())) {
-      return buildRepoObjectMetadata(response);
+             objectDao.createRepoObj(bucketName, repoObjectInput, repoObjectInput.probeContentType())) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating an object. RepoMessage: ");
     }
@@ -385,8 +391,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata versionRepoObject(RepoObjectInput repoObjectInput) {
     RepoObjectValidator.validate(repoObjectInput);
-    try (CloseableHttpResponse response = objectDao.versionRepoObj(repoObjectInput.getBucketName(), repoObjectInput, repoObjectInput.probeContentType())) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = repoObjectInput.getBucketName();
+    try (CloseableHttpResponse response = objectDao.versionRepoObj(bucketName, repoObjectInput, repoObjectInput.probeContentType())) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when versioning an object. RepoMessage: ");
     }
@@ -395,8 +402,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public RepoObjectMetadata autoCreateRepoObject(RepoObjectInput repoObjectInput) {
     RepoObjectValidator.validate(repoObjectInput);
-    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(repoObjectInput.getBucketName(), repoObjectInput, repoObjectInput.probeContentType())) {
-      return buildRepoObjectMetadata(response);
+    String bucketName = repoObjectInput.getBucketName();
+    try (CloseableHttpResponse response = objectDao.autoCreateRepoObj(bucketName, repoObjectInput, repoObjectInput.probeContentType())) {
+      return buildRepoObjectMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when trying to auto create an object. RepoMessage: ");
     }
@@ -405,7 +413,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public List<RepoObjectMetadata> getRepoObjects(String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getObjectsCloseableResp(bucketName, offset, limit, includeDeleted, tag)) {
-      return buildRepoObjectMetadataList(response);
+      return buildRepoObjectMetadataList(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when fetching a list of objects. RepoMessage: ");
     }
@@ -422,34 +430,35 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   // ------------------------ Collections ------------------------
 
-  private RepoCollectionList buildRepoCollectionMetadata(HttpResponse response) {
+  private RepoCollectionList buildRepoCollectionMetadata(String bucketName, HttpResponse response) {
     Map<String, Object> raw = gson.fromJson(HttpResponseUtil.getResponseAsString(response), MAP_TOKEN);
-    return new RepoCollectionList(raw);
+    return new RepoCollectionList(bucketName, raw);
   }
 
-  private List<RepoCollectionList> buildRepoCollectionMetadataList(HttpResponse response) {
+  private List<RepoCollectionList> buildRepoCollectionMetadataList(String bucketName, HttpResponse response) {
     List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
     List<RepoCollectionList> list = new ArrayList<>(rawList.size());
     for (Map<String, Object> rawObj : rawList) {
-      list.add(new RepoCollectionList(rawObj));
+      list.add(new RepoCollectionList(bucketName, rawObj));
     }
     return list;
   }
 
-  private List<RepoCollectionMetadata> buildRepoCollectionObjectsMetadataList(HttpResponse response) {
+  private List<RepoCollectionMetadata> buildRepoCollectionObjectsMetadataList(String bucketName, HttpResponse response) {
     List<Map<String, Object>> rawList = gson.fromJson(HttpResponseUtil.getResponseAsString(response), LIST_OF_MAPS_TOKENS);
     List<RepoCollectionMetadata> list = new ArrayList<>(rawList.size());
     for (Map<String, Object> rawObj : rawList) {
-      list.add(new RepoCollectionMetadata(rawObj));
+      list.add(new RepoCollectionMetadata(bucketName, rawObj));
     }
     return list;
   }
 
   @Override
   public RepoCollectionList createCollection(RepoCollectionInput repoCollectionInput) {
-    RepoId.create(repoCollectionInput.getBucketName(), repoCollectionInput.getKey()); // validate
-    try (CloseableHttpResponse response = collectionDao.createCollection(repoCollectionInput.getBucketName(), repoCollectionInput)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = repoCollectionInput.getBucketName();
+    RepoId.create(bucketName, repoCollectionInput.getKey()); // validate
+    try (CloseableHttpResponse response = collectionDao.createCollection(bucketName, repoCollectionInput)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -457,9 +466,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList versionCollection(RepoCollectionInput repoCollectionInput) {
-    RepoId.create(repoCollectionInput.getBucketName(), repoCollectionInput.getKey()); // validate
-    try (CloseableHttpResponse response = collectionDao.versionCollection(repoCollectionInput.getBucketName(), repoCollectionInput)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = repoCollectionInput.getBucketName();
+    RepoId.create(bucketName, repoCollectionInput.getKey()); // validate
+    try (CloseableHttpResponse response = collectionDao.versionCollection(bucketName, repoCollectionInput)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -468,9 +478,10 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList autoCreateCollection(RepoCollectionInput repoCollectionInput) {
-    RepoId.create(repoCollectionInput.getBucketName(), repoCollectionInput.getKey()); // validate
-    try (CloseableHttpResponse response = collectionDao.autoCreateCollection(repoCollectionInput.getBucketName(), repoCollectionInput)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = repoCollectionInput.getBucketName();
+    RepoId.create(bucketName, repoCollectionInput.getKey()); // validate
+    try (CloseableHttpResponse response = collectionDao.autoCreateCollection(bucketName, repoCollectionInput)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when creating a collection. RepoMessage: ");
     }
@@ -515,8 +526,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoCollectionList getCollection(RepoVersion version) {
     String key = version.getId().getKey();
     String uuid = version.getUuid().toString();
-    try (CloseableHttpResponse response = collectionDao.getCollectionUsingUuid(version.getId().getBucketName(), key, uuid)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = version.getId().getBucketName();
+    try (CloseableHttpResponse response = collectionDao.getCollectionUsingUuid(bucketName, key, uuid)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the UUID. Key: ")
@@ -532,8 +544,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoCollectionList getCollection(RepoVersionNumber number) {
     String key = number.getId().getKey();
     int versionNumber = number.getNumber();
-    try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionNumber(number.getId().getBucketName(), key, versionNumber)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = number.getId().getBucketName();
+    try (CloseableHttpResponse response = collectionDao.getCollectionUsingVersionNumber(bucketName, key, versionNumber)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version number. Key: ")
@@ -549,8 +562,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   public RepoCollectionList getCollection(RepoVersionTag tagObj) {
     String key = tagObj.getId().getKey();
     String tag = tagObj.getTag();
-    try (CloseableHttpResponse response = collectionDao.getCollectionUsingTag(tagObj.getId().getBucketName(), key, tag)) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = tagObj.getId().getBucketName();
+    try (CloseableHttpResponse response = collectionDao.getCollectionUsingTag(bucketName, key, tag)) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting a collection using the version tag. Key: ")
@@ -564,8 +578,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionMetadata getLatestCollection(RepoId id) {
-    try (CloseableHttpResponse response = collectionDao.getLatestCollection(id.getBucketName(), id.getKey())) {
-      return buildRepoCollectionMetadata(response);
+    String bucketName = id.getBucketName();
+    try (CloseableHttpResponse response = collectionDao.getLatestCollection(bucketName, id.getKey())) {
+      return buildRepoCollectionMetadata(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e,
           "Error handling the response when getting the latest collection using the key. Key: " + id.getKey() + " RepoMessage: ");
@@ -573,8 +588,9 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   }
 
   public List<RepoCollectionList> getCollectionVersions(RepoId id) {
-    try (CloseableHttpResponse response = collectionDao.getCollectionVersions(id.getBucketName(), id.getKey())) {
-      return buildRepoCollectionMetadataList(response);
+    String bucketName = id.getBucketName();
+    try (CloseableHttpResponse response = collectionDao.getCollectionVersions(bucketName, id.getKey())) {
+      return buildRepoCollectionMetadataList(bucketName, response);
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when getting the versions of a collection. Key: ")
@@ -587,7 +603,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public List<RepoCollectionMetadata> getCollections(String bucketName, int offset, int limit, boolean includeDeleted, String tag) {
     try (CloseableHttpResponse response = getCollectionsCloseableResp(bucketName, offset, limit, includeDeleted, tag)) {
-      return buildRepoCollectionObjectsMetadataList(response);
+      return buildRepoCollectionObjectsMetadataList(bucketName, response);
     } catch (IOException e) {
       throw serviceServerException(e, "Error handling the response when getting all the collections. RepoMessage: ");
     }

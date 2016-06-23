@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,11 +27,13 @@ import java.util.UUID;
  * Represents metadata about a repo entity, to output to the client.
  */
 public abstract class RepoMetadata {
+  private final String bucketName;
   protected final ImmutableMap<String, Object> raw;
 
   @SuppressWarnings("unchecked")
     // recursiveImmutableCopy guarantees type safety
-  RepoMetadata(Map<String, Object> raw) {
+  RepoMetadata(String bucketName, Map<String, Object> raw) {
+    this.bucketName = Objects.requireNonNull(bucketName);
     this.raw = (ImmutableMap<String, Object>) recursiveImmutableCopy(raw);
   }
 

@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class RepoObjectMetadata extends RepoMetadata {
 
-  public RepoObjectMetadata(Map<String, Object> raw) {
-    super(raw);
+  public RepoObjectMetadata(String bucketName, Map<String, Object> raw) {
+    super(bucketName, raw);
   }
 
   public long getSize() {

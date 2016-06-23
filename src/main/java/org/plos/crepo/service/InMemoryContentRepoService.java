@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -94,6 +95,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
    * @param <M> the metadata type for output representing the entity
    */
   private abstract class FakeEntity<M extends RepoMetadata> {
+    protected final String bucketName;
+
     protected final String key;
     protected final UUID uuid;
     protected final int number;
@@ -104,7 +107,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
     protected final Timestamp creationDate;
     protected Timestamp timestamp;
 
-    private FakeEntity(String key, int number, String tag) {
+    private FakeEntity(String bucketName, String key, int number, String tag) {
+      this.bucketName = Objects.requireNonNull(bucketName);
       this.key = key;
       this.uuid = uuidGenerator.get();
       this.number = number;
@@ -135,8 +139,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
     private String downloadName;
     private String contentType;
 
-    private FakeObject(String key, int number, String tag, byte[] content) {
-      super(key, number, tag);
+    private FakeObject(String bucketName, String key, int number, String tag, byte[] content) {
+      super(bucketName, key, number, tag);
       this.content = content; // must be created internally
       this.contentHash = CONTENT_HASH_FUNCTION.hashBytes(this.content);
     }
@@ -147,7 +151,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
     @Override
     public RepoObjectMetadata getMetadata() {
-      return new RepoObjectMetadata(buildMetadata()
+      return new RepoObjectMetadata(bucketName, buildMetadata()
           .put("checksum", contentHash.toString())
           .put("size", content.length)
           .put("downloadName", downloadName)
@@ -159,22 +163,23 @@ public class InMemoryContentRepoService implements ContentRepoService {
   private class FakeCollection extends FakeEntity<RepoCollectionList> {
     private final Collection<RepoVersion> objectIds = new LinkedHashSet<>();
 
-    private FakeCollection(String key, int number, String tag) {
-      super(key, number, tag);
+    private FakeCollection(String bucketName, String key, int number, String tag) {
+      super(bucketName, key, number, tag);
     }
 
     @Override
     public RepoCollectionList getMetadata() {
       List<Map<String, Object>> rawObjectMetadata = new ArrayList<>(objectIds.size());
       for (RepoVersion objectId : objectIds) {
-        FakeBucket bucket = get(objectId.getId().getBucketName());
+        String bucketName = objectId.getId().getBucketName();
+        FakeBucket bucket = get(bucketName);
         List<FakeObject> fakeObjectList = bucket.objects.get(objectId.getId().getKey());
         FakeObject fakeObject = fakeObjectList.stream()
             .filter(o -> objectId.getUuid().equals(o.uuid))
             .findAny().orElseThrow(InMemoryContentRepoServiceException::new);
         rawObjectMetadata.add(fakeObject.getMetadata().getMapView());
       }
-      return new RepoCollectionList(buildMetadata()
+      return new RepoCollectionList(bucketName, buildMetadata()
           .put("objects", rawObjectMetadata)
           .build());
     }
@@ -446,7 +451,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
   @Override
   public RepoObjectMetadata autoCreateRepoObject(RepoObjectInput repoObjectInput) {
     String key = repoObjectInput.getKey();
-    List<FakeObject> existing = get(repoObjectInput.getBucketName()).objects.get(key);
+    String bucketName = repoObjectInput.getBucketName();
+    List<FakeObject> existing = get(bucketName).objects.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
     byte[] content;
@@ -456,7 +462,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
       throw new RuntimeException(e);
     }
 
-    FakeObject created = new FakeObject(key, versionNumber, repoObjectInput.getTag(), content);
+    FakeObject created = new FakeObject(bucketName, key, versionNumber, repoObjectInput.getTag(), content);
     created.userMetadata = repoObjectInput.getUserMetadata();
     created.downloadName = repoObjectInput.getDownloadName();
     created.contentType = repoObjectInput.getContentType();
@@ -508,10 +514,11 @@ public class InMemoryContentRepoService implements ContentRepoService {
   @Override
   public RepoCollectionList autoCreateCollection(RepoCollectionInput repoCollectionInput) {
     String key = repoCollectionInput.getKey();
-    List<FakeCollection> existing = get(repoCollectionInput.getBucketName()).collections.get(key);
+    String bucketName = repoCollectionInput.getBucketName();
+    List<FakeCollection> existing = get(bucketName).collections.get(key);
     int versionNumber = getNextVersionNumber(existing);
 
-    FakeCollection created = new FakeCollection(key, versionNumber, repoCollectionInput.getTag());
+    FakeCollection created = new FakeCollection(bucketName, key, versionNumber, repoCollectionInput.getTag());
     for (RepoVersion objectVersion : repoCollectionInput.getObjects()) {
       if (getRepoObjectMetadata(objectVersion) == null) throw new InMemoryContentRepoServiceException();
       created.objectIds.add(objectVersion);
