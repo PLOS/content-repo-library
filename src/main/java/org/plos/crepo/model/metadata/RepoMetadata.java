@@ -1,7 +1,6 @@
 package org.plos.crepo.model.metadata;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -23,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -93,8 +93,8 @@ public abstract class RepoMetadata {
 
   public Optional<RepoVersionTag> getTag() {
     String key = (String) raw.get("key");
-    String tag = (String) raw.get("tag");
-    return (tag == null) ? Optional.<RepoVersionTag>absent() : Optional.of(RepoVersionTag.create(bucketName, key, tag));
+    return Optional.ofNullable((String) raw.get("tag"))
+        .map((String tag) -> RepoVersionTag.create(bucketName, key, tag));
   }
 
   public Timestamp getTimestamp() {
@@ -110,7 +110,7 @@ public abstract class RepoMetadata {
   }
 
   public Optional<String> getRawUserMetadata() {
-    return Optional.fromNullable((String) raw.get("userMetadata"));
+    return Optional.ofNullable((String) raw.get("userMetadata"));
   }
 
   // Store to avoid redundant parsing. Null means uninitialized; absent means this has no userMetadata.
@@ -119,18 +119,18 @@ public abstract class RepoMetadata {
   public Optional<Object> getJsonUserMetadata() {
     if (jsonUserMetadata != null) return jsonUserMetadata;
     Optional<String> raw = getRawUserMetadata();
-    if (!raw.isPresent()) return Optional.absent();
+    if (!raw.isPresent()) return Optional.empty();
 
     final Gson gson = new Gson();
     JsonElement parsed;
     try {
       parsed = gson.fromJson(raw.get(), JsonElement.class);
     } catch (JsonSyntaxException e) {
-      return Optional.absent(); // TODO: Exception more appropriate instead?
+      return Optional.empty(); // TODO: Exception more appropriate instead?
     }
 
     Object converted = convertJsonToImmutable(parsed);
-    return jsonUserMetadata = Optional.fromNullable(converted);
+    return jsonUserMetadata = Optional.ofNullable(converted);
   }
 
   @VisibleForTesting
