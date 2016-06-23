@@ -31,9 +31,8 @@ public class RepoCollection {
     this.creationDateTime = builder.creationDateTime;
   }
 
-  public static RepoCollection create(String key, Collection<RepoVersion> objects) {
-    return builder()
-        .setKey(key)
+  public static RepoCollection create(String bucketName, String key, Collection<RepoVersion> objects) {
+    return builder(bucketName, key)
         .setObjects(objects)
         .build();
   }
@@ -67,46 +66,26 @@ public class RepoCollection {
   }
 
 
-  public static Builder builder() {
-    return new Builder();
+  public static Builder builder(String bucketName, String key) {
+    return new Builder(bucketName, key);
   }
 
   public static class Builder {
-    private String bucketName;
-    private String key;
+    private final String bucketName;
+    private final String key;
     private String timestamp;
     private String tag;
     private Collection<RepoVersion> objects;
     private String userMetadata;
     private String creationDateTime;
 
-    private Builder() {
+    private Builder(String bucketName, String key) {
+      this.bucketName = Objects.requireNonNull(bucketName);
+      this.key = Objects.requireNonNull(key);
     }
 
     public RepoCollection build() {
       return new RepoCollection(this);
-    }
-
-    public String getBucketName() {
-      return bucketName;
-    }
-
-    public Builder setBucketName(String bucketName) {
-      this.bucketName = bucketName;
-      return this;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public Builder setKey(String key) {
-      this.key = key;
-      return this;
-    }
-
-    public String getTimestamp() {
-      return timestamp;
     }
 
     public Builder setTimestamp(String timestamp) {
@@ -114,17 +93,9 @@ public class RepoCollection {
       return this;
     }
 
-    public String getTag() {
-      return tag;
-    }
-
     public Builder setTag(String tag) {
       this.tag = tag;
       return this;
-    }
-
-    public Collection<RepoVersion> getObjects() {
-      return objects;
     }
 
     public Builder setObjects(Collection<RepoVersion> objects) {
@@ -132,17 +103,9 @@ public class RepoCollection {
       return this;
     }
 
-    public String getUserMetadata() {
-      return userMetadata;
-    }
-
     public Builder setUserMetadata(String userMetadata) {
       this.userMetadata = userMetadata;
       return this;
-    }
-
-    public String getCreationDateTime() {
-      return creationDateTime;
     }
 
     public Builder setCreationDateTime(String creationDateTime) {

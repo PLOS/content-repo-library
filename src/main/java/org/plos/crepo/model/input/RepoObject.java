@@ -57,7 +57,7 @@ public class RepoObject {
   private final String userMetadata;
   private final ContentAccessor contentAccessor;
 
-  private RepoObject(RepoObjectBuilder builder) {
+  private RepoObject(Builder builder) {
     this.bucketName = builder.bucketName;
     this.key = builder.key;
     this.downloadName = builder.downloadName;
@@ -107,9 +107,8 @@ public class RepoObject {
 
 
   /**
-   * Return the set content type or, if this object was supplied with a file on disk via {@link
-   * RepoObjectBuilder#fileContent}, probe the file for its content type using enviornmental {@link
-   * java.nio.file.spi.FileTypeDetector}s.
+   * Return the set content type or, if this object was supplied with a file on disk via {@link Builder#setFileContent},
+   * probe the file for its content type using enviornmental {@link java.nio.file.spi.FileTypeDetector}s.
    */
   public String probeContentType() throws IOException {
     if (contentType != null) return contentType;
@@ -129,7 +128,11 @@ public class RepoObject {
   }
 
 
-  public static class RepoObjectBuilder {
+  public static Builder builder(String bucketName, String key) {
+    return new Builder(bucketName, key);
+  }
+
+  public static class Builder {
 
     private final String bucketName;
     private final String key; // what the user specifies
@@ -141,52 +144,52 @@ public class RepoObject {
     private String userMetadata;
     private ContentAccessor contentAccessor;
 
-    public RepoObjectBuilder(String bucketName, String key) {
+    public Builder(String bucketName, String key) {
       this.bucketName = Objects.requireNonNull(bucketName);
       this.key = Objects.requireNonNull(key);
     }
 
-    public RepoObjectBuilder downloadName(String downloadName) {
+    public Builder setDownloadName(String downloadName) {
       this.downloadName = downloadName;
       return this;
     }
 
-    public RepoObjectBuilder contentType(String contentType) {
+    public Builder setContentType(String contentType) {
       this.contentType = contentType;
       return this;
     }
 
-    public RepoObjectBuilder tag(String tag) {
+    public Builder setTag(String tag) {
       this.tag = tag;
       return this;
     }
 
-    public RepoObjectBuilder creationDate(Timestamp creationDate) {
+    public Builder setCreationDate(Timestamp creationDate) {
       this.creationDate = creationDate;
       return this;
     }
 
-    public RepoObjectBuilder timestamp(Timestamp timestamp) {
+    public Builder setTimestamp(Timestamp timestamp) {
       this.timestamp = timestamp;
       return this;
     }
 
-    public RepoObjectBuilder userMetadata(String userMetadata) {
+    public Builder setUserMetadata(String userMetadata) {
       this.userMetadata = userMetadata;
       return this;
     }
 
-    public RepoObjectBuilder fileContent(File fileContent) {
+    public Builder setFileContent(File fileContent) {
       this.contentAccessor = new FileAccessor(fileContent);
       return this;
     }
 
-    public RepoObjectBuilder byteContent(byte[] byteContent) {
+    public Builder setByteContent(byte[] byteContent) {
       this.contentAccessor = new ByteArrayAccessor(byteContent);
       return this;
     }
 
-    public RepoObjectBuilder contentAccessor(ContentAccessor contentAccessor) {
+    public Builder setContentAccessor(ContentAccessor contentAccessor) {
       this.contentAccessor = contentAccessor;
       return this;
     }
@@ -194,7 +197,6 @@ public class RepoObject {
     public RepoObject build() {
       return new RepoObject(this);
     }
-
   }
 
   @Override
