@@ -12,6 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 import org.plos.crepo.model.Status;
+import org.plos.crepo.model.identity.RepoVersion;
+import org.plos.crepo.model.identity.RepoVersionNumber;
+import org.plos.crepo.model.identity.RepoVersionTag;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -21,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents metadata about a repo entity, to output to the client.
@@ -77,12 +79,22 @@ public abstract class RepoMetadata {
     return raw;
   }
 
-  public String getKey() {
-    return (String) raw.get("key");
+  public RepoVersion getVersion() {
+    String key = (String) raw.get("key");
+    String uuid = (String) raw.get("uuid");
+    return RepoVersion.create(bucketName, key, uuid);
   }
 
-  public UUID getUuid() {
-    return UUID.fromString((String) raw.get("uuid"));
+  public RepoVersionNumber getVersionNumber() {
+    String key = (String) raw.get("key");
+    int versionNumber = ((Number) raw.get("versionNumber")).intValue();
+    return RepoVersionNumber.create(bucketName, key, versionNumber);
+  }
+
+  public Optional<RepoVersionTag> getTag() {
+    String key = (String) raw.get("key");
+    String tag = (String) raw.get("tag");
+    return (tag == null) ? Optional.<RepoVersionTag>absent() : Optional.of(RepoVersionTag.create(bucketName, key, tag));
   }
 
   public Timestamp getTimestamp() {

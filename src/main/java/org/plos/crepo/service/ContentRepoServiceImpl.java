@@ -327,13 +327,15 @@ public class ContentRepoServiceImpl implements ContentRepoService {
   @Override
   public boolean deleteLatestRepoObject(RepoId id) {
     RepoObjectMetadata repoObj = this.getLatestRepoObjectMetadata(id);
-    String uuid = repoObj.getUuid().toString();
-    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingUuid(id.getBucketName(), repoObj.getKey(), uuid)) {
+    String key = id.getKey();
+    String uuid = repoObj.getVersion().getUuid().toString();
+    String bucketName = id.getBucketName();
+    try (CloseableHttpResponse response = objectDao.deleteRepoObjUsingUuid(bucketName, key, uuid)) {
       return true;
     } catch (IOException e) {
       StringBuilder logMessage = new StringBuilder()
           .append("Error handling the response when deleting an object. Key: ")
-          .append(repoObj.getKey())
+          .append(key)
           .append("RepoMessage: ");
       throw serviceServerException(e, logMessage.toString());
     }
