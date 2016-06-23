@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import org.junit.Test;
-import org.plos.crepo.model.metadata.RepoMetadata;
 
 import java.util.Collection;
 import java.util.HashMap;

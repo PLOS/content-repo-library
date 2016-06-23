@@ -19,8 +19,8 @@ import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.input.RepoCollection;
 import org.plos.crepo.model.identity.RepoVersion;
+import org.plos.crepo.model.input.RepoCollection;
 import org.plos.crepo.util.CollectionUrlGenerator;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.powermock.api.mockito.PowerMockito;
@@ -53,7 +53,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   private ContentRepoCollectionDaoImpl contentRepoCollectionDaoImpl;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     contentRepoCollectionDaoImpl = new ContentRepoCollectionDaoImpl(repoAccessConfig);
     when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
@@ -76,7 +76,9 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
   }
 
   @Test
-  public void versionCollectionThrownExcTest() throws IOException { postCollectionsWithExc("VERSION", ErrorType.ErrorVersioningCollection); }
+  public void versionCollectionThrownExcTest() throws IOException {
+    postCollectionsWithExc("VERSION", ErrorType.ErrorVersioningCollection);
+  }
 
   @Test
   public void deleteCollectionUsingUuidTest() throws IOException {
@@ -87,7 +89,7 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
     HttpResponse response = contentRepoCollectionDaoImpl.deleteCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
 
-    verifyCommonCalls(repoAccessConfig,httpGettArgument, statusLine, 1, 1);
+    verifyCommonCalls(repoAccessConfig, httpGettArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
     assertNotNull(response);
@@ -104,10 +106,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.deleteCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorDeletingCollection);
     }
 
@@ -142,10 +144,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.deleteCollectionUsingVersionNumber(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorDeletingCollection);
     }
 
@@ -181,10 +183,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollectionUsingUuid(BUCKET_NAME, COLLECTION_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollection);
     }
 
@@ -220,10 +222,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollectionVersions(BUCKET_NAME, COLLECTION_KEY);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollectionVersions);
     }
 
@@ -260,10 +262,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollectionUsingVersionNumber(BUCKET_NAME, COLLECTION_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollection);
     }
 
@@ -300,10 +302,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollectionUsingTag(BUCKET_NAME, COLLECTION_KEY, TAG);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollection);
     }
 
@@ -337,10 +339,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollectionsUsingTag(BUCKET_NAME, 0, 10, true, TAG);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollections);
     }
 
@@ -377,10 +379,10 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoCollectionDaoImpl.getCollections(BUCKET_NAME, 0, 10, true);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingCollections);
     }
 
@@ -399,9 +401,9 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
     HttpResponse response = null;
 
-    if ("NEW".equals(create)){
+    if ("NEW".equals(create)) {
       response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollection);
-    } else{
+    } else {
       response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollection);
     }
 
@@ -413,9 +415,9 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     assertNotNull(response);
     assertEquals(mockResponse, response);
     HttpPost httpPost = httpPostArgument.getValue();
-    if ("NEW".equals(create)){
+    if ("NEW".equals(create)) {
       verifyHttpPost(httpPost, "NEW");
-    } else{
+    } else {
       verifyHttpPost(httpPost, "VERSION");
     }
 
@@ -430,13 +432,13 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
 
     HttpResponse response = null;
 
-    try{
-      if ("NEW".equals(create)){
+    try {
+      if ("NEW".equals(create)) {
         response = contentRepoCollectionDaoImpl.createCollection(BUCKET_NAME, repoCollection);
-      } else{
+      } else {
         response = contentRepoCollectionDaoImpl.versionCollection(BUCKET_NAME, repoCollection);
       }
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, errorType);
     }
 
@@ -458,7 +460,8 @@ public class ContentRepoCollectionDaoImplTest extends BaseDaoTest {
     assertEquals(SOME_URL, httpPost.getURI().toString());
     String params = EntityUtils.toString(httpPost.getEntity(), CharEncoding.UTF_8);
     Gson gson = new Gson();
-    Map<String, Object> postParams = gson.fromJson(params, new TypeToken<Map<String, Object>>() {}.getType());
+    Map<String, Object> postParams = gson.fromJson(params, new TypeToken<Map<String, Object>>() {
+    }.getType());
     assertEquals(BUCKET_NAME, postParams.get("bucketName"));
     assertEquals(COLLECTION_KEY, postParams.get("key"));
     assertEquals(creationMethod, postParams.get("create"));

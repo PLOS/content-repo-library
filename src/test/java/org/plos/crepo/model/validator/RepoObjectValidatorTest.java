@@ -8,8 +8,14 @@ import org.plos.crepo.model.input.RepoObject;
 
 import java.io.ByteArrayInputStream;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RepoObjectValidatorTest {
 
@@ -19,12 +25,12 @@ public class RepoObjectValidatorTest {
   private static final RepoObject.ContentAccessor CONTENT_ACCESSOR = () -> new ByteArrayInputStream(new byte[1]);
 
   @Before
-  public void setUp(){
+  public void setUp() {
     repoObjectValidator = new RepoObjectValidator();
   }
 
   @Test
-  public void valideRepoObjectTest(){
+  public void valideRepoObjectTest() {
 
     RepoObject repoObject = mock(RepoObject.class);
 
@@ -41,31 +47,31 @@ public class RepoObjectValidatorTest {
   }
 
   @Test
-  public void emptyKeyTest(){
+  public void emptyKeyTest() {
 
     RepoObject repoObject = mock(RepoObject.class);
 
-    try{
+    try {
       repoObjectValidator.validate(repoObject);
       fail("A content repo app was expected. ");
-    } catch(ContentRepoException e){
+    } catch (ContentRepoException e) {
       assertEquals(ErrorType.EmptyKey, e.getErrorType());
     }
 
   }
 
   @Test
-  public void emptyContentRepoObjectTest(){
+  public void emptyContentRepoObjectTest() {
 
     RepoObject repoObject = mock(RepoObject.class);
 
     when(repoObject.getKey()).thenReturn("validaKey");
     when(repoObject.getContentAccessor()).thenReturn(null);
 
-    try{
+    try {
       repoObjectValidator.validate(repoObject);
       fail("A content repo app was expected. ");
-    } catch(ContentRepoException e){
+    } catch (ContentRepoException e) {
       assertEquals(ErrorType.EmptyContent, e.getErrorType());
       verify(repoObject, times(2)).getKey();
       verify(repoObject).getContentAccessor();
@@ -74,7 +80,7 @@ public class RepoObjectValidatorTest {
   }
 
   @Test
-  public void emptyContentTypeRepoObjectTest(){
+  public void emptyContentTypeRepoObjectTest() {
 
     RepoObject repoObject = mock(RepoObject.class);
 
@@ -83,10 +89,10 @@ public class RepoObjectValidatorTest {
     when(repoObject.getContentType()).thenReturn(null);
     when(repoObject.getKey()).thenReturn(KEY);
 
-    try{
+    try {
       repoObjectValidator.validate(repoObject);
       fail("A content repo app was expected. ");
-    } catch(ContentRepoException e){
+    } catch (ContentRepoException e) {
       assertEquals(ErrorType.EmptyContentType, e.getErrorType());
       assertTrue(e.getMessage().contains(KEY));
       verify(repoObject, times(2)).getKey();

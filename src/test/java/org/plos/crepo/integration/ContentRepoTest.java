@@ -41,8 +41,8 @@ import static org.junit.Assert.fail;
 import static org.plos.crepo.service.BaseServiceTest.asRawList;
 
 /**
- * Test the content repo library against a live instance of content-repo.
- * Uncomment @Test and set REPO_SERVER_URL to point the actual content-repo
+ * Test the content repo library against a live instance of content-repo. Uncomment @Test and set REPO_SERVER_URL to
+ * point the actual content-repo
  */
 public class ContentRepoTest {
 
@@ -89,7 +89,7 @@ public class ContentRepoTest {
     HttpResponse response = null;
     try {
       response = contentRepoDao.getBucket(BUCKET_NAME);
-    } catch(ContentRepoException ce){
+    } catch (ContentRepoException ce) {
       // if it does not exist, create it
       contentRepoDao.createBucket(BUCKET_NAME);
     }
@@ -97,7 +97,7 @@ public class ContentRepoTest {
   }
 
   @Before
-  public void setUp(){
+  public void setUp() {
     Calendar cal = Calendar.getInstance();
     cal.setTimeInMillis(0);
 
@@ -105,104 +105,104 @@ public class ContentRepoTest {
     creationDateTime = new Timestamp(cal.getTime().getTime());
   }
 
-  private static int getRandomNumber(int Low, int High){
+  private static int getRandomNumber(int Low, int High) {
     Random r = new Random();
-    return r.nextInt(High-Low) + Low;
+    return r.nextInt(High - Low) + Low;
   }
 
   /*@Test*/
-  public void objectErrorTest(){
+  public void objectErrorTest() {
 
-    try{
+    try {
       contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, "41ff0ad0-3f7e-4fcf-980a-83a336d01624")).getReproxyUrls();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getLatestRepoObject("invalidKey");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObject(RepoVersion.create("invalidKey", "69921e8a-7723-47a0-a25d-18ab0aeef04d"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObject(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObject);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getLatestRepoObjectMetadata("invalidKey");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObjectMetadata(RepoVersion.create("invalidKey", "e876703d-7c53-4806-96fd-e8d9ebf90d71"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObjectMetadata(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObjectMetadata(new RepoVersionTag("invalidKey", "tag"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getRepoObjectVersions(null);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
-    try{
+    try {
       contentRepoService.deleteLatestRepoObject("invalidKey");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
     }
 
-    try{
+    try {
       contentRepoService.deleteRepoObject(RepoVersion.create("invalidKey", "7289a3b1-a96c-4de2-b4b8-034f16988976"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.deleteRepoObject(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingObject);
       assertTrue(fe.getMessage().contains("not found"));
     }
@@ -210,49 +210,49 @@ public class ContentRepoTest {
     try {
       contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("").build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
       contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("dsad").build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
     }
 
     try {
       contentRepoService.createRepoObject(new RepoObject.RepoObjectBuilder("dsad").byteContent(new byte[]{}).build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
     }
 
     try {
       contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("").build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
     try {
       contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("dsad").build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContent);
     }
 
     try {
       contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder("dsad").byteContent(new byte[]{}).build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyContentType);
     }
 
     try {
       contentRepoService.versionRepoObject(new RepoObject.RepoObjectBuilder(repoObjKey1).byteContent(new byte[]{}).contentType("text/plain").build());
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningObject);
       assertTrue(fe.getMessage().contains("does not exist"));
     }
@@ -260,79 +260,79 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void collectionErrorTest(){
+  public void collectionErrorTest() {
 
-    try{
+    try {
       contentRepoService.createCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
-    try{
+    try {
       contentRepoService.createCollection(RepoCollection.create("dsakjds", null));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingCollection);
     }
 
-    try{
+    try {
       contentRepoService.versionCollection(RepoCollection.create("", null));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
-    try{
+    try {
       contentRepoService.versionCollection(RepoCollection.create("dsakjds", null));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorVersioningCollection);
     }
 
-    try{
+    try {
       contentRepoService.getCollection(RepoVersion.create("invalidKey", "365ef3d9-5017-41f8-8ab6-9d2179b40e6d"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getCollection(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getCollection(new RepoVersionTag("invalidKey", "tag"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.getCollectionVersions(null);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyKey);
     }
 
-    try{
+    try {
       contentRepoService.deleteCollection(RepoVersion.create("invalidKey", "1ae72ceb-fce8-4711-8ed3-f2927848076d"));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
       assertTrue(fe.getMessage().contains("not found"));
     }
 
-    try{
+    try {
       contentRepoService.deleteCollection(new RepoVersionNumber("invalidKey", 0));
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorDeletingCollection);
       assertTrue(fe.getMessage().contains("not found"));
     }
@@ -340,33 +340,33 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void bucketErrorTest(){
+  public void bucketErrorTest() {
 
-    try{
+    try {
       contentRepoService.createBucket("");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorCreatingBucket);
     }
 
-    try{
+    try {
       contentRepoService.getBucket("dsadas");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingBucketMeta);
     }
 
-    try{
+    try {
       contentRepoService.getBucket("");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.EmptyBucketKey);
     }
 
-    try{
+    try {
       contentRepoService.getBucket("invalidBucket");
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingBucketMeta);
     }
 
@@ -381,7 +381,7 @@ public class ContentRepoTest {
       BufferedWriter output = new BufferedWriter(new FileWriter(file));
       output.write(testData1);
       output.close();
-    } catch ( IOException e ) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 
@@ -434,11 +434,11 @@ public class ContentRepoTest {
     contentRepoService.deleteRepoObject(RepoVersion.create(repoObjKey1, fileUuid));
 
     Map<String, Object> repoObj6 = null;
-    try{
+    try {
       // get object 1 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
@@ -447,11 +447,11 @@ public class ContentRepoTest {
     // delete using version number ---> object 2
     contentRepoService.deleteRepoObject(new RepoVersionNumber(repoObjKey1, versionNumber2.intValue()));
 
-    try{
+    try {
       // get object 2 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey1, fileUuid2)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
@@ -468,7 +468,7 @@ public class ContentRepoTest {
       BufferedWriter output = new BufferedWriter(new FileWriter(file));
       output.write(testData1);
       output.close();
-    } catch ( IOException e ) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 
@@ -508,11 +508,11 @@ public class ContentRepoTest {
     contentRepoService.deleteRepoObject(RepoVersion.create(repoObjKey10, fileUuid));
 
     Map<String, Object> repoObj6 = null;
-    try{
+    try {
       // get object 1 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey10, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
@@ -521,11 +521,11 @@ public class ContentRepoTest {
     // delete using version number ---> object 2
     contentRepoService.deleteRepoObject(new RepoVersionNumber(repoObjKey10, versionNumber2.intValue()));
 
-    try{
+    try {
       // get object 2 by version UUID ----> must be null
       repoObj6 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey10, fileUuid2)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(repoObj6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
@@ -534,7 +534,7 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void hasXProxyAndRedirectUrlTest(){
+  public void hasXProxyAndRedirectUrlTest() {
 
     assertFalse(contentRepoService.hasXReproxy());
 
@@ -555,11 +555,11 @@ public class ContentRepoTest {
     assertTrue(deleted);
 
     Map<String, Object> repoObj2 = null;
-    try{
+    try {
       // get object 1 by version UUID ----> must be null
       repoObj2 = contentRepoService.getRepoObjectMetadata(RepoVersion.create(repoObjKey2, fileUuid)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(repoObj2);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingObjectMeta);
       assertTrue(fe.getMessage().contains("not found"));
@@ -606,7 +606,7 @@ public class ContentRepoTest {
       BufferedWriter output = new BufferedWriter(new FileWriter(file));
       output.write(testData1);
       output.close();
-    } catch ( IOException e ) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 
@@ -662,9 +662,9 @@ public class ContentRepoTest {
     String fileContent5 = new String(content5);
     String fileContent6 = new String(content6);
 
-    assertEquals(fileContent4,fileContent1);
-    assertEquals(fileContent4,fileContent5);
-    assertEquals(fileContent4,fileContent6);
+    assertEquals(fileContent4, fileContent1);
+    assertEquals(fileContent4, fileContent5);
+    assertEquals(fileContent4, fileContent6);
 
     boolean deleted = contentRepoService.deleteRepoObject(RepoVersion.create(repoObjKey3, fileUuid));
     assertTrue(deleted);
@@ -674,7 +674,7 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void collectionsTest(){
+  public void collectionsTest() {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
@@ -723,7 +723,7 @@ public class ContentRepoTest {
     String collUuid2 = (String) collection2.get("uuid");
     Double collVersionNumber2 = (Double) collection2.get("versionNumber");
 
-    List<Map<String,Object>> versions = asRawList(contentRepoService.getCollectionVersions(collectionKey1));
+    List<Map<String, Object>> versions = asRawList(contentRepoService.getCollectionVersions(collectionKey1));
     assertNotNull(versions);
     assertEquals(2, versions.size());
     assertEquals(collUuid1, versions.get(0).get("uuid"));
@@ -741,11 +741,11 @@ public class ContentRepoTest {
     assertTrue(deleted);
 
     Map<String, Object> collection5 = null;
-    try{
+    try {
       // get object 2 by version UUID ----> must be null
       collection5 = contentRepoService.getCollection(new RepoVersionNumber(collectionKey1, collVersionNumber2.intValue())).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(collection5);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
       assertTrue(fe.getMessage().contains("not found"));
@@ -755,11 +755,11 @@ public class ContentRepoTest {
     assertTrue(deleted);
 
     Map<String, Object> collection6 = null;
-    try{
+    try {
       // get object 2 by version UUID ----> must be null
       collection6 = contentRepoService.getCollection(RepoVersion.create(collectionKey1, collUuid1)).getMapView();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException fe){
+    } catch (ContentRepoException fe) {
       assertNull(collection6);
       assertEquals(fe.getErrorType(), ErrorType.ErrorFetchingCollection);
       assertTrue(fe.getMessage().contains("not found"));
@@ -771,7 +771,7 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void repoConfigTest(){
+  public void repoConfigTest() {
 
     Map<String, Object> repoConfig = contentRepoService.getRepoConfig();
     assertNotNull(repoConfig.get("version"));
@@ -788,7 +788,7 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void collectionsTagTest(){
+  public void collectionsTagTest() {
 
     byte[] content1 = testData1.getBytes();
     // create object 1
@@ -885,7 +885,7 @@ public class ContentRepoTest {
   }
 
   /*@Test*/
-  public void repoObjectsTagTest(){
+  public void repoObjectsTagTest() {
 
     byte[] content1 = testData1.getBytes();
     RepoObject repoObject1 = new RepoObject.RepoObjectBuilder(repoObjKey8)
@@ -927,14 +927,14 @@ public class ContentRepoTest {
     assertEquals(fileUuid1, repoObj4.get("uuid"));
 
 
-    List<Map<String, Object>> repoObjectsTag =  asRawList(contentRepoService.getRepoObjects(0, 10, false, TAG));
+    List<Map<String, Object>> repoObjectsTag = asRawList(contentRepoService.getRepoObjects(0, 10, false, TAG));
     assertNotNull(repoObjectsTag);
     assertEquals(2, repoObjectsTag.size());
-    for (Map<String, Object> repoObject : repoObjectsTag){
+    for (Map<String, Object> repoObject : repoObjectsTag) {
       assertEquals(TAG, repoObject.get("tag"));
     }
 
-    List<Map<String, Object>> repoObjects =  asRawList(contentRepoService.getRepoObjects(0, 10, false, null));
+    List<Map<String, Object>> repoObjects = asRawList(contentRepoService.getRepoObjects(0, 10, false, null));
     assertNotNull(repoObjects);
     assertEquals(3, repoObjects.size());
 
