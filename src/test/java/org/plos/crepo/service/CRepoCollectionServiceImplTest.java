@@ -80,13 +80,14 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
+    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.createCollection(repoCollection).getMapView();
 
-    verify(repoCollection).getKey();
+    verify(repoCollection, atLeastOnce()).getKey();
     verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -101,6 +102,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
+    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.createCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
 
@@ -114,7 +116,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoCollection).getKey();
+    verify(repoCollection, atLeastOnce()).getKey();
     verify(contentRepoCollectionDao).createCollection(BUCKET_NAME, repoCollection);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -129,13 +131,14 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
+    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
     Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.versionCollection(repoCollection).getMapView();
 
-    verify(repoCollection).getKey();
+    verify(repoCollection, atLeastOnce()).getKey();
     verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();
@@ -150,6 +153,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mockJsonResponse(expectedResponse);
 
     RepoCollection repoCollection = mock(RepoCollection.class);
+    when(repoCollection.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoCollection.getKey()).thenReturn("key");
     when(contentRepoCollectionDao.versionCollection(BUCKET_NAME, repoCollection)).thenReturn(httpResponse);
 
@@ -163,7 +167,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
     }
 
-    verify(repoCollection).getKey();
+    verify(repoCollection, atLeastOnce()).getKey();
     verify(contentRepoCollectionDao).versionCollection(BUCKET_NAME, repoCollection);
     verify(httpResponse, atLeastOnce()).close();
     PowerMockito.verifyStatic();

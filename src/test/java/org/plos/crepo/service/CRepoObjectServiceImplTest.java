@@ -510,6 +510,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doNothing().when(httpResponse).close();
 
     RepoObject repoObject = mock(RepoObject.class);
+    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
@@ -532,6 +533,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
 
     RepoObject repoObject = mock(RepoObject.class);
+    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
@@ -562,6 +564,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     Mockito.doNothing().when(httpResponse).close();
 
     RepoObject repoObject = mock(RepoObject.class);
+    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);
@@ -584,6 +587,7 @@ public class CRepoObjectServiceImplTest extends BaseServiceTest {
     CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
 
     RepoObject repoObject = mock(RepoObject.class);
+    when(repoObject.getBucketName()).thenReturn(BUCKET_NAME);
     PowerMockito.mockStatic(RepoObjectValidator.class);
     PowerMockito.doNothing().when(RepoObjectValidator.class, "validate", repoObject);
     when(repoObject.probeContentType()).thenReturn(CONTENT_TYPE);

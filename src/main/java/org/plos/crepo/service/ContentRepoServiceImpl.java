@@ -447,6 +447,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList createCollection(RepoCollection repoCollection) {
+    RepoId.create(repoCollection.getBucketName(), repoCollection.getKey()); // validate
     try (CloseableHttpResponse response = collectionDao.createCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
@@ -456,6 +457,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList versionCollection(RepoCollection repoCollection) {
+    RepoId.create(repoCollection.getBucketName(), repoCollection.getKey()); // validate
     try (CloseableHttpResponse response = collectionDao.versionCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
@@ -466,6 +468,7 @@ public class ContentRepoServiceImpl implements ContentRepoService {
 
   @Override
   public RepoCollectionList autoCreateCollection(RepoCollection repoCollection) {
+    RepoId.create(repoCollection.getBucketName(), repoCollection.getKey()); // validate
     try (CloseableHttpResponse response = collectionDao.autoCreateCollection(repoCollection.getBucketName(), repoCollection)) {
       return buildRepoCollectionMetadata(response);
     } catch (IOException e) {
