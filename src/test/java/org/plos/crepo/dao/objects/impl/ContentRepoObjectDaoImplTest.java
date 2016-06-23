@@ -60,7 +60,6 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   @Before
   public void setUp() {
     contentRepoObjectDaoImpl = new ContentRepoObjectDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
     PowerMockito.mockStatic(ObjectUrlGenerator.class);
   }

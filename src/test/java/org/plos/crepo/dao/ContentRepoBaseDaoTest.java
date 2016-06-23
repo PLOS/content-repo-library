@@ -40,7 +40,6 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest {
   @Before
   public void setUp() {
     contentRepoBaseDao = new TestContentRepoBaseDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
   }
 

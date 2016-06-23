@@ -14,6 +14,7 @@ import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
+import org.plos.crepo.model.identity.RepoId;
 import org.plos.crepo.model.identity.RepoVersion;
 import org.plos.crepo.model.identity.RepoVersionNumber;
 import org.plos.crepo.model.identity.RepoVersionTag;
@@ -41,9 +42,9 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({HttpResponseUtil.class, Gson.class})
 public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
-  private static final String VERSION_UUID = "d8562db9-6974-499f-a522-9e7a945d48bb";
-  private static final RepoVersion DUMMY_VERSION = RepoVersion.create(KEY, VERSION_UUID);
   private static final String BUCKET_NAME = "bucketName";
+  private static final String VERSION_UUID = "d8562db9-6974-499f-a522-9e7a945d48bb";
+  private static final RepoVersion DUMMY_VERSION = RepoVersion.create(BUCKET_NAME, KEY, VERSION_UUID);
   private static final int VERSION_NUMBER = 0;
   private static final String TAG = "tag";
   private static final int OFFSET = 0;
@@ -71,7 +72,6 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
         .setCollectionDao(contentRepoCollectionDao)
         .build();
     Whitebox.setInternalState(cRepoCollectionServiceImpl, "gson", gson);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
   }
 
   @Test
@@ -177,7 +177,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.deleteCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
+    boolean deleted = cRepoCollectionServiceImpl.deleteCollection(RepoVersionNumber.create(BUCKET_NAME, KEY, VERSION_NUMBER));
 
     verify(contentRepoCollectionDao).deleteCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(httpResponse, atLeastOnce()).close();
@@ -193,7 +193,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     boolean deleted = false;
     try {
-      deleted = cRepoCollectionServiceImpl.deleteCollection(new RepoVersionNumber(KEY, VERSION_NUMBER));
+      deleted = cRepoCollectionServiceImpl.deleteCollection(RepoVersionNumber.create(BUCKET_NAME, KEY, VERSION_NUMBER));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
@@ -285,7 +285,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoVersionNumber.create(BUCKET_NAME, KEY, VERSION_NUMBER)).getMapView();
 
     verify(contentRepoCollectionDao).getCollectionUsingVersionNumber(BUCKET_NAME, KEY, VERSION_NUMBER);
     verify(httpResponse, atLeastOnce()).close();
@@ -305,7 +305,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionNumber(KEY, VERSION_NUMBER)).getMapView();
+      collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoVersionNumber.create(BUCKET_NAME, KEY, VERSION_NUMBER)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
@@ -326,7 +326,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.getCollectionUsingTag(BUCKET_NAME, KEY, TAG)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG)).getMapView();
+    Map<String, Object> collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoVersionTag.create(BUCKET_NAME, KEY, TAG)).getMapView();
 
     verify(contentRepoCollectionDao).getCollectionUsingTag(BUCKET_NAME, KEY, TAG);
     verify(httpResponse, atLeastOnce()).close();
@@ -346,7 +346,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     Map<String, Object> collectionResponse = null;
     try {
-      collectionResponse = cRepoCollectionServiceImpl.getCollection(new RepoVersionTag(KEY, TAG)).getMapView();
+      collectionResponse = cRepoCollectionServiceImpl.getCollection(RepoVersionTag.create(BUCKET_NAME, KEY, TAG)).getMapView();
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
@@ -366,7 +366,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.getCollectionVersions(BUCKET_NAME, KEY)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(KEY));
+    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(RepoId.create(BUCKET_NAME, KEY)));
 
     verify(contentRepoCollectionDao).getCollectionVersions(BUCKET_NAME, KEY);
     verify(httpResponse, atLeastOnce()).close();
@@ -387,7 +387,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     List<Map<String, Object>> collectionResponse = null;
     try {
-      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(KEY));
+      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollectionVersions(RepoId.create(BUCKET_NAME, KEY)));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
@@ -407,7 +407,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, TAG));
+    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(BUCKET_NAME, OFFSET, LIMIT, true, TAG));
 
     verify(contentRepoCollectionDao).getCollectionsUsingTag(BUCKET_NAME, OFFSET, LIMIT, true, TAG);
     verify(httpResponse, atLeastOnce()).close();
@@ -427,7 +427,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     List<Map<String, Object>> collectionResponse = null;
     try {
-      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, TAG));
+      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(BUCKET_NAME, OFFSET, LIMIT, true, TAG));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());
@@ -448,7 +448,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
     when(contentRepoCollectionDao.getCollections(BUCKET_NAME, OFFSET, LIMIT, true)).thenReturn(httpResponse);
     Mockito.doNothing().when(httpResponse).close();
 
-    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, null));
+    List<Map<String, Object>> collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(BUCKET_NAME, OFFSET, LIMIT, true, null));
 
     verify(contentRepoCollectionDao).getCollections(BUCKET_NAME, OFFSET, LIMIT, true);
     verify(httpResponse, atLeastOnce()).close();
@@ -469,7 +469,7 @@ public class CRepoCollectionServiceImplTest extends BaseServiceTest {
 
     List<Map<String, Object>> collectionResponse = null;
     try {
-      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(OFFSET, LIMIT, true, null));
+      collectionResponse = asRawList(cRepoCollectionServiceImpl.getCollections(BUCKET_NAME, OFFSET, LIMIT, true, null));
     } catch (ContentRepoException exception) {
       assertEquals(ErrorType.ServerError, exception.getErrorType());
       assertEquals(TestExpectedException.class, exception.getCause().getClass());

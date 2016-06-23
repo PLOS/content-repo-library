@@ -19,6 +19,15 @@ public final class RepoVersionNumber {
     Preconditions.checkArgument(this.number >= 0);
   }
 
+  public static RepoVersionNumber create(RepoId id, int number) {
+    return new RepoVersionNumber(id, number);
+  }
+
+  public static RepoVersionNumber create(String bucketName, String key, int number) {
+    return create(RepoId.create(bucketName, key), number);
+  }
+
+
   public RepoId getId() {
     return id;
   }
