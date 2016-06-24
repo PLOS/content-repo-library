@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -95,10 +94,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
    * @param <M> the metadata type for output representing the entity
    */
   private abstract class FakeEntity<M extends RepoMetadata> {
-    protected final String bucketName;
-
-    protected final String key;
-    protected final UUID uuid;
+    protected final RepoVersion version;
     protected final int number;
     protected final String tag;
 
@@ -108,9 +104,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
     protected Timestamp timestamp;
 
     private FakeEntity(String bucketName, String key, int number, String tag) {
-      this.bucketName = Objects.requireNonNull(bucketName);
-      this.key = key;
-      this.uuid = uuidGenerator.get();
+      this.version = RepoVersion.create(bucketName, key, uuidGenerator.get());
       this.number = number;
       this.tag = tag;
       this.status = Status.USED;
@@ -120,8 +114,8 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
     protected NullSafeMapBuilder<String, Object> buildMetadata() {
       return new NullSafeMapBuilder<String, Object>()
-          .put("key", key)
-          .put("uuid", uuid.toString())
+          .put("key", version.getId().getKey())
+          .put("uuid", version.getUuid().toString())
           .put("versionNumber", number)
           .put("tag", tag)
           .put("userMetadata", userMetadata)
@@ -151,7 +145,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
     @Override
     public RepoObjectMetadata getMetadata() {
-      return new RepoObjectMetadata(bucketName, buildMetadata()
+      return new RepoObjectMetadata(version.getId().getBucketName(), buildMetadata()
           .put("checksum", contentHash.toString())
           .put("size", content.length)
           .put("downloadName", downloadName)
@@ -171,15 +165,10 @@ public class InMemoryContentRepoService implements ContentRepoService {
     public RepoCollectionList getMetadata() {
       List<Map<String, Object>> rawObjectMetadata = new ArrayList<>(objectIds.size());
       for (RepoVersion objectId : objectIds) {
-        String bucketName = objectId.getId().getBucketName();
-        FakeBucket bucket = get(bucketName);
-        List<FakeObject> fakeObjectList = bucket.objects.get(objectId.getId().getKey());
-        FakeObject fakeObject = fakeObjectList.stream()
-            .filter(o -> objectId.getUuid().equals(o.uuid))
-            .findAny().orElseThrow(InMemoryContentRepoServiceException::new);
+        FakeObject fakeObject = getFrom(InMemoryContentRepoService.this::lookUpObjects, objectId);
         rawObjectMetadata.add(fakeObject.getMetadata().getMapView());
       }
-      return new RepoCollectionList(bucketName, buildMetadata()
+      return new RepoCollectionList(version.getId().getBucketName(), buildMetadata()
           .put("objects", rawObjectMetadata)
           .build());
     }
@@ -329,7 +318,7 @@ public class InMemoryContentRepoService implements ContentRepoService {
   private static <T extends FakeEntity> T getFrom(BucketKeyLookup<T> lookup, RepoVersion version) {
     List<? extends T> entities = lookup.getEntities(version.getId());
     for (T entity : entities) {
-      if (version.getUuid().equals(entity.uuid)) {
+      if (version.equals(entity.version)) {
         return entity;
       }
     }
