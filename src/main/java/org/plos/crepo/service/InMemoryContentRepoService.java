@@ -2,6 +2,7 @@ package org.plos.crepo.service;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -225,15 +225,23 @@ public class InMemoryContentRepoService implements ContentRepoService {
 
   private final Supplier<UUID> uuidGenerator = new FakeUuidGenerator();
   private final Map<String, FakeBucket> buckets = new HashMap<>();
+  private final ImmutableSet<String> initialBuckets;
 
   public InMemoryContentRepoService() {
+    this(ImmutableSet.of());
   }
 
   public InMemoryContentRepoService(String... initialBuckets) {
-    this(Arrays.asList(initialBuckets));
+    this(ImmutableSet.copyOf(initialBuckets));
   }
 
   public InMemoryContentRepoService(Iterable<String> initialBuckets) {
+    this.initialBuckets = ImmutableSet.copyOf(initialBuckets);
+    clear();
+  }
+
+  public void clear() {
+    buckets.clear();
     for (String bucketName : initialBuckets) {
       createBucket(bucketName);
     }
