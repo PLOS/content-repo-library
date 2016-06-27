@@ -2,17 +2,17 @@ package org.plos.crepo.dao.collections;
 
 
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.plos.crepo.model.RepoCollection;
+import org.plos.crepo.model.input.RepoCollectionInput;
 
 public interface ContentRepoCollectionDao {
 
-  CloseableHttpResponse createCollection(String bucketName, RepoCollection repoCollection);
+  CloseableHttpResponse createCollection(String bucketName, RepoCollectionInput repoCollectionInput);
 
-  CloseableHttpResponse versionCollection(String bucketName, RepoCollection repoCollection);
+  CloseableHttpResponse versionCollection(String bucketName, RepoCollectionInput repoCollectionInput);
 
   CloseableHttpResponse deleteCollectionUsingUuid(String bucketName, String key, String uuid);
 
-  CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollection repoCollection);
+  CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollectionInput repoCollectionInput);
 
   CloseableHttpResponse deleteCollectionUsingVersionNumber(String bucketName, String key, int versionNumber);
 

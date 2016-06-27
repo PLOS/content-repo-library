@@ -1,4 +1,4 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

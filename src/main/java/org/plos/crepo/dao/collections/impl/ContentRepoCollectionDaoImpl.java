@@ -13,8 +13,8 @@ import org.plos.crepo.dao.collections.ContentRepoCollectionDao;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 import org.plos.crepo.model.CreationMethod;
-import org.plos.crepo.model.RepoCollection;
-import org.plos.crepo.model.RepoCollectionEntity;
+import org.plos.crepo.model.input.RepoCollectionInput;
+import org.plos.crepo.model.input.RepoCollectionEntity;
 import org.plos.crepo.util.CollectionUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +36,18 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
   }
 
   @Override
-  public CloseableHttpResponse createCollection(String bucketName, RepoCollection repoCollection) {
+  public CloseableHttpResponse createCollection(String bucketName, RepoCollectionInput repoCollectionInput) {
     HttpPost request = new HttpPost(CollectionUrlGenerator.getCreateCollUrl(getRepoServer()));
-    request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.NEW));
+    request.setEntity(getCollectionEntity(bucketName, repoCollectionInput, CreationMethod.NEW));
     request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
     return executeRequest(request, ErrorType.ErrorCreatingCollection);
   }
 
   @Override
-  public CloseableHttpResponse versionCollection(String bucketName, RepoCollection repoCollection) {
+  public CloseableHttpResponse versionCollection(String bucketName, RepoCollectionInput repoCollectionInput) {
     HttpPost request = new HttpPost(CollectionUrlGenerator.getCreateCollUrl(getRepoServer()));
     request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-    request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.VERSION));
+    request.setEntity(getCollectionEntity(bucketName, repoCollectionInput, CreationMethod.VERSION));
     return executeRequest(request, ErrorType.ErrorVersioningCollection);
   }
 
@@ -57,9 +57,9 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
     return executeRequest(request, ErrorType.ErrorDeletingCollection);
   }
 
-  public CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollection repoCollection) {
+  public CloseableHttpResponse autoCreateCollection(String bucketName, RepoCollectionInput repoCollectionInput) {
     HttpPost request = new HttpPost(CollectionUrlGenerator.getCreateCollUrl(getRepoServer()));
-    request.setEntity(getCollectionEntity(bucketName, repoCollection, CreationMethod.AUTO));
+    request.setEntity(getCollectionEntity(bucketName, repoCollectionInput, CreationMethod.AUTO));
     request.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
     return executeRequest(request, ErrorType.ErrorAutoCreatingCollection);
   }
@@ -112,17 +112,17 @@ public class ContentRepoCollectionDaoImpl extends ContentRepoBaseDao implements 
     return executeRequest(request, ErrorType.ErrorFetchingCollections);
   }
 
-  private StringEntity getCollectionEntity(String bucketName, RepoCollection repoCollection, CreationMethod creationType) {
+  private StringEntity getCollectionEntity(String bucketName, RepoCollectionInput repoCollectionInput, CreationMethod creationType) {
     Gson gson = new Gson();
     StringEntity entityString = null;
-    RepoCollectionEntity repoCollectionEntity = new RepoCollectionEntity(repoCollection, bucketName, creationType.toString());
+    RepoCollectionEntity repoCollectionEntity = new RepoCollectionEntity(repoCollectionInput, bucketName, creationType.toString());
     try {
       entityString = new StringEntity(gson.toJson(repoCollectionEntity));
     } catch (UnsupportedEncodingException e) {
       log.error("Error generating the StringEntity to send in the POST for ---> bucketName: "
-          + bucketName + " key " + repoCollection.getKey() + " creationType " + creationType, e);
+          + bucketName + " key " + repoCollectionInput.getKey() + " creationType " + creationType, e);
       throw new ContentRepoException.ContentRepoExceptionBuilder(ErrorType.ErrorCreatingCollection)
-          .key(repoCollection.getKey())
+          .key(repoCollectionInput.getKey())
           .baseException(e)
           .build();
     }

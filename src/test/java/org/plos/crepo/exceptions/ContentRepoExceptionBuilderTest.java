@@ -3,7 +3,9 @@ package org.plos.crepo.exceptions;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ContentRepoExceptionBuilderTest {
 
@@ -17,12 +19,12 @@ public class ContentRepoExceptionBuilderTest {
   private Exception baseException = new Exception(BASE_EXCEPTION_MESSAGE);
 
   @Before
-  public void setUp(){
+  public void setUp() {
     builder = new ContentRepoException.ContentRepoExceptionBuilder(errorType);
   }
 
   @Test
-  public void buildExceptionTest(){
+  public void buildExceptionTest() {
 
     ContentRepoException contentRepoExcp = builder.baseException(baseException)
         .repoMessage(REPO_MESSAGE)

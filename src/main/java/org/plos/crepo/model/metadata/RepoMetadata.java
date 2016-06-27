@@ -1,7 +1,6 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -11,6 +10,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
+import org.plos.crepo.model.Status;
+import org.plos.crepo.model.identity.RepoVersion;
+import org.plos.crepo.model.identity.RepoVersionNumber;
+import org.plos.crepo.model.identity.RepoVersionTag;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,17 +21,21 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Represents metadata about a repo entity, to output to the client.
  */
 public abstract class RepoMetadata {
+  private final String bucketName;
   protected final ImmutableMap<String, Object> raw;
 
   @SuppressWarnings("unchecked")
     // recursiveImmutableCopy guarantees type safety
-  RepoMetadata(Map<String, Object> raw) {
+  RepoMetadata(String bucketName, Map<String, Object> raw) {
+    this.bucketName = Objects.requireNonNull(bucketName);
     this.raw = (ImmutableMap<String, Object>) recursiveImmutableCopy(raw);
   }
 
@@ -75,19 +82,19 @@ public abstract class RepoMetadata {
   public RepoVersion getVersion() {
     String key = (String) raw.get("key");
     String uuid = (String) raw.get("uuid");
-    return RepoVersion.create(key, uuid);
+    return RepoVersion.create(bucketName, key, uuid);
   }
 
   public RepoVersionNumber getVersionNumber() {
     String key = (String) raw.get("key");
     int versionNumber = ((Number) raw.get("versionNumber")).intValue();
-    return new RepoVersionNumber(key, versionNumber);
+    return RepoVersionNumber.create(bucketName, key, versionNumber);
   }
 
   public Optional<RepoVersionTag> getTag() {
     String key = (String) raw.get("key");
-    String tag = (String) raw.get("tag");
-    return (tag == null) ? Optional.<RepoVersionTag>absent() : Optional.of(new RepoVersionTag(key, tag));
+    return Optional.ofNullable((String) raw.get("tag"))
+        .map((String tag) -> RepoVersionTag.create(bucketName, key, tag));
   }
 
   public Timestamp getTimestamp() {
@@ -103,7 +110,7 @@ public abstract class RepoMetadata {
   }
 
   public Optional<String> getRawUserMetadata() {
-    return Optional.fromNullable((String) raw.get("userMetadata"));
+    return Optional.ofNullable((String) raw.get("userMetadata"));
   }
 
   // Store to avoid redundant parsing. Null means uninitialized; absent means this has no userMetadata.
@@ -112,18 +119,18 @@ public abstract class RepoMetadata {
   public Optional<Object> getJsonUserMetadata() {
     if (jsonUserMetadata != null) return jsonUserMetadata;
     Optional<String> raw = getRawUserMetadata();
-    if (!raw.isPresent()) return Optional.absent();
+    if (!raw.isPresent()) return Optional.empty();
 
     final Gson gson = new Gson();
     JsonElement parsed;
     try {
       parsed = gson.fromJson(raw.get(), JsonElement.class);
     } catch (JsonSyntaxException e) {
-      return Optional.absent(); // TODO: Exception more appropriate instead?
+      return Optional.empty(); // TODO: Exception more appropriate instead?
     }
 
     Object converted = convertJsonToImmutable(parsed);
-    return jsonUserMetadata = Optional.fromNullable(converted);
+    return jsonUserMetadata = Optional.ofNullable(converted);
   }
 
   @VisibleForTesting

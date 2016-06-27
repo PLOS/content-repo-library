@@ -1,6 +1,7 @@
-package org.plos.crepo.model;
+package org.plos.crepo.model.input;
 
 import com.google.common.collect.ImmutableCollection;
+import org.plos.crepo.model.identity.RepoVersion;
 
 public class RepoCollectionEntity {
 
@@ -15,7 +16,7 @@ public class RepoCollectionEntity {
   private final String create;   // created time
 
 
-  public RepoCollectionEntity(RepoCollection collection, String bucketName, String create) {
+  public RepoCollectionEntity(RepoCollectionInput collection, String bucketName, String create) {
     this.bucketName = bucketName;
     this.create = create;
 
@@ -68,8 +69,9 @@ public class RepoCollectionEntity {
 
     if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
     if (create != null ? !create.equals(that.create) : that.create != null) return false;
-    if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null)
+    if (creationDateTime != null ? !creationDateTime.equals(that.creationDateTime) : that.creationDateTime != null) {
       return false;
+    }
     if (key != null ? !key.equals(that.key) : that.key != null) return false;
     if (objects != null ? !objects.equals(that.objects) : that.objects != null) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
