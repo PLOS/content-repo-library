@@ -8,3 +8,6 @@ The file-store provided the method 'OutputStream getFileOutStream(final String k
 the new file in the content.
 
 'Boolean deleteLatestRepoObj(String key)'  is replacing void 'deleteFile(String fsid)' from the file-store jar
+
+Please contact us at dev@ambraproject.org with any questions, comments, or concerns.
+Please use [Github Issues](https://github.com/PLOS/ambraproject/issues) to report any problems, or submit a pull request.
