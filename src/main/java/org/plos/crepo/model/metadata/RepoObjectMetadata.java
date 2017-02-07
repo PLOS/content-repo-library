@@ -20,9 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
-import com.google.common.base.Optional;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
 
@@ -31,14 +30,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Represents output to the client, describing an object.
  */
 public class RepoObjectMetadata extends RepoMetadata {
 
-  public RepoObjectMetadata(Map<String, Object> raw) {
-    super(raw);
+  public RepoObjectMetadata(String bucketName, Map<String, Object> raw) {
+    super(bucketName, raw);
   }
 
   public long getSize() {
@@ -46,11 +46,11 @@ public class RepoObjectMetadata extends RepoMetadata {
   }
 
   public Optional<String> getContentType() {
-    return Optional.fromNullable((String) raw.get("contentType"));
+    return Optional.ofNullable((String) raw.get("contentType"));
   }
 
   public Optional<String> getDownloadName() {
-    return Optional.fromNullable((String) raw.get("downloadName"));
+    return Optional.ofNullable((String) raw.get("downloadName"));
   }
 
   public List<URL> getReproxyUrls() {

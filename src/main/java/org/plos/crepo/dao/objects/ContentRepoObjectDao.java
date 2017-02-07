@@ -24,7 +24,7 @@ package org.plos.crepo.dao.objects;
 
 
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObjectInput;
 
 public interface ContentRepoObjectDao {
 
@@ -48,11 +48,11 @@ public interface ContentRepoObjectDao {
 
   CloseableHttpResponse deleteRepoObjUsingVersionNumber(String bucketName, String key, int versionNumber);
 
-  CloseableHttpResponse createRepoObj(String bucketName, RepoObject repoObject, String contentType);
+  CloseableHttpResponse createRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType);
 
-  CloseableHttpResponse versionRepoObj(String bucketName, RepoObject repoObject, String contentType);
+  CloseableHttpResponse versionRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType);
 
-  CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObject repoObject, String contentType);
+  CloseableHttpResponse autoCreateRepoObj(String bucketName, RepoObjectInput repoObjectInput, String contentType);
 
   CloseableHttpResponse getRedirectURL(String bucketName, String key);
 

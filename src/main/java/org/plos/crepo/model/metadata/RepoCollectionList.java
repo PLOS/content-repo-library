@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package org.plos.crepo.model;
+package org.plos.crepo.model.metadata;
 
 import com.google.common.collect.ImmutableList;
 
@@ -35,16 +35,16 @@ public class RepoCollectionList extends RepoCollectionMetadata {
 
   private final ImmutableList<RepoObjectMetadata> objects;
 
-  public RepoCollectionList(Map<String, Object> raw) {
-    super(raw);
-    objects = parseObjects(raw);
+  public RepoCollectionList(String bucketName, Map<String, Object> raw) {
+    super(bucketName, raw);
+    objects = parseObjects(bucketName, raw);
   }
 
-  private static ImmutableList<RepoObjectMetadata> parseObjects(Map<String, Object> raw) {
+  private static ImmutableList<RepoObjectMetadata> parseObjects(String bucketName, Map<String, Object> raw) {
     List<Map<String, Object>> rawObjects = (List<Map<String, Object>>) raw.get("objects");
     List<RepoObjectMetadata> builtObjects = new ArrayList<>(rawObjects.size());
     for (Map<String, Object> rawObject : rawObjects) {
-      builtObjects.add(new RepoObjectMetadata(rawObject));
+      builtObjects.add(new RepoObjectMetadata(bucketName, rawObject));
     }
     return ImmutableList.copyOf(builtObjects);
   }

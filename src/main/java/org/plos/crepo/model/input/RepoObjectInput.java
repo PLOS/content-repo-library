@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package org.plos.crepo.model;
+package org.plos.crepo.model.input;
 
 import com.google.common.base.Preconditions;
 import org.plos.crepo.exceptions.ContentRepoException;
@@ -34,8 +34,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.sql.Timestamp;
+import java.util.Objects;
 
-public class RepoObject {
+public class RepoObjectInput {
 
   public static interface ContentAccessor {
     InputStream open() throws IOException;
@@ -68,6 +69,7 @@ public class RepoObject {
   }
 
 
+  private final String bucketName;
   private final String key; // what the user specifies
   private final String downloadName;
   private final String contentType;
@@ -77,7 +79,8 @@ public class RepoObject {
   private final String userMetadata;
   private final ContentAccessor contentAccessor;
 
-  private RepoObject(RepoObjectBuilder builder){
+  private RepoObjectInput(Builder builder) {
+    this.bucketName = builder.bucketName;
     this.key = builder.key;
     this.downloadName = builder.downloadName;
     this.contentType = builder.contentType;
@@ -86,6 +89,10 @@ public class RepoObject {
     this.timestamp = builder.timestamp;
     this.userMetadata = builder.userMetadata;
     this.contentAccessor = builder.contentAccessor;
+  }
+
+  public String getBucketName() {
+    return bucketName;
   }
 
   public String getKey() {
@@ -122,9 +129,8 @@ public class RepoObject {
 
 
   /**
-   * Return the set content type or, if this object was supplied with a file on disk via {@link
-   * RepoObjectBuilder#fileContent}, probe the file for its content type using enviornmental {@link
-   * java.nio.file.spi.FileTypeDetector}s.
+   * Return the set content type or, if this object was supplied with a file on disk via {@link Builder#setFileContent},
+   * probe the file for its content type using enviornmental {@link java.nio.file.spi.FileTypeDetector}s.
    */
   public String probeContentType() throws IOException {
     if (contentType != null) return contentType;
@@ -144,9 +150,14 @@ public class RepoObject {
   }
 
 
-  public static class RepoObjectBuilder {
+  public static Builder builder(String bucketName, String key) {
+    return new Builder(bucketName, key);
+  }
 
-    private String key; // what the user specifies
+  public static class Builder {
+
+    private final String bucketName;
+    private final String key; // what the user specifies
     private String downloadName;
     private String contentType;
     private String tag;
@@ -155,59 +166,59 @@ public class RepoObject {
     private String userMetadata;
     private ContentAccessor contentAccessor;
 
-    public RepoObjectBuilder(String key){
-      this.key = key;
+    public Builder(String bucketName, String key) {
+      this.bucketName = Objects.requireNonNull(bucketName);
+      this.key = Objects.requireNonNull(key);
     }
 
-    public RepoObjectBuilder downloadName(String downloadName){
+    public Builder setDownloadName(String downloadName) {
       this.downloadName = downloadName;
       return this;
     }
 
-    public RepoObjectBuilder contentType(String contentType){
+    public Builder setContentType(String contentType) {
       this.contentType = contentType;
       return this;
     }
 
-    public RepoObjectBuilder tag(String tag){
+    public Builder setTag(String tag) {
       this.tag = tag;
       return this;
     }
 
-    public RepoObjectBuilder creationDate(Timestamp creationDate){
+    public Builder setCreationDate(Timestamp creationDate) {
       this.creationDate = creationDate;
       return this;
     }
 
-    public RepoObjectBuilder timestamp(Timestamp timestamp){
+    public Builder setTimestamp(Timestamp timestamp) {
       this.timestamp = timestamp;
       return this;
     }
 
-    public RepoObjectBuilder userMetadata(String userMetadata) {
+    public Builder setUserMetadata(String userMetadata) {
       this.userMetadata = userMetadata;
       return this;
     }
 
-    public RepoObjectBuilder fileContent(File fileContent){
+    public Builder setFileContent(File fileContent) {
       this.contentAccessor = new FileAccessor(fileContent);
       return this;
     }
 
-    public RepoObjectBuilder byteContent(byte[] byteContent){
+    public Builder setByteContent(byte[] byteContent) {
       this.contentAccessor = new ByteArrayAccessor(byteContent);
       return this;
     }
 
-    public RepoObjectBuilder contentAccessor(ContentAccessor contentAccessor) {
+    public Builder setContentAccessor(ContentAccessor contentAccessor) {
       this.contentAccessor = contentAccessor;
       return this;
     }
 
-    public RepoObject build(){
-      return new RepoObject(this);
+    public RepoObjectInput build() {
+      return new RepoObjectInput(this);
     }
-
   }
 
   @Override
@@ -215,25 +226,24 @@ public class RepoObject {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    RepoObject that = (RepoObject) o;
+    RepoObjectInput that = (RepoObjectInput) o;
 
-    if (contentAccessor != null ? !contentAccessor.equals(that.contentAccessor) : that.contentAccessor != null) {
-      return false;
-    }
-    if (contentType != null ? !contentType.equals(that.contentType) : that.contentType != null) return false;
-    if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
-    if (downloadName != null ? !downloadName.equals(that.downloadName) : that.downloadName != null) return false;
+    if (bucketName != null ? !bucketName.equals(that.bucketName) : that.bucketName != null) return false;
     if (key != null ? !key.equals(that.key) : that.key != null) return false;
+    if (downloadName != null ? !downloadName.equals(that.downloadName) : that.downloadName != null) return false;
+    if (contentType != null ? !contentType.equals(that.contentType) : that.contentType != null) return false;
     if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+    if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
     if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
     if (userMetadata != null ? !userMetadata.equals(that.userMetadata) : that.userMetadata != null) return false;
+    return contentAccessor != null ? contentAccessor.equals(that.contentAccessor) : that.contentAccessor == null;
 
-    return true;
   }
 
   @Override
   public int hashCode() {
-    int result = key != null ? key.hashCode() : 0;
+    int result = bucketName != null ? bucketName.hashCode() : 0;
+    result = 31 * result + (key != null ? key.hashCode() : 0);
     result = 31 * result + (downloadName != null ? downloadName.hashCode() : 0);
     result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
     result = 31 * result + (tag != null ? tag.hashCode() : 0);

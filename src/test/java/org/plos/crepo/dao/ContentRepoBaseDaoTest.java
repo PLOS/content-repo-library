@@ -25,7 +25,6 @@ package org.plos.crepo.dao;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,12 +39,19 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.io.IOException;
 import java.net.URI;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(HttpResponseUtil.class)
-public class ContentRepoBaseDaoTest extends BaseDaoTest{
+public class ContentRepoBaseDaoTest extends BaseDaoTest {
 
   private TestContentRepoBaseDaoImpl contentRepoBaseDao;
   private URI uri = URI.create("http://testUri");
@@ -54,9 +60,8 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
   private ContentRepoAccessConfig repoAccessConfig;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     contentRepoBaseDao = new TestContentRepoBaseDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
   }
 
@@ -90,9 +95,9 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
 
     HttpResponse response = null;
 
-    try{
+    try {
       response = contentRepoBaseDao.executeRequest(httpRequest, ErrorType.ErrorFetchingBucketMeta);
-    } catch(ContentRepoException ex) {
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
@@ -115,9 +120,9 @@ public class ContentRepoBaseDaoTest extends BaseDaoTest{
 
     HttpResponse response = null;
 
-    try{
+    try {
       response = contentRepoBaseDao.executeRequest(httpRequest, ErrorType.ErrorFetchingBucketMeta);
-    } catch(ContentRepoException ex) {
+    } catch (ContentRepoException ex) {
       assertNull(response);
       assertEquals(ErrorType.ErrorFetchingBucketMeta, ex.getErrorType());
       assertTrue(ex.getMessage().contains(uri.toString()));

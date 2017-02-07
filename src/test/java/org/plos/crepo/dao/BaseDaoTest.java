@@ -39,9 +39,13 @@ import org.powermock.api.mockito.PowerMockito;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 public class BaseDaoTest {
@@ -60,7 +64,7 @@ public class BaseDaoTest {
   protected StatusLine statusLine;
 
   private static final String ERROR_MESSAGE = "bad request test";
-  protected static final String  EXCEPTION_EXPECTED = "A Content Repo Exception was expected. ";
+  protected static final String EXCEPTION_EXPECTED = "A Content Repo Exception was expected. ";
 
   protected void verifyException(ContentRepoException ex, HttpResponse response, ErrorType errorType) {
     assertNull(response);

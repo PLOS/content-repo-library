@@ -37,7 +37,7 @@ import org.plos.crepo.config.ContentRepoAccessConfig;
 import org.plos.crepo.dao.BaseDaoTest;
 import org.plos.crepo.exceptions.ContentRepoException;
 import org.plos.crepo.exceptions.ErrorType;
-import org.plos.crepo.model.RepoObject;
+import org.plos.crepo.model.input.RepoObjectInput;
 import org.plos.crepo.util.HttpResponseUtil;
 import org.plos.crepo.util.ObjectUrlGenerator;
 import org.powermock.api.mockito.PowerMockito;
@@ -46,15 +46,22 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, ObjectUrlGenerator.class})
-public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
+public class ContentRepoObjectInputDaoImplTest extends BaseDaoTest {
 
   private static final String BUCKET_NAME = "bucket1";
   private static final String OBJECT_KEY = "objectKey";
@@ -65,7 +72,7 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private static final int VERSION_NUMBER = 0;
   private static final String DOWNLOAD_NAME = "objKeyDownloadName";
   private static final String CONTENT_TYPE = "text/plain";
-  private static final RepoObject.ContentAccessor CONTENT = () -> new ByteArrayInputStream(new byte[2]);
+  private static final RepoObjectInput.ContentAccessor CONTENT = () -> new ByteArrayInputStream(new byte[2]);
 
   @Mock
   private ContentRepoAccessConfig repoAccessConfig;
@@ -73,9 +80,8 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
   private ContentRepoObjectDaoImpl contentRepoObjectDaoImpl;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     contentRepoObjectDaoImpl = new ContentRepoObjectDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
     PowerMockito.mockStatic(ObjectUrlGenerator.class);
   }
@@ -107,10 +113,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getLatestRepoObj(BUCKET_NAME, OBJECT_KEY);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
@@ -147,10 +153,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjUsingUuid(BUCKET_NAME, OBJECT_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
 
       assertNull(response);
@@ -191,10 +197,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjUsingVersionNum(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObject);
     }
 
@@ -231,10 +237,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjMetaLatestVersion(BUCKET_NAME, OBJECT_KEY);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
@@ -271,10 +277,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjMetaUsingUuid(BUCKET_NAME, OBJECT_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
@@ -311,10 +317,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjMetaUsingVersionNumber(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
@@ -351,10 +357,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjMetaUsingTag(BUCKET_NAME, OBJECT_KEY, TAG);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectMeta);
     }
 
@@ -391,10 +397,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.getRepoObjVersionsMeta(BUCKET_NAME, OBJECT_KEY);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingObjectVersions);
     }
 
@@ -429,10 +435,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.deleteRepoObjUsingUuid(BUCKET_NAME, OBJECT_KEY, VERSION_UUID);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
@@ -467,10 +473,10 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoObjectDaoImpl.deleteRepoObjUsingVersionNumber(BUCKET_NAME, OBJECT_KEY, VERSION_NUMBER);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorDeletingObject);
     }
 
@@ -514,20 +520,20 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_CREATED);
 
-    RepoObject repoObject = mock(RepoObject.class);
-    mockRepoObjectCalls(repoObject);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    mockRepoObjectCalls(repoObjectInput);
 
     HttpResponse response = null;
 
-    if ("NEW".equals(create)){
-      response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    if ("NEW".equals(create)) {
+      response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     } else if ("VERSION".equals(create)) {
-      response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-    } else{
-      response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+      response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
+    } else {
+      response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
     }
 
-    verifyRepoObjectCalls(repoObject);
+    verifyRepoObjectCalls(repoObjectInput);
     verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
 
     assertNotNull(response);
@@ -543,48 +549,48 @@ public class ContentRepoObjectDaoImplTest extends BaseDaoTest {
     ArgumentCaptor<HttpPost> httpPostArgument = ArgumentCaptor.forClass(HttpPost.class);
     mockCommonCalls(repoAccessConfig, HttpStatus.SC_BAD_REQUEST);
     mockHttpResponseUtilCalls(mockResponse);
-    RepoObject repoObject = mock(RepoObject.class);
-    mockRepoObjectCalls(repoObject);
+    RepoObjectInput repoObjectInput = mock(RepoObjectInput.class);
+    mockRepoObjectCalls(repoObjectInput);
 
     HttpResponse response = null;
 
-    try{
-      if ("NEW".equals(create)){
-        response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
-      } else if ("VERSION".equals(create)){
-        response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+    try {
+      if ("NEW".equals(create)) {
+        response = contentRepoObjectDaoImpl.createRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
+      } else if ("VERSION".equals(create)) {
+        response = contentRepoObjectDaoImpl.versionRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
       } else {
-        response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObject, CONTENT_TYPE);
+        response = contentRepoObjectDaoImpl.autoCreateRepoObj(BUCKET_NAME, repoObjectInput, CONTENT_TYPE);
       }
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, errorType);
     }
 
-    verifyRepoObjectCalls(repoObject);
+    verifyRepoObjectCalls(repoObjectInput);
     verifyCommonCalls(repoAccessConfig, httpPostArgument, statusLine, 1, 1);
     PowerMockito.verifyStatic();
 
   }
 
-  private void mockRepoObjectCalls(RepoObject repoObject) {
+  private void mockRepoObjectCalls(RepoObjectInput repoObjectInput) {
 
-    when(repoObject.getKey()).thenReturn(OBJECT_KEY);
-    when(repoObject.getContentAccessor()).thenReturn(CONTENT);
-    when(repoObject.getTimestamp()).thenReturn(TIMESTAMP);
-    when(repoObject.getDownloadName()).thenReturn(DOWNLOAD_NAME);
-    when(repoObject.getCreationDate()).thenReturn(TIMESTAMP);
-    when(repoObject.getTag()).thenReturn(TAG);
+    when(repoObjectInput.getKey()).thenReturn(OBJECT_KEY);
+    when(repoObjectInput.getContentAccessor()).thenReturn(CONTENT);
+    when(repoObjectInput.getTimestamp()).thenReturn(TIMESTAMP);
+    when(repoObjectInput.getDownloadName()).thenReturn(DOWNLOAD_NAME);
+    when(repoObjectInput.getCreationDate()).thenReturn(TIMESTAMP);
+    when(repoObjectInput.getTag()).thenReturn(TAG);
 
   }
 
-  private void verifyRepoObjectCalls(RepoObject repoObject) {
+  private void verifyRepoObjectCalls(RepoObjectInput repoObjectInput) {
 
-    verify(repoObject).getKey();
-    verify(repoObject, atLeastOnce()).getContentAccessor();
-    verify(repoObject, times(2)).getTimestamp();
-    verify(repoObject, times(2)).getDownloadName();
-    verify(repoObject, times(2)).getCreationDate();
-    verify(repoObject, times(2)).getTag();
+    verify(repoObjectInput).getKey();
+    verify(repoObjectInput, atLeastOnce()).getContentAccessor();
+    verify(repoObjectInput, times(2)).getTimestamp();
+    verify(repoObjectInput, times(2)).getDownloadName();
+    verify(repoObjectInput, times(2)).getCreationDate();
+    verify(repoObjectInput, times(2)).getTag();
 
   }
 

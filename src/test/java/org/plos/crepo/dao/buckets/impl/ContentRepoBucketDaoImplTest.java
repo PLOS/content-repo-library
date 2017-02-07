@@ -46,12 +46,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HttpResponseUtil.class, BucketUrlGenerator.class})
-public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
+public class ContentRepoBucketDaoImplTest extends BaseDaoTest {
 
   private ContentRepoBucketDaoImpl contentRepoBucketDaoImpl;
 
@@ -59,9 +62,8 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
   private ContentRepoAccessConfig repoAccessConfig;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     contentRepoBucketDaoImpl = new ContentRepoBucketDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
     PowerMockito.mockStatic(BucketUrlGenerator.class);
   }
@@ -93,10 +95,10 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoBucketDaoImpl.createBucket(BUCKET_NAME);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorCreatingBucket);
     }
 
@@ -135,10 +137,10 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoBucketDaoImpl.getBuckets();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 
@@ -174,10 +176,10 @@ public class ContentRepoBucketDaoImplTest extends BaseDaoTest{
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoBucketDaoImpl.getBucket(BUCKET_NAME);
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingBucketMeta);
     }
 

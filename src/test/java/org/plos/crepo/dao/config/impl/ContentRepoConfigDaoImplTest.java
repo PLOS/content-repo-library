@@ -42,7 +42,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -55,9 +57,8 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
   private ContentRepoConfigDaoImpl contentRepoConfigDaoImpl;
 
   @Before
-  public void setUp(){
+  public void setUp() {
     contentRepoConfigDaoImpl = new ContentRepoConfigDaoImpl(repoAccessConfig);
-    when(repoAccessConfig.getBucketName()).thenReturn(BUCKET_NAME);
     when(repoAccessConfig.getRepoServer()).thenReturn(REPO_SERVER);
     PowerMockito.mockStatic(ConfigUrlGenerator.class);
   }
@@ -86,10 +87,10 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoConfigDaoImpl.hasReProxy();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingReproxyData);
     }
 
@@ -123,10 +124,10 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoConfigDaoImpl.getRepoConfig();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingConfig);
     }
 
@@ -160,10 +161,10 @@ public class ContentRepoConfigDaoImplTest extends BaseDaoTest {
     mockHttpResponseUtilCalls(mockResponse);
 
     HttpResponse response = null;
-    try{
+    try {
       response = contentRepoConfigDaoImpl.getRepoStatus();
       fail(EXCEPTION_EXPECTED);
-    } catch(ContentRepoException ex){
+    } catch (ContentRepoException ex) {
       verifyException(ex, response, ErrorType.ErrorFetchingStatus);
     }
 
