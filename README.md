@@ -1,13 +1,8 @@
-Content Repository Library
-==================
+This is a client-side library for accessing the API of the Ambra stack's
+[Content Repo](https://github.com/PLOS/content-repo) component.
 
-'InputStream getLatestRepoObjStream(String key)' is replacing 'InputStream getFileInStream(String key)' from the file-store jar
-
-'Map<String, String> createRepoObj(RepoObject repoObject)' is responsible of creating an asset in the content-repo.
-The file-store provided the method 'OutputStream getFileOutStream(final String key, long byteCount)' to obtain an OutputStream to write
-the new file in the content.
-
-'Boolean deleteLatestRepoObj(String key)'  is replacing void 'deleteFile(String fsid)' from the file-store jar
-
-Please contact us at dev@ambraproject.org with any questions, comments, or concerns.
-Please use [Github Issues](https://github.com/PLOS/ambraproject/issues) to report any problems, or submit a pull request.
+See the [Ambra Project documentation](https://plos.github.io/ambraproject/) for
+an overview of the stack and user instructions. If you have any questions or
+comments, please email dev@ambraproject.org, open a [GitHub
+issue](https://github.com/PLOS/content-repo-library/issues), or submit a pull
+request.
