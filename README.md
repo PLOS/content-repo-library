@@ -1,6 +1,5 @@
-[![Build Status Badge]][Build Status]
-
-Content Repository Library
+build: [![Build Status Badge]][Build Status]&#8193;&#9733;&#8193;
+# Content Repository Library
 ==================
 
 'InputStream getLatestRepoObjStream(String key)' is replacing 'InputStream getFileInStream(String key)' from the file-store jar
