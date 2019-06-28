@@ -1,4 +1,4 @@
-[![Build Status Badge]][Build Status]
+build: [![Build Status Badge]][Build Status]
 
 Content Repository Library
 ==================
