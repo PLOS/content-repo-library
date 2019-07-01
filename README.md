@@ -1,4 +1,5 @@
-build: [![Build Status Badge]][Build Status]&#8193;&#9733;&#8193;
+[![Build Status Badge]][Build Status]
+
 # Content Repository Library
 ==================
 
@@ -14,4 +15,4 @@ Please contact us at dev@ambraproject.org with any questions, comments, or conce
 Please use [Github Issues](https://github.com/PLOS/ambraproject/issues) to report any problems, or submit a pull request.
 
 [Build Status]: https://teamcity.plos.org/teamcity/viewType.html?buildTypeId=ContentRepoClientLibrary
-[Build Status Badge]: https://teamcity.plos.org/teamcity/app/rest/builds/builType:(id:ContentRepoClientLibrary)/statusIcon.svg
+[Build Status Badge]: https://teamcity.plos.org/teamcity/app/rest/builds/buildType:(id:ContentRepoClientLibrary)/statusIcon.svg
